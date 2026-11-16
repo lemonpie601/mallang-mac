@@ -2479,15 +2479,16 @@ function widgetBody(w) {
     case "locker": {
       // The "확장 보관함" extension gathers other extensions' floating buttons
       // (marked data-bgh-stored); the widget lists them and clicks the real one.
+      // Every button is listed; the row (medium) or grid (small, large)
+      // scrolls by dragging, swiping or the mouse wheel.
       const items = lockerItems();
-      const max = { s: 4, m: 5, l: 12 }[w.size] || 5;
       return [
         h("div", { class: "mdos-wg-label", text: L.widgetNames.locker }),
         items.length
-          ? h(
+          ? dragScroll(h(
               "div",
               { class: "mdos-locker" },
-              ...items.slice(0, max).map((it) =>
+              ...items.map((it) =>
                 h(
                   "button",
                   {
@@ -2504,7 +2505,7 @@ function widgetBody(w) {
                   h("span", { class: "mdos-locker-name", text: it.label }),
                 ),
               ),
-            )
+            ))
           : h("div", { class: "mdos-wg-empty", text: L.lockerEmpty }),
       ];
     }
@@ -2575,6 +2576,66 @@ function widgetBody(w) {
     default:
       return [];
   }
+}
+// Scrolls a widget's list by dragging with the mouse (touch scrolls natively)
+// and turns a vertical wheel into sideways scrolling for a sideways row. A
+// drag doesn't count as a click on the item under the pointer. Edges fade
+// while there is more to see in that direction.
+function dragScroll(el) {
+  let start = null;
+  let moved = false;
+  const fade = () => {
+    const sideways = el.scrollWidth > el.clientWidth + 1;
+    const max = sideways ? el.scrollWidth - el.clientWidth : el.scrollHeight - el.clientHeight;
+    const pos = sideways ? el.scrollLeft : el.scrollTop;
+    el.dataset.more = max <= 1 ? "" : `${pos > 1 ? "start " : ""}${pos < max - 1 ? "end" : ""}`.trim();
+  };
+  el.addEventListener("pointerdown", (event) => {
+    if (event.pointerType !== "mouse" || event.button !== 0 || editMode) return;
+    start = { x: event.clientX, y: event.clientY, left: el.scrollLeft, top: el.scrollTop, id: event.pointerId };
+    moved = false;
+  });
+  el.addEventListener("pointermove", (event) => {
+    if (!start || event.pointerId !== start.id) return;
+    const dx = event.clientX - start.x;
+    const dy = event.clientY - start.y;
+    if (!moved && Math.hypot(dx, dy) < 5) return;
+    if (!moved) {
+      moved = true;
+      el.setPointerCapture(event.pointerId);
+      el.classList.add("is-dragging");
+    }
+    el.scrollLeft = start.left - dx;
+    el.scrollTop = start.top - dy;
+  });
+  const end = () => {
+    start = null;
+    el.classList.remove("is-dragging");
+  };
+  el.addEventListener("pointerup", end);
+  el.addEventListener("pointercancel", end);
+  el.addEventListener(
+    "click",
+    (event) => {
+      if (!moved) return;
+      moved = false;
+      event.stopPropagation();
+      event.preventDefault();
+    },
+    true,
+  );
+  el.addEventListener(
+    "wheel",
+    (event) => {
+      if (el.scrollWidth <= el.clientWidth + 1 || Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+      el.scrollLeft += event.deltaY;
+      event.preventDefault();
+    },
+    { passive: false },
+  );
+  el.addEventListener("scroll", fade, { passive: true });
+  raf(fade);
+  return el;
 }
 function lockerItems() {
   return $$("[data-bgh-stored]")

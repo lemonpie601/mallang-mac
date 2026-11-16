@@ -965,19 +965,61 @@ html.mdos-desktop-home.mdos-no-credits [data-component="HomeBrowserHub.HomePage"
 }
 
 /* ── Extension locker widget ─────────────────────────────────── */
+/* Every button is in the list. Small and large scroll down, medium is one
+   row that scrolls sideways; drag with the mouse, swipe, or use the wheel
+   (desktop.js dragScroll). The edge fades while there is more that way. */
 .mdos-locker {
+  flex: 1;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-content: start;
   gap: 10px 6px;
-  margin-top: 10px;
+  margin: 10px -4px 0;
+  padding: 2px 4px 4px;
   min-height: 0;
-  overflow: hidden;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  touch-action: pan-y;
+  cursor: grab;
+  --fade: 22px;
+}
+.mdos-locker::-webkit-scrollbar {
+  display: none;
+}
+.mdos-locker.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none !important;
+}
+.mdos-locker.is-dragging .mdos-locker-item {
+  pointer-events: none;
 }
 .mdos-wg--s .mdos-locker {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .mdos-wg--m .mdos-locker {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: none;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 4 * 6px) / 5);
+  align-content: center;
+  touch-action: pan-x;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: 4px;
+}
+.mdos-wg--m .mdos-locker-item {
+  scroll-snap-align: start;
+}
+.mdos-locker[data-more="end"] {
+  mask-image: linear-gradient(var(--fade-dir, to bottom), #000 calc(100% - var(--fade)), transparent);
+}
+.mdos-locker[data-more="start"] {
+  mask-image: linear-gradient(var(--fade-dir, to bottom), transparent, #000 var(--fade));
+}
+.mdos-locker[data-more="start end"] {
+  mask-image: linear-gradient(var(--fade-dir, to bottom), transparent, #000 var(--fade), #000 calc(100% - var(--fade)), transparent);
+}
+.mdos-wg--m .mdos-locker {
+  --fade-dir: to right;
 }
 .mdos-locker-item {
   all: unset;
