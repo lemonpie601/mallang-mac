@@ -363,3 +363,39 @@ html.mdos .mari-folder-helper[data-mdos-tip]:is(:hover, :focus-visible, [data-md
   opacity: 1;
   transform: none;
 }
+
+/* ── Chat mode tabs: icons only ──────────────────────────────── */
+/* The label stays as the tooltip and accessible name (desktop.js). */
+html.mdos .mari-chat-sidebar [data-chat-mode-tab] > span:not(:first-child) {
+  display: none !important;
+}
+html.mdos .mari-chat-sidebar [data-chat-mode-tab] {
+  padding-block: 7px !important;
+}
+html.mdos .mari-chat-sidebar [data-chat-mode-tab] svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ── App agents (Otome Hearth, Story Writer…) ────────────────── */
+/* They open as Home tabs; inside a window the hub's own brand and tab strip
+   are noise — the window title already names the app. */
+html.mdos.mdos-hub-app .mari-home-browser-chrome {
+  display: none !important;
+}
+/* The title strip takes the app's own backdrop (desktop.js tintHubApp). */
+html.mdos.mdos-hub-app[data-mdos-hub-tone] [data-mdos-win="main"] [data-component="TopBar"] {
+  background: var(--mdos-hubapp-bg) !important;
+  border-color: transparent !important;
+}
+html.mdos.mdos-hub-app[data-mdos-hub-tone="dark"] [data-mdos-win="main"] [data-component="TopBar"] {
+  color: rgba(255, 255, 255, 0.82) !important;
+  --mdos-fg: #f5f5f7;
+  --mdos-fg-2: rgba(255, 255, 255, 0.7);
+}
+html.mdos.mdos-hub-app[data-mdos-hub-tone="dark"] [data-mdos-win="main"] [data-component="TopBar"] :is(button, svg) {
+  color: rgba(255, 255, 255, 0.78) !important;
+}
+html.mdos.mdos-hub-app[data-mdos-hub-tone="dark"] [data-mdos-win="main"] .mdos-light {
+  box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.18);
+}

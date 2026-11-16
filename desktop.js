@@ -75,8 +75,8 @@ const L = KO
       themeWallpaper: "앱 테마",
       appearance: "모양",
       rpStyle: "롤플 화면",
-      rpBook: "책 (종이)",
-      rpNight: "책 (밤)",
+      rpBook: "리더 (세피아·라이트)",
+      rpNight: "리더 (다크)",
       rpClean: "깔끔하게",
       convoStyle: "대화 화면",
       convoMessages: "메시지 앱",
@@ -116,7 +116,11 @@ const L = KO
         note: "메모",
         dday: "디데이",
         greeting: "인사말",
+        credits: "API 크레딧",
+        locker: "확장 보관함",
       },
+      lockerEmpty: "보관함에 담긴 확장 버튼이 없어요",
+      creditsEmpty: "홈을 한 번 열면 크레딧이 여기 표시돼요",
       pickPhoto: "사진을 골라 주세요",
       notePlaceholder: "메모를 적어 보세요",
       ddayDefault: "최애 생일",
@@ -139,7 +143,13 @@ const L = KO
       load: "열기",
       openOutside: "새 창에서 열기",
       addToHome: "홈 화면에 추가",
-      cantEmbed: "이 사이트는 보안 설정 때문에 창 안에 바로 띄울 수 없어요. 새 창에서 열면 옆에 띄워 둘 수 있어요.",
+      cantEmbed: "이 사이트는 보안 설정 때문에 창 안에 바로 띄울 수 없어요. 리더로 보거나 새 창에서 열 수 있어요.",
+      readerView: "리더로 보기",
+      readerNote: "리더 보기: 주소를 외부 서비스(r.jina.ai)가 대신 열어 글과 이미지만 가져와요. 로그인·글쓰기는 새 창에서 해 주세요.",
+      readerLoading: "불러오는 중… (몇 초 걸릴 수 있어요)",
+      readerFail: "리더로 불러오지 못했어요",
+      readerEmpty: "이 페이지는 사이트가 리더 서비스를 막고 있어 내용을 가져오지 못했어요. 새 창에서 열어 옆에 띄워 두세요.",
+      back: "뒤로",
       favorites: "즐겨찾기",
       noFavorites: "아직 즐겨찾기가 없어요. 주소를 열고 ★ 를 누르면 여기와 홈 화면에 생겨요.",
       pinOnTop: "항상 위에",
@@ -176,7 +186,7 @@ const L = KO
       roleplay: "롤플",
       presets: "프리셋",
       font: "글꼴",
-      fonts: { "": "기본", system: "시스템", serif: "명조", rounded: "둥근", hand: "손글씨", mono: "고정폭", theme: "테마 글꼴", custom: "직접 입력" },
+      fonts: { "": "기본 (프리텐다드)", system: "시스템", serif: "명조", rounded: "둥근", hand: "손글씨", mono: "고정폭", theme: "테마 글꼴", custom: "직접 입력" },
       customFont: "글꼴 이름 (예: Pretendard)",
       textSize: "글자 크기",
       lineHeight: "줄 간격",
@@ -195,11 +205,22 @@ const L = KO
       preview: "미리보기",
       resetChat: "기본 디자인으로",
       cvPresets: { base: "기본", yellow: "노랑 말풍선", green: "초록 말풍선", dark: "다크", pastel: "파스텔" },
-      rpPresets: { book: "종이책", parchment: "양피지", night: "밤", typewriter: "타자기", novel: "소설 앱" },
+      rpPresets: { book: "세피아", novel: "라이트", night: "다크", parchment: "양피지", typewriter: "타자기" },
+      justify: "양쪽 정렬",
+      actionsHover: "메시지 버튼은 가리킬 때만",
+      actItalic: "행동(* *) 기울이기",
+      readerLayout: "읽기 화면",
       pvThem: "오늘 뭐 했어?",
       pvMe: "마리나라 꾸미기 하고 있었어!",
       pvThem2: "오 진짜? 보여 줘 ✨",
-      pvRp: "창밖으로 비가 내리기 시작했다. 그는 찻잔을 내려놓고 조용히 웃었다. \"오늘은 여기서 쉬어 가요.\"",
+      pvRpNar: "창밖으로 비가 내리기 시작했다. ",
+      pvRpAct: "그는 찻잔을 내려놓고 조용히 웃었다.",
+      pvRpDlg: "“오늘은 여기서 쉬어 가요.”",
+      textTone: "대사·서술·행동 색 구분",
+      textToneHint: "대사(\" \")는 진하게, 서술은 조금 연하게, 행동(* *)은 더 연하게 보여요.",
+      dlgColor: "대사",
+      narColor: "서술",
+      actColor: "행동 (* *)",
       ytMode: "YouTube 사용 방식",
       ytModes: { link: "링크만", api: "API 키로 검색", account: "내 계정으로" },
       ytApiKey: "YouTube Data API 키",
@@ -282,8 +303,8 @@ const L = KO
       themeWallpaper: "App theme",
       appearance: "Appearance",
       rpStyle: "Roleplay view",
-      rpBook: "Book (paper)",
-      rpNight: "Book (night)",
+      rpBook: "Reader (sepia / light)",
+      rpNight: "Reader (dark)",
       rpClean: "Clean",
       convoStyle: "Conversation view",
       convoMessages: "Messages app",
@@ -323,7 +344,11 @@ const L = KO
         note: "Note",
         dday: "Countdown",
         greeting: "Greeting",
+        credits: "API credits",
+        locker: "Extension locker",
       },
+      lockerEmpty: "No extension buttons in the locker yet",
+      creditsEmpty: "Open Home once to load your credits here",
       pickPhoto: "Choose a photo",
       notePlaceholder: "Write a note",
       ddayDefault: "Bias birthday",
@@ -346,7 +371,13 @@ const L = KO
       load: "Open",
       openOutside: "Open in new window",
       addToHome: "Add to home screen",
-      cantEmbed: "This site's security settings stop it from opening inside a window. Open it in a new window to keep it alongside.",
+      cantEmbed: "This site's security settings stop it from opening inside a window. Read it in reader view, or open it in a new window.",
+      readerView: "Reader view",
+      readerNote: "Reader view: an outside service (r.jina.ai) opens the address and returns its text and images. Sign in or post in a new window.",
+      readerLoading: "Loading… (this can take a few seconds)",
+      readerFail: "Couldn't load this page in reader view",
+      readerEmpty: "This site blocks the reader service for this page, so nothing came back. Open it in a new window to keep it alongside.",
+      back: "Back",
       favorites: "Favorites",
       noFavorites: "No favorites yet. Open an address and press ★ to add it here and to your home screen.",
       pinOnTop: "Keep on top",
@@ -383,7 +414,7 @@ const L = KO
       roleplay: "Roleplay",
       presets: "Presets",
       font: "Font",
-      fonts: { "": "Default", system: "System", serif: "Serif", rounded: "Rounded", hand: "Handwriting", mono: "Monospace", theme: "Theme font", custom: "Custom" },
+      fonts: { "": "Default (Pretendard)", system: "System", serif: "Serif", rounded: "Rounded", hand: "Handwriting", mono: "Monospace", theme: "Theme font", custom: "Custom" },
       customFont: "Font name (e.g. Inter)",
       textSize: "Text size",
       lineHeight: "Line height",
@@ -402,11 +433,22 @@ const L = KO
       preview: "Preview",
       resetChat: "Reset to default",
       cvPresets: { base: "Default", yellow: "Yellow bubbles", green: "Green bubbles", dark: "Dark", pastel: "Pastel" },
-      rpPresets: { book: "Paperback", parchment: "Parchment", night: "Night", typewriter: "Typewriter", novel: "Novel app" },
+      rpPresets: { book: "Sepia", novel: "Light", night: "Dark", parchment: "Parchment", typewriter: "Typewriter" },
+      justify: "Justify text",
+      actionsHover: "Message buttons on hover only",
+      actItalic: "Italic actions (* *)",
+      readerLayout: "Reading view",
       pvThem: "What did you do today?",
       pvMe: "Decorating my Marinara!",
       pvThem2: "Ooh, show me ✨",
-      pvRp: "Rain began to fall outside the window. He set down his teacup and smiled quietly. \"Rest here for tonight.\"",
+      pvRpNar: "Rain began to fall outside the window. ",
+      pvRpAct: "He set down his teacup and smiled quietly.",
+      pvRpDlg: "“Rest here for tonight.”",
+      textTone: "Tone dialogue, narration and actions",
+      textToneHint: "Dialogue (\" \") reads darkest, narration a little lighter, actions (* *) lighter still.",
+      dlgColor: "Dialogue",
+      narColor: "Narration",
+      actColor: "Actions (* *)",
       ytMode: "How YouTube works",
       ytModes: { link: "Links only", api: "Search with API key", account: "My account" },
       ytApiKey: "YouTube Data API key",
@@ -561,6 +603,8 @@ const ICONS = {
   pin: '<path d="M9 3h6l-1 6 3 3H7l3-3z"/><path d="M12 12v9"/>',
   plus: '<path d="M12 5v14M5 12h14"/>',
   trash: '<path d="M4 7h16M9 7V4h6v3M6.5 7l1 13h9l1-13"/>',
+  back: '<path d="M15 5l-7 7 7 7"/>',
+  reader: '<path d="M6 3.5h8.5L19 8v12.5H6z"/><path d="M9.5 11h6M9.5 14.5h6M9.5 18h4"/>',
 };
 const svg = (name) =>
   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ICONS.launchpad}</svg>`;
@@ -671,6 +715,7 @@ const DEFAULTS = {
   reduceMotion: false,
   rpStyle: "book",
   convoStyle: "messages",
+  rpTone: true,
   homeApps: [],
   apps: [], // open small-app windows
   bookmarks: [],
@@ -728,7 +773,13 @@ if (!state.launcherSeeded) {
   state.launcherSeeded = true;
 }
 
-for (const key of ["apps", "bookmarks", "sbOrder", "sbHidden"]) if (!Array.isArray(state[key])) state[key] = [];
+// 2.3: the document window now leaves the widget column free by default;
+// forget an older saved size once so the new default applies.
+if (!state.mainFitWidgets) {
+  if (state.windows && !state.windows.main?.snap) delete state.windows.main;
+  state.mainFitWidgets = true;
+}
+for (const key of ["apps", "bookmarks", "sbOrder", "sbHidden", "readerHosts"]) if (!Array.isArray(state[key])) state[key] = [];
 state.chat = { convo: { ...(state.chat?.convo || {}) }, rp: { ...(state.chat?.rp || {}) } };
 state.yt = { mode: "link", apiKey: "", ...(state.yt || {}) };
 if (!Array.isArray(state.desk)) {
@@ -910,6 +961,10 @@ if (hostRoot?.parentNode) hostRoot.parentNode.insertBefore(widgetLayer, hostRoot
 else doc.body.append(widgetLayer);
 doc.body.append(ui);
 ui.append(snapPreview);
+// Launcher drawers such as "확장 보관함" skip roots marked data-exd. Our layers
+// aren't floating launchers, and without the mark every clock tick, Dock or
+// window change woke a full-page scan there (~125 ms each, twice a second).
+for (const el of [ui, wallpaper, widgetLayer]) el.setAttribute("data-exd", "");
 
 // ── Mode ──────────────────────────────────────────────────────
 
@@ -994,7 +1049,12 @@ function defaultRect(id) {
   if (id === "chats") return { x: a.left + 4, y: a.top, w: chatsW, h: height };
   if (id === "main") {
     const x = a.left + 4 + chatsW + 10;
-    return { x, y: a.top, w: Math.max(MIN_W, a.right - 4 - x), h: height };
+    // Leave the right-hand widget column showing beside the chat when the
+    // screen is wide enough, so the desktop doesn't vanish behind a window.
+    let right = a.right - 4;
+    const col = state.widgets.filter((w) => Number.isFinite(w.x) && w.x > innerWidth / 2).map((w) => w.x);
+    if (isDesktop() && col.length && Math.min(...col) - 16 - x >= 600) right = Math.min(...col) - 16;
+    return { x, y: a.top, w: Math.max(MIN_W, right - x), h: height };
   }
   if (activePanelId() === "settings") {
     // Wide enough for the two-pane Settings layout (layout.css, ≥ 620 px).
@@ -1125,13 +1185,40 @@ function setMainMinimized(min) {
   else focusWin("main");
   syncSoon();
 }
+// App agents (Otome Hearth, Story Writer…) open as Home tabs. Leaving one
+// selects Home's own tab; Marinara's Home button does nothing there.
+const hubAppTab = () => {
+  if (!homeVisible()) return null;
+  const tab = $(`${SEL.homeTabs}[aria-selected="true"]`);
+  return tab && tab.id !== "marinara-home-tab-home" ? tab : null;
+};
+const leaveHubApp = () => !!hubAppTab() && click($("#marinara-home-tab-home"));
+// App agents paint their own backdrop (Otome Hearth is always dark, for
+// example). The window's title strip takes that colour, with light or dark
+// controls to match, instead of a light strip over a dark app.
+function tintHubApp(on) {
+  let bg = "";
+  if (on) {
+    let el = $('[data-component="HomeBrowserHub.Content"]')?.firstElementChild;
+    for (let depth = 0; el && depth < 4; el = el.firstElementChild, depth++) {
+      const c = getComputedStyle(el).backgroundColor;
+      if (c && c !== "transparent" && !/^rgba\(.*,\s*0\)$/.test(c)) {
+        bg = c;
+        break;
+      }
+    }
+  }
+  if (bg) setVar("--mdos-hubapp-bg", bg);
+  else html.style.removeProperty("--mdos-hubapp-bg");
+  html.dataset.mdosHubTone = bg ? (luminance(bg) < 0.35 ? "dark" : "light") : "";
+}
 function goHome() {
   closeOverlays();
   if (state.mainMinimized) setMainMinimized(false);
   // On touch screens Home stays mounted under open sheets; Marinara's Home
   // button also closes those sheets there. Open small apps go to the background.
   if (isTouch()) for (const rec of state.apps) if (!rec.min) setAppMinimized(`app:${rec.id}`, true);
-  if (!homePageVisible() || (isTouch() && $(SEL.sheets))) click($(SEL.homeBtn));
+  if (!homePageVisible() || (isTouch() && $(SEL.sheets))) leaveHubApp() || click($(SEL.homeBtn));
 }
 function closeWin(id) {
   if (isAppWin(id)) return closeApp(id);
@@ -1142,7 +1229,7 @@ function closeWin(id) {
     if (active) click(panelBtn(active));
   } else {
     // Closing the document window shows the desktop (Home).
-    click($(SEL.homeBtn));
+    leaveHubApp() || click($(SEL.homeBtn));
   }
   marinara.setTimeout(focusTopVisible, 60);
 }
@@ -1277,6 +1364,10 @@ function onPointerDown(event) {
 
 function startGesture(event, id, gmode) {
   event.preventDefault();
+  // The title strip sits on Marinara's TopBar, whose "pull down to search /
+  // ask Mari" drag starts from the same press. We listen on the document in
+  // the capture phase, so stopping here keeps that press from React entirely.
+  event.stopPropagation();
   const saved = savedRect(id);
   let start = rectOf(id);
   if (gmode === "move" && saved?.snap) {
@@ -1391,6 +1482,11 @@ function onPointerUp() {
           g.el.classList.add("is-settling");
           marinara.setTimeout(() => g.el.classList.remove("is-settling"), 260);
         }
+      }
+      // Free placement too: a widget dropped onto another slides to a free spot.
+      if (g.kind === "widget" && state.layoutMode !== "grid") {
+        const others = state.widgets.filter((o) => o !== g.w);
+        if (others.some((o) => Number.isFinite(o.x) && rectsOverlap(wgRect(g.w), wgRect(o)))) snapToGrid(g.w, "widget", others);
       }
       placeWidget(g.el, g.w);
       save();
@@ -2235,7 +2331,7 @@ function openIconPicker() {
 // ── Widgets ───────────────────────────────────────────────────
 
 let editMode = false;
-const WIDGET_TYPES = ["launcher", "clock", "analog", "calendar", "greeting", "dday", "note", "photo"];
+const WIDGET_TYPES = ["launcher", "clock", "analog", "calendar", "greeting", "dday", "note", "photo", "credits", "locker"];
 // New chat launcher: the three buttons of Marinara's (hidden) Home greeting.
 const LAUNCH_MODES = [
   { icon: "chat", g: ["#6ef08d", "#17a84d"] },
@@ -2370,8 +2466,130 @@ function widgetBody(w) {
         ? [h("img", { class: "mdos-wg-photo", src, alt: "", draggable: "false" })]
         : [h("div", { class: "mdos-wg-empty", text: L.pickPhoto })];
     }
+    case "locker": {
+      // The "확장 보관함" extension gathers other extensions' floating buttons
+      // (marked data-bgh-stored); the widget lists them and clicks the real one.
+      const items = lockerItems();
+      const max = { s: 4, m: 5, l: 12 }[w.size] || 5;
+      return [
+        h("div", { class: "mdos-wg-label", text: L.widgetNames.locker }),
+        items.length
+          ? h(
+              "div",
+              { class: "mdos-locker" },
+              ...items.slice(0, max).map((it) =>
+                h(
+                  "button",
+                  {
+                    type: "button",
+                    class: "mdos-locker-item",
+                    title: it.label,
+                    "aria-label": it.label,
+                    onclick: (event) => {
+                      event.stopPropagation();
+                      if (!editMode) it.el.click();
+                    },
+                  },
+                  h("span", { class: "mdos-locker-ico" }, it.icon),
+                  h("span", { class: "mdos-locker-name", text: it.label }),
+                ),
+              ),
+            )
+          : h("div", { class: "mdos-wg-empty", text: L.lockerEmpty }),
+      ];
+    }
+    case "credits": {
+      // A summary of the credit extension's cards, cached from the last time
+      // Home was showing, so it stays on the desktop beside open windows.
+      const c = state.credits;
+      const head = h("div", { class: "mdos-wg-label mdos-cr-head" }, h("span", { text: L.widgetNames.credits }), c?.total ? h("b", { text: c.total }) : null);
+      if (!c?.rows?.length) return [head, h("div", { class: "mdos-wg-empty", text: L.creditsEmpty })];
+      const max = w.size === "l" ? 8 : w.size === "m" ? 3 : 4;
+      return [
+        head,
+        h(
+          "div",
+          { class: "mdos-cr-list" },
+          ...c.rows.slice(0, max).map((r) =>
+            h(
+              "div",
+              { class: "mdos-cr-row" },
+              h("span", { class: "mdos-cr-brand", text: r.brand }),
+              h("span", { class: "mdos-cr-amt", text: r.amount }),
+              r.pct != null ? h("i", { class: "mdos-cr-bar", style: `--p:${r.pct}%` }) : null,
+            ),
+          ),
+        ),
+      ];
+    }
     default:
       return [];
+  }
+}
+function lockerItems() {
+  return $$("[data-bgh-stored]")
+    .map((el) => {
+      const label = (el.getAttribute("aria-label") || el.title || el.textContent || "")
+        .trim()
+        .replace(/\s*(열기|Open)$/i, "")
+        .slice(0, 30);
+      // Clone the button's own artwork (already on the page); else a letter.
+      const art = el.querySelector("svg, img");
+      return { el, label, icon: art ? art.cloneNode(true) : label.charAt(0) };
+    })
+    .filter((it) => it.label);
+}
+let lockerSig = "";
+function refreshLocker() {
+  const sig = $$("[data-bgh-stored]")
+    .map((el) => el.getAttribute("aria-label") || el.title || "")
+    .join("|");
+  if (sig === lockerSig) return;
+  lockerSig = sig;
+  if (sig && !state.lockerSeeded) {
+    state.lockerSeeded = true;
+    if (!state.widgets.some((w) => w.type === "locker")) {
+      state.widgets.push({ id: newId(), type: "locker", size: "m", style: "glass", x: null, y: null });
+      save();
+      return renderWidgets();
+    }
+  }
+  for (const w of state.widgets) {
+    if (w.type !== "locker") continue;
+    for (const el of $$(`.mdos-wg[data-wid="${w.id}"] .mdos-wg-body`)) el.replaceChildren(...widgetBody(w));
+  }
+}
+// Reads the credit extension's cards (#mac-credit-home) while Home shows them.
+function scrapeCredits() {
+  const home = $("#mac-credit-home");
+  if (!home) return;
+  const rows = [];
+  for (const card of home.querySelectorAll(".mlh-crcard")) {
+    const brand = card.querySelector(".mlh-cr-brand b")?.textContent.trim();
+    if (!brand) continue;
+    const amount =
+      card.querySelector(".mlh-cr-big b")?.textContent.trim() ||
+      card.querySelector(".mlh-cr-big")?.textContent.trim() ||
+      card.querySelector(".mlh-rc-line b")?.textContent.trim() ||
+      "";
+    const pct = parseFloat(card.querySelector(".mlh-cr-bar i")?.style.width);
+    rows.push({ brand: brand.slice(0, 40), amount: amount.slice(0, 40), pct: Number.isFinite(pct) ? Math.round(pct) : null });
+  }
+  const total = home.querySelector(".mac-led-total b")?.textContent.trim().slice(0, 30) || "";
+  const next = { total, rows: rows.slice(0, 12) };
+  if (JSON.stringify(next) === JSON.stringify(state.credits || null)) return;
+  state.credits = next;
+  save();
+  if (!state.creditsSeeded && rows.length) {
+    state.creditsSeeded = true;
+    if (!state.widgets.some((w) => w.type === "credits")) {
+      state.widgets.push({ id: newId(), type: "credits", size: "m", style: "glass", x: null, y: null });
+      return renderWidgets();
+    }
+  }
+  for (const w of state.widgets) {
+    if (w.type !== "credits") continue;
+    for (const el of $$(`.mdos-wg[data-wid="${w.id}"] .mdos-wg-body`)) el.replaceChildren(...widgetBody(w));
   }
 }
 
@@ -2509,6 +2727,21 @@ function snapToGrid(item, kind, others) {
     }
   }
 }
+// Widgets never sit on top of each other: one that lands on another (after a
+// drop, a resize of the window or auto-placement) moves to the nearest free cell.
+const wgRect = (w) => {
+  const [ww, wh] = WIDGET_SIZES[w.size] || WIDGET_SIZES.s;
+  return { x: w.x, y: w.y, w: ww, h: wh };
+};
+const rectsOverlap = (a, b) => a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
+function fixOverlaps(list = state.widgets) {
+  const placed = [];
+  for (const w of list) {
+    if (!Number.isFinite(w.x) || !Number.isFinite(w.y)) continue;
+    if (placed.some((o) => rectsOverlap(wgRect(w), wgRect(o)))) snapToGrid(w, "widget", placed);
+    placed.push(w);
+  }
+}
 function snapAll() {
   if (state.layoutMode !== "grid") return;
   state.widgets.forEach((w, i) => snapToGrid(w, "widget", state.widgets.slice(0, i)));
@@ -2519,11 +2752,29 @@ function placeWidget(el, w) {
   el.style.left = `${w.x}px`;
   el.style.top = `${w.y}px`;
 }
+// Widgets on the right half keep their distance from the right edge when the
+// browser width changes, so the widget column stays a column.
+function reanchorWidgets() {
+  const last = state.layoutW;
+  if (last && last !== innerWidth) {
+    const dx = innerWidth - last;
+    for (const w of state.widgets) if (Number.isFinite(w.x) && w.x > last / 2) w.x += dx;
+  }
+  if (state.layoutW !== innerWidth) {
+    state.layoutW = innerWidth;
+    save();
+  }
+}
 function renderWidgets() {
   if (isDesktop()) {
+    reanchorWidgets();
     autoPlace();
     autoPlaceIcons();
     snapAll();
+    fixOverlaps();
+    // Home's own board (feed, credit cards) stops short of the widget column.
+    const col = state.widgets.filter((w) => Number.isFinite(w.x) && w.x > innerWidth * 0.3).map((w) => w.x);
+    setVar("--mdos-widget-reserve", `${col.length ? Math.max(0, innerWidth - Math.min(...col)) + 12 : 24}px`);
     toggleClass("mdos-has-icons", state.desk.length > 0);
     widgetLayer.replaceChildren(
       ...state.desk
@@ -2796,11 +3047,12 @@ function openUrl(url) {
 }
 const toolBtn = (icon, label, onclick) =>
   h("button", { type: "button", class: "mdos-tool", title: label, "aria-label": label, svg: svg(icon), onclick });
-function frame(src, title) {
+function frame(src, title, sandbox = null) {
   return h("iframe", {
     class: "mdos-frame",
     src,
     title,
+    sandbox,
     allow: "autoplay; encrypted-media; picture-in-picture; fullscreen; clipboard-write",
     allowfullscreen: true,
     referrerpolicy: "strict-origin-when-cross-origin",
@@ -3005,6 +3257,129 @@ function mountNotes(win) {
   win.dispose = () => marinara.clearTimeout(listTimer);
 }
 
+// ── Reader view ───────────────────────────────────────────────
+// Most sites refuse to be framed (X-Frame-Options / CSP), and Marinara has no
+// page proxy. Reader view asks r.jina.ai for the page as Markdown and renders
+// it here as plain elements — never as HTML from the site. Opt-in per site,
+// because the address is sent to that service.
+// ponytail: line-based Markdown subset (headings, lists, quotes, links,
+// images, bold); upgrade to a real parser if pages need tables or code.
+const READER = "https://r.jina.ai/";
+async function fetchReader(url) {
+  const doFetch = typeof marinara.fetch === "function" ? marinara.fetch : window.fetch.bind(window);
+  const res = await doFetch(READER + url, { headers: { Accept: "text/plain" } });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.text();
+}
+function safeHref(href, base) {
+  try {
+    const u = new URL(href, base);
+    return u.protocol === "https:" || u.protocol === "http:" ? u.href : null;
+  } catch {
+    return null;
+  }
+}
+function mdImg(alt, src, base) {
+  const u = safeHref(src, base);
+  // Image hosts that refuse hotlinking just drop out instead of showing a broken icon.
+  return u ? h("img", { src: u, alt, loading: "lazy", decoding: "async", referrerpolicy: "no-referrer", onerror: (e) => e.target.remove() }) : null;
+}
+function mdLink(kids, href, onLink) {
+  return h(
+    "a",
+    {
+      href,
+      target: "_blank",
+      rel: "noopener noreferrer",
+      onclick: (e) => {
+        if (e.ctrlKey || e.metaKey || e.shiftKey || e.button) return;
+        e.preventDefault();
+        onLink(href);
+      },
+    },
+    ...kids,
+  );
+}
+// Link text may hold images ("[![thumb](src) title](href)"), so it is parsed again.
+const MD_INLINE = /!\[([^\]]*)\]\(([^)\s]+)[^)]*\)|\[((?:[^[\]]|!\[[^\]]*\]\([^)\s]*\)|\[[^[\]]*\])+)\]\(([^)\s]+)[^)]*\)|\*\*([^*]+)\*\*/g;
+function mdInline(text, base, onLink) {
+  const out = [];
+  let last = 0;
+  for (const m of text.matchAll(MD_INLINE)) {
+    if (m.index > last) out.push(text.slice(last, m.index));
+    last = m.index + m[0].length;
+    if (m[1] !== undefined) out.push(mdImg(m[1], m[2], base));
+    else if (m[3] !== undefined) {
+      const href = safeHref(m[4], base);
+      const kids = mdInline(m[3], base, onLink);
+      out.push(href ? mdLink(kids, href, onLink) : kids);
+    } else out.push(h("strong", { text: m[5] }));
+  }
+  if (last < text.length) out.push(text.slice(last));
+  return out;
+}
+function mdBlocks(md, base, onLink) {
+  const blocks = [];
+  let para = [];
+  let list = null;
+  const flush = () => {
+    if (para.length) blocks.push(h("p", {}, ...mdInline(para.join(" "), base, onLink)));
+    para = [];
+  };
+  for (const raw of md.split(/\r?\n/)) {
+    if (blocks.length > 2500) break;
+    const line = raw.trim();
+    if (!line || /^([-=*_]\s*){3,}$/.test(line) || /^\|?\s*:?-{2,}/.test(line)) {
+      flush();
+      list = null;
+      continue;
+    }
+    const head = line.match(/^(#{1,6})\s+(.*)$/);
+    const item = line.match(/^(?:(?:[*+-]|\d+\.)\s+)+(.*)$/);
+    if (head) {
+      flush();
+      list = null;
+      blocks.push(h(`h${Math.min(6, head[1].length + 1)}`, {}, ...mdInline(head[2], base, onLink)));
+    } else if (item) {
+      flush();
+      if (!list) blocks.push((list = h("ul")));
+      list.append(h("li", {}, ...mdInline(item[1], base, onLink)));
+    } else if (line.startsWith(">")) {
+      flush();
+      list = null;
+      blocks.push(h("blockquote", {}, ...mdInline(line.replace(/^>+\s*/, ""), base, onLink)));
+    } else if (line.startsWith("|")) {
+      flush();
+      list = null;
+      const cells = line.split("|").map((c) => c.trim()).filter(Boolean);
+      blocks.push(h("p", { class: "mdos-reader-row" }, ...mdInline(cells.join("  ·  "), base, onLink)));
+    } else para.push(line);
+  }
+  flush();
+  return blocks;
+}
+const readerOn = (url) => state.readerHosts.includes(hostOf(url));
+// Web pages open in a real iframe first. Marinara's own security policy
+// (frame-src) refuses most sites; the browser reports that as a
+// "securitypolicyviolation", and the window then falls back to reader view or
+// the open-in-new-window card for that site.
+const frameBlocked = new Set();
+const originOf = (u) => {
+  try {
+    return new URL(u).origin;
+  } catch {
+    return "";
+  }
+};
+// No top navigation: a framed page can't take Marinara's tab away.
+const WEB_SANDBOX = "allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals";
+function setReader(url, on) {
+  const host = hostOf(url);
+  state.readerHosts = state.readerHosts.filter((x) => x !== host);
+  if (on) state.readerHosts.push(host);
+  save();
+}
+
 // Web: an address bar. YouTube and Marinara pages open in the window; other
 // sites can't be framed under Marinara's security policy, so they get a card
 // with "open in new window" and "add to home screen".
@@ -3012,8 +3387,44 @@ function mountBrowser(win) {
   const input = urlField(win, L.urlPlaceholder, (value) => go(normalizeUrl(value)));
   const star = toolBtn("star", L.addToHome, () => win.rec.url && addBookmark({ url: win.rec.url }));
   const ext = toolBtn("external", L.openOutside, () => win.rec.url && openExternal(win.rec.url));
-  win.tools.append(star, ext);
+  const history = [];
+  const back = toolBtn("back", L.back, () => history.length && go(history.pop(), false));
+  const reader = toolBtn("reader", L.readerView, () => {
+    if (!win.rec.url) return;
+    setReader(win.rec.url, !readerOn(win.rec.url));
+    render();
+  });
+  win.tools.prepend(back);
+  win.tools.append(reader, star, ext);
   let shown = null;
+  let readSeq = 0;
+  const readerView = (url) => {
+    const note = h("p", { class: "mdos-reader-note", text: L.readerNote });
+    const status = h("p", { class: "mdos-web-note", text: L.readerLoading });
+    const box = h("div", { class: "mdos-reader" }, note, status);
+    const token = ++readSeq;
+    fetchReader(url).then(
+      (text) => {
+        if (token !== readSeq) return;
+        const title = text.match(/^Title:[ \t]*(.*)$/m)?.[1]?.trim();
+        const at = text.indexOf("Markdown Content:");
+        const body = at >= 0 ? text.slice(at + 17) : text;
+        const blocks = mdBlocks(body, url, go);
+        if (!blocks.length) {
+          // Some sites (DCInside galleries, for one) refuse the reader service.
+          status.textContent = L.readerEmpty;
+          box.append(h("button", { type: "button", class: "mdos-btn mdos-btn--primary", text: L.openOutside, onclick: () => openExternal(url) }));
+          return;
+        }
+        box.replaceChildren(note, ...(title ? [h("h1", { class: "mdos-reader-title", text: title })] : []), ...blocks);
+        box.scrollTop = 0;
+      },
+      (err) => {
+        if (token === readSeq) status.textContent = `${L.readerFail} (${err.message})`;
+      },
+    );
+    return box;
+  };
   const startPage = () => {
     const tiles = bookmarkApps().map((a) =>
       h(
@@ -3041,7 +3452,16 @@ function mountBrowser(win) {
       h(
         "div",
         { class: "mdos-row" },
-        h("button", { type: "button", class: "mdos-btn mdos-btn--primary", text: L.openOutside, onclick: () => openExternal(url) }),
+        h("button", {
+          type: "button",
+          class: "mdos-btn mdos-btn--primary",
+          text: L.readerView,
+          onclick: () => {
+            setReader(url, true);
+            render();
+          },
+        }),
+        h("button", { type: "button", class: "mdos-btn", text: L.openOutside, onclick: () => openExternal(url) }),
         h("button", { type: "button", class: "mdos-btn", text: L.addToHome, onclick: () => addBookmark({ url }) }),
       ),
     );
@@ -3049,13 +3469,22 @@ function mountBrowser(win) {
     const url = win.rec.url || "";
     input.value = url;
     star.disabled = ext.disabled = !url;
+    back.disabled = !history.length;
     const src = url ? embedSrc(url, win.autoplay) : null;
-    const key = url ? src || `card:${url}` : `start:${state.bookmarks.length}`;
+    const useReader = !!url && !src && readerOn(url);
+    const page = url && !src && !useReader && /^https?:/i.test(url) && !frameBlocked.has(originOf(url)) ? url : null;
+    reader.disabled = !url || !!src;
+    reader.setAttribute("aria-pressed", String(useReader));
+    const key = url ? (src ? `embed:${src}` : page ? `frame:${page}` : `${useReader ? "reader" : "card"}:${url}`) : `start:${state.bookmarks.length}`;
     if (key === shown) return;
     shown = key;
-    win.body.replaceChildren(!url ? startPage() : src ? frame(src, hostOf(url)) : blocked(url));
+    win.body.replaceChildren(
+      !url ? startPage() : src ? frame(src, hostOf(url)) : page ? frame(page, hostOf(url), WEB_SANDBOX) : useReader ? readerView(url) : blocked(url),
+    );
   };
-  const go = (url) => {
+  const go = (url, remember = true) => {
+    if (remember && win.rec.url && win.rec.url !== url) history.push(win.rec.url);
+    if (history.length > 50) history.shift();
     win.rec.url = url;
     win.autoplay = true;
     save();
@@ -3896,7 +4325,10 @@ function chatDesignSection(win, { group, row, hint, btn, rerender }) {
           h("div", { class: "mdos-pv-row mdos-pv-them" }, h("span", { class: "mdos-pv-avatar" }), h("div", { class: "mdos-pv-col" }, h("small", { class: "mdos-pv-name", text: "Mari" }), h("p", { class: "mdos-pv-bubble", text: L.pvThem }), h("p", { class: "mdos-pv-bubble", text: L.pvThem2 }))),
           h("div", { class: "mdos-pv-row mdos-pv-me" }, h("p", { class: "mdos-pv-bubble", text: L.pvMe })),
         ]
-      : [h("small", { class: "mdos-pv-name", text: "MARI" }), h("p", { class: "mdos-pv-rp", text: L.pvRp })],
+      : [
+          h("small", { class: "mdos-pv-name", text: "MARI" }),
+          h("p", { class: "mdos-pv-rp" }, L.pvRpNar, h("em", { text: L.pvRpAct }), " ", h("span", { class: "mdos-pv-dlg", text: L.pvRpDlg })),
+        ],
   );
   const out = [
     group(
@@ -3993,11 +4425,47 @@ function chatDesignSection(win, { group, row, hint, btn, rerender }) {
       group(
         L.font,
         ...fontPicker(),
-        row(L.textSize, range("size", 13, 24, 1, 17, "px")),
-        row(L.lineHeight, range("line", 1.3, 2.4, 0.05, 1.85)),
-        row(L.columnWidth, range("width", 480, 1000, 20, 700, "px")),
+        row(L.textSize, range("size", 13, 24, 1, 16, "px")),
+        row(L.lineHeight, range("line", 1.3, 2.4, 0.05, 1.8)),
+        row(L.columnWidth, range("width", 480, 1000, 20, 640, "px")),
+      ),
+      group(
+        L.readerLayout,
+        ...[
+          ["justify", L.justify, !!spec.justify, (on) => ({ justify: on || "" })],
+          ["actItalic", L.actItalic, !spec.actUpright, (on) => ({ actUpright: on ? "" : true })],
+          ["actions", L.actionsHover, !spec.actionsAlways, (on) => ({ actionsAlways: on ? "" : true })],
+        ].map(([key, label, checked, patch]) =>
+          h(
+            "label",
+            { class: "mdos-cc-toggle", "data-key": key },
+            h("span", { text: label }),
+            h("input", { type: "checkbox", role: "switch", checked, onchange: (e) => commit(patch(e.target.checked)) }),
+          ),
+        ),
       ),
       group(L.paper, row(L.paper, color("paper", "var(--mdos-paper)")), row(L.ink, color("ink", "var(--mdos-ink)"))),
+      group(
+        L.textTone,
+        h(
+          "label",
+          { class: "mdos-cc-toggle" },
+          h("span", { text: L.textTone }),
+          h("input", {
+            type: "checkbox",
+            role: "switch",
+            checked: !!state.rpTone,
+            onchange: (e) => {
+              updateSetting("rpTone", e.target.checked);
+              rerender();
+            },
+          }),
+        ),
+        hint(L.textToneHint),
+        state.rpTone ? row(L.dlgColor, color("dlg", "var(--mdos-rp-dlg-c)")) : null,
+        state.rpTone ? row(L.narColor, color("nar", "var(--mdos-rp-nar-c)")) : null,
+        state.rpTone ? row(L.actColor, color("act", "var(--mdos-rp-act-c)")) : null,
+      ),
     );
   }
   out.push(
@@ -4157,6 +4625,17 @@ function compactHelpers() {
     // Tagged here instead of a CSS :has() rule, which the browser would
     // re-check on every DOM change anywhere on the page.
     el.parentElement?.setAttribute("data-mdos-tip-row", "");
+  }
+  // Chat-mode tabs (Conversation / Roleplay / Game) show only their icons;
+  // the label stays as the tooltip and accessible name.
+  for (const b of $$(".mari-chat-sidebar [data-chat-mode-tab]:not([data-mdos-icon-tab])")) {
+    const label = b.textContent.trim();
+    b.setAttribute("data-mdos-icon-tab", "");
+    if (!b.title) {
+      b.title = label;
+      b.setAttribute("data-mdos-set-title", "");
+    }
+    if (!b.hasAttribute("aria-label")) b.setAttribute("aria-label", label);
   }
 }
 
@@ -4346,10 +4825,10 @@ const CV_PRESETS = {
 };
 const RP_PRESETS = {
   book: { style: "book" },
-  parchment: { style: "book", paper: "#efe0bf", ink: "#3b2a14", font: "serif" },
+  parchment: { style: "book", paper: "#efe0bf", ink: "#3b2a14", font: "serif", justify: true },
   night: { style: "night" },
   typewriter: { style: "book", paper: "#f6f5ef", ink: "#222222", font: "mono", size: 15, line: 1.7 },
-  novel: { style: "book", paper: "#ffffff", ink: "#1d1d1f", font: "system", size: 17, line: 1.9 },
+  novel: { style: "book", paper: "#ffffff", ink: "#3a3a3c" },
 };
 function applyChatStyle() {
   const cv = state.chat.convo;
@@ -4373,6 +4852,72 @@ function applyChatStyle() {
   v("--mdos-rp-paper", rp.paper);
   v("--mdos-rp-ink", rp.ink);
   v("--mdos-rp-width", rp.width ? `${rp.width}px` : null);
+  v("--mdos-rp-dlg", rp.dlg);
+  v("--mdos-rp-nar", rp.nar);
+  v("--mdos-rp-act", rp.act);
+  html.dataset.mdosRpJustify = rp.justify ? "on" : "";
+  html.dataset.mdosRpActions = rp.actionsAlways ? "" : "hover";
+  html.dataset.mdosRpActItalic = rp.actUpright ? "off" : "";
+  html.dataset.mdosRpTone = state.rpTone ? "on" : "";
+  if (!state.rpTone) CSS.highlights?.delete("mdos-dlg");
+  scanDialogue(true);
+}
+
+// ── Roleplay text tones ───────────────────────────────────────
+// Dialogue in quotes is plain text in Marinara's roleplay messages, so it is
+// coloured with the CSS Custom Highlight API: ranges over the existing text,
+// no DOM changes (React keeps owning the message markup). Narration and
+// *actions* (<em>) are coloured in apps.css.
+const DLG_RE = /"[^"\n]{1,800}"|“[^”\n]{1,800}”|「[^」\n]{1,800}」|『[^』\n]{1,800}』/g;
+const DLG_SKIP = 'code, pre, [class*="mrpc-"]';
+const dlgCache = new WeakMap();
+let dlgCount = -1;
+function dialogueRanges(el) {
+  const nodes = [];
+  let text = "";
+  let lastBlock = null;
+  const walker = doc.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
+    acceptNode: (n) => (n.parentElement?.closest(DLG_SKIP) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT),
+  });
+  for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+    // A paragraph break ends any open quote.
+    const block = n.parentElement?.closest("p, li, blockquote, div, h1, h2, h3, h4");
+    if (lastBlock && block !== lastBlock) text += "\n";
+    lastBlock = block;
+    nodes.push([n, text.length]);
+    text += n.data;
+  }
+  const at = (pos, isEnd) => {
+    let i = nodes.length - 1;
+    while (i > 0 && (isEnd ? nodes[i][1] >= pos : nodes[i][1] > pos)) i--;
+    return [nodes[i][0], pos - nodes[i][1]];
+  };
+  const ranges = [];
+  for (const m of text.matchAll(DLG_RE)) {
+    const r = new Range();
+    r.setStart(...at(m.index, false));
+    r.setEnd(...at(m.index + m[0].length, true));
+    ranges.push(r);
+  }
+  return ranges;
+}
+function scanDialogue(force = false) {
+  if (!state.rpTone || !CSS.highlights || typeof Highlight === "undefined" || mode === "off") return;
+  const els = $$('[data-chat-mode="roleplay"] .mari-message-content');
+  let changed = force || els.length !== dlgCount;
+  const all = [];
+  for (const el of els) {
+    const key = el.textContent;
+    let c = dlgCache.get(el);
+    if (!c || c.key !== key || (c.ranges[0] && !c.ranges[0].startContainer.isConnected)) {
+      c = { key, ranges: dialogueRanges(el) };
+      dlgCache.set(el, c);
+      changed = true;
+    }
+    all.push(...c.ranges);
+  }
+  dlgCount = els.length;
+  if (changed) CSS.highlights.set("mdos-dlg", new Highlight(...all));
 }
 function applySettings() {
   applyThemeSync();
@@ -4422,6 +4967,7 @@ const returnPill = h(
   h("span", { class: "mdos-return-icon", svg: LOGO }),
   h("span", { text: L.desktop }),
 );
+returnPill.setAttribute("data-exd", ""); // never tucked into a launcher drawer
 doc.body.append(returnPill);
 
 function refreshMode() {
@@ -4479,6 +5025,7 @@ const prevOpen = { chats: null, panel: null };
 let lastPanel = null;
 let syncTimer = 0;
 let lastSync = 0;
+let lastCreditScrape = -1e9;
 // Set by cleanup: a queued sync must not re-attach chrome after disable.
 let disposed = false;
 function syncSoon() {
@@ -4501,9 +5048,18 @@ function sync() {
   ensureAppLayer();
   // Tagged here (not CSS :has) for the "show wallpaper" chat background.
   toggleClass("mdos-in-convo", !!$('[data-chat-mode="conversation"]'));
+  toggleClass("mdos-in-rp", !!$('[data-chat-mode="roleplay"]'));
   const appOpen = state.apps.some((a) => !a.min);
   toggleClass("mdos-touch-home", isTouch() && onHome && !$(SEL.sheets) && !appOpen);
   if (homeVisible()) readHomeApps();
+  const hubApp = !!hubAppTab();
+  toggleClass("mdos-hub-app", hubApp);
+  refreshLocker();
+  tintHubApp(hubApp);
+  if (onHome && performance.now() - lastCreditScrape > 2500) {
+    lastCreditScrape = performance.now();
+    scrapeCredits();
+  }
 
   if (isTouch()) {
     ensureSpringboard();
@@ -4578,6 +5134,9 @@ const pollTimer = marinara.setInterval(() => {
   if (!doc.hidden && !gesture) syncSoon();
 }, 700);
 const viewTimer = marinara.setInterval(watchMainView, 800);
+const dlgTimer = marinara.setInterval(() => {
+  if (!doc.hidden && !gesture) scanDialogue();
+}, 1200);
 
 // ── Global listeners ──────────────────────────────────────────
 
@@ -4593,14 +5152,21 @@ on(doc, "click", (event) => {
   for (const open of $$("[data-mdos-tip-open]")) if (open !== tip) open.removeAttribute("data-mdos-tip-open");
   if (tip) tip.toggleAttribute("data-mdos-tip-open");
 });
+on(doc, "securitypolicyviolation", (event) => {
+  if (!/^(frame|child)-src/.test(event.effectiveDirective || event.violatedDirective || "")) return;
+  const origin = originOf(event.blockedURI);
+  if (!origin || frameBlocked.has(origin)) return;
+  frameBlocked.add(origin);
+  for (const w of appWins.values()) if (w.rec.type === "browser") w.refresh?.();
+});
 let resizeTimer = 0;
 on(window, "resize", () => {
   marinara.clearTimeout(resizeTimer);
   resizeTimer = marinara.setTimeout(() => {
     refreshMode();
     if (isDesktop()) {
-      applyAllRects();
       renderWidgets();
+      applyAllRects();
     }
   }, 120);
 });
@@ -4658,7 +5224,7 @@ function bootSplash() {
   if (shown || !state.bootSplash || mode === "off") return;
   const splash = h(
     "div",
-    { id: "mdos-boot", "aria-hidden": "true" },
+    { id: "mdos-boot", "aria-hidden": "true", "data-exd": "" },
     h("div", { class: "mdos-boot-logo", svg: LOGO }),
     h("div", { class: "mdos-boot-bar" }, h("span")),
   );
@@ -4686,6 +5252,8 @@ return () => {
   marinara.clearInterval(clockTimer);
   marinara.clearInterval(viewTimer);
   marinara.clearInterval(pollTimer);
+  marinara.clearInterval(dlgTimer);
+  CSS.highlights?.delete("mdos-dlg");
   marinara.clearTimeout(syncTimer);
   marinara.clearTimeout(dockHideTimer);
   // Flush anything still waiting to be saved (a note typed a moment ago).
@@ -4707,6 +5275,12 @@ return () => {
     for (const a of ["data-mdos-tip", "data-mdos-tip-open", "tabindex", "role", "aria-label"]) el.removeAttribute(a);
   }
   for (const el of $$("[data-mdos-tip-row]")) el.removeAttribute("data-mdos-tip-row");
+  for (const el of $$("[data-mdos-icon-tab]")) {
+    el.removeAttribute("data-mdos-icon-tab");
+    el.removeAttribute("aria-label");
+    if (el.hasAttribute("data-mdos-set-title")) el.removeAttribute("title");
+    el.removeAttribute("data-mdos-set-title");
+  }
   ui.remove();
   wallpaper.remove();
   widgetLayer.remove();

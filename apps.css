@@ -6,9 +6,10 @@
      the left in grey bubbles with a small round avatar, a translucent
      centred header and quiet date dividers.
 
-   Roleplay (data-mdos-rp="book" | "night"): an e-book reader —
-     paper (or night) page, serif text in a comfortable column, names
-     as small caps, your turns marked like a highlighted passage.
+   Roleplay (data-mdos-rp="book" | "night"): a reading view — a sepia
+     (or light / dark) page, Pretendard text in a centred column, the name
+     as a quiet label, your turns as a soft card, message buttons on hover
+     and a rounded composer card. Narrow windows tighten the margins.
 
    Every look can be changed in Customize → Chat design. Those choices
    arrive as variables on <html> (--mdos-cv-* and --mdos-rp-*); when a
@@ -161,36 +162,53 @@ html.mdos-in-convo[data-mdos-cv-bg="wallpaper"] [data-chat-mode="conversation"] 
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
 }
 
-/* ── Roleplay: e-book reader ─────────────────────────────────── */
+/* ── Roleplay: reading view ──────────────────────────────────── */
 
 html.mdos[data-mdos-rp="book"] {
-  --mdos-paper: var(--mdos-rp-paper, #fbf6ea);
-  --mdos-ink: var(--mdos-rp-ink, #2d261c);
-  --mdos-mark: rgba(255, 205, 80, 0.26);
-  --mdos-mark-edge: #e3ae35;
+  --mdos-paper: var(--mdos-rp-paper, #f4ecd8);
+  --mdos-ink: var(--mdos-rp-ink, #5c4b37);
 }
 html.mdos[data-mdos-rp="night"] {
-  --mdos-paper: var(--mdos-rp-paper, #1c1a17);
-  --mdos-ink: var(--mdos-rp-ink, #e8e1d1);
-  --mdos-mark: rgba(255, 205, 80, 0.12);
-  --mdos-mark-edge: #b88a2a;
+  --mdos-paper: var(--mdos-rp-paper, #1c1b19);
+  --mdos-ink: var(--mdos-rp-ink, #d8d0c2);
 }
 html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) {
-  --mdos-paper-2: color-mix(in srgb, var(--mdos-paper) 92%, var(--mdos-ink));
-  --mdos-ink-2: color-mix(in srgb, var(--mdos-ink) 55%, var(--mdos-paper));
+  --mdos-paper-2: color-mix(in srgb, var(--mdos-ink) 6%, var(--mdos-paper));
+  --mdos-ink-2: color-mix(in srgb, var(--mdos-ink) 62%, var(--mdos-paper));
+  --mdos-ink-3: color-mix(in srgb, var(--mdos-ink) 42%, var(--mdos-paper));
+  --mdos-mark: color-mix(in srgb, var(--mdos-ink) 6%, transparent);
   --mdos-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "AppleMyungjo", "Nanum Myeongjo", "Noto Serif KR",
     "Noto Serif CJK KR", Batang, "바탕", serif;
+  --mdos-rp-sans: Pretendard, "Pretendard Variable", "Pretendard JP", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR",
+    system-ui, sans-serif;
+  --mdos-rp-text: var(--mdos-rp-font, var(--mdos-rp-sans));
 }
 html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area {
   background: var(--mdos-paper) !important;
   color: var(--mdos-ink);
 }
-/* Weather effects draw over the page; a book doesn't need them. */
+/* Weather effects draw over the page; a reading view doesn't need them. */
 html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area > canvas {
   display: none !important;
 }
 html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] {
-  --mari-roleplay-message-column-width: min(var(--mdos-rp-width, 700px), 100cqw - 48px) !important;
+  --mari-roleplay-message-column-width: min(var(--mdos-rp-width, 640px), 100cqw - 48px) !important;
+}
+/* A reading column sits in the middle of the window, whatever Marinara's
+   chat position (left / right) is set to. */
+@media (min-width: 768px) {
+  html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"][data-chat-position] [data-chat-scroll] > *,
+  html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"][data-chat-position] .mari-roleplay-input-column {
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
+/* The window's title strip is part of the page, not a separate bar. */
+html.mdos.mdos-in-rp:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-mdos-win="main"] [data-component="TopBar"] {
+  background: var(--mdos-paper) !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  color: var(--mdos-ink-2) !important;
 }
 html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] .mari-rp-bubble {
   background: transparent !important;
@@ -200,55 +218,123 @@ html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="rol
   backdrop-filter: none !important;
 }
 html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] .mari-rp-bubble > div {
-  padding: 4px 2px !important;
+  padding: 2px 0 !important;
 }
 html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] .mari-message-content {
-  font-family: var(--mdos-rp-font, var(--mdos-serif)) !important;
-  font-size: var(--mdos-rp-size, 17px) !important;
-  line-height: var(--mdos-rp-line, 1.85) !important;
+  font-family: var(--mdos-rp-text) !important;
+  font-size: var(--mdos-rp-size, 16px) !important;
+  line-height: var(--mdos-rp-line, 1.8) !important;
+  letter-spacing: -0.003em;
   color: var(--mdos-ink) !important;
   text-wrap: pretty;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
-/* Names as small caps above each passage; times and model names fade back. */
+html.mdos[data-mdos-rp-justify="on"]:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] .mari-message-content {
+  text-align: justify;
+}
+html.mdos[data-mdos-rp-act-italic="off"] [data-chat-mode="roleplay"] .mari-message-content em {
+  font-style: normal;
+}
+/* The name is a quiet label above the passage; time and model fade back. */
 html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-row .mari-message-name {
-  font-family: var(--mdos-font) !important;
-  font-size: 11px !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--mdos-ink-2) !important;
+  font-family: var(--mdos-rp-sans) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--mdos-ink) !important;
   text-shadow: none !important;
 }
 html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-body > div:first-child span:not(.mari-message-name) {
-  color: color-mix(in srgb, var(--mdos-ink-2) 70%, transparent) !important;
+  font-size: 11px !important;
+  color: var(--mdos-ink-3) !important;
 }
 html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-row {
-  margin-bottom: 26px !important;
+  margin-bottom: 30px !important;
 }
-/* Your turns read like a highlighted passage in the margin. */
+/* Your turns: a soft card in the column. */
 html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-row.mari-message-user .mari-rp-bubble {
   background: var(--mdos-mark) !important;
-  border-left: 3px solid var(--mdos-mark-edge) !important;
-  border-radius: 3px !important;
+  border-radius: 14px !important;
 }
 html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-row.mari-message-user .mari-rp-bubble > div {
-  padding: 6px 14px !important;
+  padding: 12px 16px !important;
 }
-html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-row.mari-message-user .mari-message-content {
-  font-style: italic;
-}
+/* Message buttons: small and quiet; on desktop they wait for the pointer. */
 html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .mari-chat-message-action {
-  color: var(--mdos-ink-2) !important;
+  width: 30px !important;
+  height: 30px !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: var(--mdos-ink-3) !important;
 }
-/* The composer sits on the page like a writing field. */
+html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .mari-chat-message-action:hover {
+  color: var(--mdos-ink) !important;
+  background: var(--mdos-mark) !important;
+}
+html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .mari-chat-message-action svg {
+  width: 15px;
+  height: 15px;
+}
+@media (hover: hover) {
+  html.mdos[data-mdos-rp-actions="hover"]:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-row .mari-message-actions {
+    opacity: 0;
+    transition: opacity 140ms ease;
+  }
+  html.mdos[data-mdos-rp-actions="hover"]:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-row:is(:hover, :focus-within) .mari-message-actions,
+  html.mdos[data-mdos-rp-actions="hover"]:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-row:last-child .mari-message-actions {
+    opacity: 1;
+  }
+}
+/* Composer: a rounded card on the page, with the text fading out above it. */
+html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .mari-roleplay-input-column {
+  background: linear-gradient(to bottom, transparent, var(--mdos-paper) 28px);
+  padding-top: 22px;
+}
 html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .marinara-chat-input-shell {
   background: var(--mdos-paper-2) !important;
-  border-color: color-mix(in srgb, var(--mdos-ink-2) 30%, transparent) !important;
-  box-shadow: none !important;
+  border: 1px solid color-mix(in srgb, var(--mdos-ink) 10%, transparent) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 6px 22px -14px color-mix(in srgb, var(--mdos-ink) 45%, transparent) !important;
+  backdrop-filter: none !important;
 }
 html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .mari-chat-input-textarea {
-  font-family: var(--mdos-rp-font, var(--mdos-serif)) !important;
+  font-family: var(--mdos-rp-text) !important;
+  font-size: 15px !important;
   color: var(--mdos-ink) !important;
+}
+html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .mari-chat-input-textarea::placeholder {
+  color: var(--mdos-ink-3) !important;
+}
+html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .marinara-chat-input-shell :is(button, svg) {
+  color: var(--mdos-ink-2);
+}
+/* Narrow windows and phones: a full-width column with tighter margins. */
+@container (max-width: 640px) {
+  html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] {
+    --mari-roleplay-message-column-width: calc(100cqw - 20px) !important;
+  }
+  html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] .mari-message-content {
+    font-size: min(var(--mdos-rp-size, 16px), 15.5px) !important;
+    line-height: min(var(--mdos-rp-line, 1.8), 1.75) !important;
+  }
+  html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-row {
+    margin-bottom: 22px !important;
+  }
+  html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-body > div:first-child span:not(.mari-message-name, :nth-child(2)) {
+    display: none;
+  }
+  html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .marinara-chat-input-shell {
+    border-radius: 14px !important;
+  }
+}
+/* Wide windows: the column stays a reading width, centred. */
+@container (min-width: 1100px) {
+  html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-row {
+    margin-bottom: 36px !important;
+  }
 }
 
 /* ── Live preview in Customize → Chat design ─────────────────── */
@@ -322,24 +408,70 @@ html.mdos-cv-no-names .mdos-cv-preview--convo .mdos-pv-name {
   color: var(--pv-me-fg);
 }
 .mdos-cv-preview--rp {
-  --pv-paper: var(--mdos-rp-paper, #fbf6ea);
-  --pv-ink: var(--mdos-rp-ink, #2d261c);
+  --pv-paper: var(--mdos-rp-paper, #f4ecd8);
+  --pv-ink: var(--mdos-rp-ink, #5c4b37);
   background: var(--pv-paper);
   color: var(--pv-ink);
   padding: 22px 26px;
 }
 html[data-mdos-rp="night"] .mdos-cv-preview--rp {
-  --pv-paper: var(--mdos-rp-paper, #1c1a17);
-  --pv-ink: var(--mdos-rp-ink, #e8e1d1);
+  --pv-paper: var(--mdos-rp-paper, #1c1b19);
+  --pv-ink: var(--mdos-rp-ink, #d8d0c2);
 }
 .mdos-cv-preview--rp .mdos-pv-name {
   margin: 0;
-  letter-spacing: 0.14em;
-  color: color-mix(in srgb, var(--pv-ink) 55%, var(--pv-paper));
+  font-size: 13px;
+  color: var(--pv-ink);
 }
 .mdos-pv-rp {
   margin: 0;
-  font-family: var(--mdos-rp-font, "Iowan Old Style", Georgia, "Nanum Myeongjo", Batang, serif);
-  font-size: var(--mdos-rp-size, 17px);
-  line-height: var(--mdos-rp-line, 1.85);
+  font-family: var(--mdos-rp-font, Pretendard, "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif);
+  font-size: var(--mdos-rp-size, 16px);
+  line-height: var(--mdos-rp-line, 1.8);
+}
+html[data-mdos-rp-justify="on"] .mdos-pv-rp {
+  text-align: justify;
+}
+html[data-mdos-rp-act-italic="off"] .mdos-pv-rp em {
+  font-style: normal;
+}
+
+/* ── Roleplay text tones ─────────────────────────────────────── */
+/* Dialogue in quotes is darkest, narration a step lighter and *actions*
+   (rendered as <em>) lighter still — same weight, colour only. Dialogue is
+   painted with the CSS Custom Highlight API ("mdos-dlg", desktop.js). */
+
+html.mdos[data-mdos-rp-tone="on"] {
+  --mdos-rp-base: var(--mdos-fg);
+  --mdos-rp-bgc: var(--mdos-win-bg);
+}
+html.mdos[data-mdos-rp-tone="on"]:is([data-mdos-rp="book"], [data-mdos-rp="night"]) {
+  --mdos-rp-base: var(--mdos-ink);
+  --mdos-rp-bgc: var(--mdos-paper);
+}
+html.mdos[data-mdos-rp-tone="on"] {
+  --mdos-rp-dlg-c: var(--mdos-rp-dlg, var(--mdos-rp-base));
+  --mdos-rp-nar-c: var(--mdos-rp-nar, color-mix(in srgb, var(--mdos-rp-base) 74%, var(--mdos-rp-bgc)));
+  --mdos-rp-act-c: var(--mdos-rp-act, color-mix(in srgb, var(--mdos-rp-base) 52%, var(--mdos-rp-bgc)));
+}
+html.mdos[data-mdos-rp-tone="on"] [data-chat-mode="roleplay"] .mari-message-content,
+html.mdos[data-mdos-rp-tone="on"] [data-chat-mode="roleplay"] .mari-message-content :is(p, li, blockquote) {
+  color: var(--mdos-rp-nar-c) !important;
+}
+html.mdos[data-mdos-rp-tone="on"] [data-chat-mode="roleplay"] .mari-message-content :is(em, i) {
+  color: var(--mdos-rp-act-c) !important;
+}
+::highlight(mdos-dlg) {
+  color: var(--mdos-rp-dlg-c);
+}
+
+/* Preview in Customize → Chat design */
+html[data-mdos-rp-tone="on"] .mdos-cv-preview--rp .mdos-pv-rp {
+  color: var(--mdos-rp-nar, color-mix(in srgb, var(--pv-ink) 74%, var(--pv-paper)));
+}
+html[data-mdos-rp-tone="on"] .mdos-cv-preview--rp .mdos-pv-rp em {
+  color: var(--mdos-rp-act, color-mix(in srgb, var(--pv-ink) 52%, var(--pv-paper)));
+}
+html[data-mdos-rp-tone="on"] .mdos-cv-preview--rp .mdos-pv-dlg {
+  color: var(--mdos-rp-dlg, var(--pv-ink));
 }
