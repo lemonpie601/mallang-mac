@@ -3,8 +3,8 @@
   "version": 1,
   "config": {
     "name": "Marinara Desktop",
-    "version": "2.0.0",
-    "description": "Turns Marinara into a desktop OS: menu bar, magnifying Dock, draggable/resizable windows, Launchpad, Control Center and wallpapers. Toggle back to the classic layout any time with Ctrl+Alt+D.",
+    "version": "2.1.0",
+    "description": "Turns Marinara into a desktop OS: menu bar, auto-hiding Dock, draggable windows, Home as a customizable widget board with desktop icons and bookmarks, small apps (Notes, Web, YouTube), Launchpad, Control Center, and phone/tablet home screens. Ctrl+Alt+D switches back to the classic layout.",
     "runtime": "client",
     "capabilities": ["full_page_access"],
     "jsPath": "desktop.js",

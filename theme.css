@@ -206,13 +206,15 @@ html.mdos [data-mdos-win] :is(h1, h2, h3) {
 /* Chat list: a translucent sidebar the wallpaper glows through. */
 /* Only the chat list keeps vibrancy (one blurred surface); other windows are solid,
    which keeps scrolling and dragging smooth. */
+/* Measured: a blurred surface over the desktop costs ~30 ms frames while
+   anything behind it scrolls, so real blur is opt-in ("real glass"). */
 html.mdos [data-mdos-win="chats"] {
+  background: var(--mdos-panel-bg) !important;
+}
+html.mdos.mdos-real-glass [data-mdos-win="chats"] {
   background: var(--mdos-sidebar-vib) !important;
   backdrop-filter: blur(24px) saturate(165%);
   -webkit-backdrop-filter: blur(24px) saturate(165%);
-}
-html.mdos.mdos-no-blur [data-mdos-win="chats"] {
-  background: var(--mdos-panel-bg) !important;
 }
 html.mdos [data-mdos-win="panel"] {
   background: var(--mdos-panel-bg) !important;
@@ -308,7 +310,7 @@ html.mdos .mari-chrome-control--danger {
 }
 
 /* The chat list's three big action buttons become one compact toolbar row. */
-html.mdos .mari-chat-sidebar div:has(> .mari-chat-mode-action) {
+html.mdos .mari-chat-sidebar > div:has(> .mari-chat-mode-action) {
   gap: 6px !important;
 }
 html.mdos .mari-chat-sidebar .mari-chat-mode-action {

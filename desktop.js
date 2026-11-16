@@ -127,6 +127,41 @@ const L = KO
       open: "열기",
       homeIndicator: "홈으로",
       newChat: "새 채팅",
+      notes: "메모장",
+      browser: "인터넷",
+      youtube: "YouTube",
+      newNote: "새 메모",
+      deleteNote: "메모 삭제",
+      untitled: "제목 없음",
+      urlPlaceholder: "주소나 검색어 입력",
+      ytPlaceholder: "YouTube 링크를 붙여 넣으세요",
+      ytHint: "보고 싶은 YouTube 영상이나 재생목록 링크를 위에 붙여 넣으세요. 창을 띄워 둔 채로 채팅할 수 있어요.",
+      load: "열기",
+      openOutside: "새 창에서 열기",
+      addToHome: "홈 화면에 추가",
+      cantEmbed: "이 사이트는 보안 설정 때문에 창 안에 바로 띄울 수 없어요. 새 창에서 열면 옆에 띄워 둘 수 있어요.",
+      favorites: "즐겨찾기",
+      noFavorites: "아직 즐겨찾기가 없어요. 주소를 열고 ★ 를 누르면 여기와 홈 화면에 생겨요.",
+      pinOnTop: "항상 위에",
+      bookmarks: "북마크",
+      addBookmark: "북마크 추가",
+      bookmarkTitle: "이름",
+      bookmarkUrl: "주소 (https://…)",
+      add: "추가",
+      rename: "이름 바꾸기",
+      removeFromDesktop: "데스크톱에서 빼기",
+      removeFromHome: "홈 화면에서 빼기",
+      addToDesktop: "데스크톱에 추가",
+      addApps: "앱·북마크 추가",
+      homeLayout: "홈 구성",
+      boardPos: "마리나라 홈 위치",
+      boardPositions: { left: "왼쪽", center: "가운데", hidden: "숨기기" },
+      showCredits: "API 크레딧 카드 보이기",
+      showFeed: "마리나라 홈 위젯 보이기",
+      arrangeIcons: "아이콘 자동 정렬",
+      arrangeWidgets: "위젯 자동 정렬",
+      realGlass: "진짜 유리 효과 (느릴 수 있음)",
+      apps: "앱",
       greeting: (hour) =>
         hour < 5 ? "늦은 밤이에요" : hour < 12 ? "좋은 아침이에요" : hour < 18 ? "좋은 오후예요" : "좋은 저녁이에요",
       shortcutList: [
@@ -246,6 +281,41 @@ const L = KO
       open: "Open",
       homeIndicator: "Go home",
       newChat: "New chat",
+      notes: "Notes",
+      browser: "Web",
+      youtube: "YouTube",
+      newNote: "New note",
+      deleteNote: "Delete note",
+      untitled: "Untitled",
+      urlPlaceholder: "Address or search",
+      ytPlaceholder: "Paste a YouTube link",
+      ytHint: "Paste a YouTube video or playlist link above. Keep the window open while you chat.",
+      load: "Open",
+      openOutside: "Open in new window",
+      addToHome: "Add to home screen",
+      cantEmbed: "This site's security settings stop it from opening inside a window. Open it in a new window to keep it alongside.",
+      favorites: "Favorites",
+      noFavorites: "No favorites yet. Open an address and press ★ to add it here and to your home screen.",
+      pinOnTop: "Keep on top",
+      bookmarks: "Bookmarks",
+      addBookmark: "Add bookmark",
+      bookmarkTitle: "Name",
+      bookmarkUrl: "Address (https://…)",
+      add: "Add",
+      rename: "Rename",
+      removeFromDesktop: "Remove from desktop",
+      removeFromHome: "Remove from home screen",
+      addToDesktop: "Add to desktop",
+      addApps: "Add apps & bookmarks",
+      homeLayout: "Home layout",
+      boardPos: "Marinara Home position",
+      boardPositions: { left: "Left", center: "Centre", hidden: "Hidden" },
+      showCredits: "Show API credit cards",
+      showFeed: "Show Marinara Home widgets",
+      arrangeIcons: "Arrange icons",
+      arrangeWidgets: "Arrange widgets",
+      realGlass: "Real glass blur (can be slow)",
+      apps: "Apps",
       greeting: (hour) =>
         hour < 5 ? "Burning the midnight oil" : hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening",
       shortcutList: [
@@ -375,6 +445,14 @@ const ICONS = {
   brush: '<path d="M14.5 4.5 19.5 9.5 11 18l-5-5z"/><path d="M6 13c-2 0-3 1.5-3 3.5S2 20 2 20s3.5.5 5-.5 2-2.5 2-3.5"/><path d="M16.5 2.5l5 5"/>',
   roleplay: '<path d="M3 5.5c3-1.3 6-1.3 9 .5 3-1.8 6-1.8 9-.5V19c-3-1.3-6-1.3-9 .5-3-1.8-6-1.8-9-.5z"/><path d="M12 6v13.5"/>',
   game: '<rect x="2.5" y="7" width="19" height="11" rx="5.5"/><path d="M7.5 10.5v4M5.5 12.5h4"/><path d="M15.5 11.5h.01M18 13.5h.01"/>',
+  notes: '<rect x="4.5" y="3" width="15" height="18" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+  compass: '<circle cx="12" cy="12" r="9"/><path d="m15.8 8.2-2.4 5.2-5.2 2.4 2.4-5.2z"/>',
+  play: '<rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="m10 9.2 5 2.8-5 2.8z" fill="currentColor"/>',
+  star: '<path d="m12 3.5 2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 17l-5.2 2.7 1-5.9-4.3-4.1 5.9-.8z"/>',
+  external: '<path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+  pin: '<path d="M9 3h6l-1 6 3 3H7l3-3z"/><path d="M12 12v9"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  trash: '<path d="M4 7h16M9 7V4h6v3M6.5 7l1 13h9l1-13"/>',
 };
 const svg = (name) =>
   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ICONS.launchpad}</svg>`;
@@ -425,7 +503,42 @@ const homeApps = () =>
     g: ["#ffffff", "#e9e9ef"],
     label: () => t.label,
   }));
-const allApps = () => [...APPS, ...homeApps(), ...TAIL_APPS, ...EXTRA_APPS];
+// Small apps that run in our own windows.
+const UTIL_APPS = [
+  { id: "notes", icon: "notes", g: ["#ffe27a", "#f5b400"], label: () => L.notes, util: true },
+  { id: "browser", icon: "compass", g: ["#6fd3ff", "#1f7cf2"], label: () => L.browser, util: true },
+  { id: "youtube", icon: "play", g: ["#ff6b6b", "#d91c1c"], label: () => L.youtube, util: true },
+];
+const hostOf = (url) => {
+  try {
+    return new URL(url).host.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
+};
+const hueOf = (text) => [...text].reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 360, 7);
+// Bookmarks are apps too: an icon on the home screen that opens the address.
+const bookmarkApps = () =>
+  (state.bookmarks || []).map((b) => {
+    const host = hostOf(b.url);
+    const hue = hueOf(host);
+    let favicon = null;
+    try {
+      const u = new URL(b.url);
+      if (u.protocol === "https:") favicon = `${u.origin}/favicon.ico`;
+    } catch {
+      /* not a URL: letter tile only */
+    }
+    return {
+      id: `bm:${b.id}`,
+      bm: b,
+      favicon,
+      letter: (b.title || host || "?").trim().charAt(0).toUpperCase(),
+      g: [`hsl(${hue} 70% 62%)`, `hsl(${(hue + 40) % 360} 65% 46%)`],
+      label: () => b.title || host,
+    };
+  });
+const allApps = () => [...APPS, ...UTIL_APPS, ...homeApps(), ...bookmarkApps(), ...TAIL_APPS, ...EXTRA_APPS];
 const appById = (id) => allApps().find((a) => a.id === id);
 
 // ── State ─────────────────────────────────────────────────────
@@ -451,6 +564,15 @@ const DEFAULTS = {
   rpStyle: "book",
   convoStyle: "messages",
   homeApps: [],
+  apps: [], // open small-app windows
+  bookmarks: [],
+  desk: null, // desktop icons [{ id, app, x, y }]
+  sbOrder: [], // touch home screen: app order
+  sbHidden: [], // touch home screen: apps taken off the grid
+  board: "left", // Marinara's Home blocks: left | center | hidden
+  showCredits: true,
+  showFeed: true,
+  realGlass: false,
 };
 let stored = {};
 try {
@@ -493,10 +615,30 @@ if (!state.launcherSeeded) {
   state.launcherSeeded = true;
 }
 
+for (const key of ["apps", "bookmarks", "sbOrder", "sbHidden"]) if (!Array.isArray(state[key])) state[key] = [];
+if (!Array.isArray(state.desk)) {
+  state.desk = UTIL_APPS.map((a) => ({ id: newId(), app: a.id, x: null, y: null }));
+}
+// Notes live under their own storage key and save on their own schedule.
+const notesStore = {
+  notes: Array.isArray(stored.desktopNotes?.notes) ? stored.desktopNotes.notes : [],
+};
+let notesTimer = 0;
+function saveNotes() {
+  marinara.clearTimeout(notesTimer);
+  notesTimer = marinara.setTimeout(() => {
+    notesTimer = 0;
+    marinara.storage
+      .patch({ desktopNotes: notesStore })
+      .catch((error) => marinara.log.warn("Could not save notes", error));
+  }, 500);
+}
+
 let saveTimer = 0;
 function save() {
   marinara.clearTimeout(saveTimer);
   saveTimer = marinara.setTimeout(() => {
+    saveTimer = 0;
     marinara.storage.patch({ desktop: state }).catch((error) => marinara.log.warn("Could not save desktop state", error));
   }, 400);
 }
@@ -504,12 +646,14 @@ let imageTimer = 0;
 function saveImages() {
   marinara.clearTimeout(imageTimer);
   imageTimer = marinara.setTimeout(() => {
+    imageTimer = 0;
     marinara.storage
       .patch({ desktopImages: images })
       .catch((error) => marinara.log.warn("Could not save desktop images", error));
   }, 300);
 }
-const imagesSize = () => JSON.stringify(images).length + JSON.stringify(state).length;
+const imagesSize = () =>
+  JSON.stringify(images).length + JSON.stringify(state).length + JSON.stringify(notesStore).length;
 
 // ── Small DOM helpers ─────────────────────────────────────────
 
@@ -682,6 +826,18 @@ function appIcon(app) {
   } else if (app.img) {
     el.classList.add("has-host-image");
     el.append(h("img", { src: app.img, alt: "", draggable: "false" }));
+  } else if (app.letter) {
+    // Bookmark: a letter tile, covered by the site's favicon when it loads.
+    el.classList.add("has-letter");
+    el.append(h("span", { class: "mdos-icon-letter", text: app.letter }));
+    if (app.favicon) {
+      const img = h("img", { class: "mdos-icon-favicon", src: app.favicon, alt: "", draggable: "false", loading: "lazy", referrerpolicy: "no-referrer" });
+      img.addEventListener("error", () => img.remove());
+      img.addEventListener("load", () => {
+        if (img.naturalWidth < 12) img.remove();
+      });
+      el.append(img);
+    }
   } else {
     el.innerHTML = svg(app.icon);
   }
@@ -696,12 +852,27 @@ let zOrder = ["chats", "panel", "main"];
 let focused = "main";
 const chrome = {};
 let desktopHome = false;
+// Small-app windows ("app:<id>") share the same manager as Marinara's windows.
+const isAppWin = (id) => typeof id === "string" && id.startsWith("app:");
+const appRec = (id) => state.apps.find((a) => `app:${a.id}` === id);
+const appWins = new Map(); // "app:<id>" → { el, rec, … }
+const winIds = () => [...WIN_IDS, ...appWins.keys()];
+const APP_SIZES = { notes: [660, 460], browser: [1000, 660], youtube: [640, 404] };
+function defaultAppRect(rec) {
+  const a = area();
+  const [w0, h0] = APP_SIZES[rec?.type] || [640, 460];
+  const w = Math.min(w0, a.right - a.left - 40);
+  const hh = Math.min(h0, a.bottom - a.top - 40);
+  const n = (state.apps.indexOf(rec) + 6) % 6;
+  return { x: Math.round((innerWidth - w) / 2) - 70 + n * 28, y: a.top + 40 + n * 28, w, h: hh };
+}
 
 function area() {
   const reserve = state.dockAutohide ? 10 : state.dockSize + 26;
   return { left: 8, top: MENUBAR_H + 8, right: innerWidth - 8, bottom: innerHeight - reserve };
 }
 function defaultRect(id) {
+  if (isAppWin(id)) return defaultAppRect(appRec(id));
   const a = area();
   const height = a.bottom - a.top;
   const chatsW = Math.round(Math.min(320, Math.max(260, innerWidth * 0.2)));
@@ -721,7 +892,23 @@ function defaultRect(id) {
 }
 // The panel window remembers a size per panel (Settings wide, libraries narrow).
 const winKey = (id) => (id === "panel" ? `panel:${activePanelId() || "none"}` : id);
-const savedRect = (id) => state.windows[winKey(id)];
+const savedRect = (id) => (isAppWin(id) ? appRec(id) : state.windows[winKey(id)]);
+function writeRect(id, r) {
+  if (isAppWin(id)) {
+    const rec = appRec(id);
+    if (rec) Object.assign(rec, { x: r.x, y: r.y, w: r.w, h: r.h, snap: r.snap ?? null });
+  } else state.windows[winKey(id)] = r;
+}
+// Moves use the compositor-only `translate`; left/top are committed on release.
+function setTranslate(id, dx, dy) {
+  if (isAppWin(id)) {
+    const w = appWins.get(id);
+    if (w) w.el.style.translate = dx || dy ? `${dx}px ${dy}px` : "";
+    return;
+  }
+  setVar(`--mdos-${id}-tx`, `${dx}px`);
+  setVar(`--mdos-${id}-ty`, `${dy}px`);
+}
 function maxRect() {
   const a = area();
   return { x: a.left, y: a.top, w: a.right - a.left, h: a.bottom - a.top };
@@ -747,17 +934,32 @@ function rectOf(id) {
 }
 function applyRect(id) {
   const r = rectOf(id);
+  if (isAppWin(id)) {
+    const w = appWins.get(id);
+    if (w) Object.assign(w.el.style, { left: `${r.x}px`, top: `${r.y}px`, width: `${r.w}px`, height: `${r.h}px` });
+    return;
+  }
   setVar(`--mdos-${id}-x`, `${r.x}px`);
   setVar(`--mdos-${id}-y`, `${r.y}px`);
   setVar(`--mdos-${id}-w`, `${r.w}px`);
   setVar(`--mdos-${id}-h`, `${r.h}px`);
 }
-const applyAllRects = () => WIN_IDS.forEach(applyRect);
+const applyAllRects = () => winIds().forEach(applyRect);
 function applyZ() {
-  zOrder.forEach((id, i) => setVar(`--mdos-${id}-z`, String(10 + i)));
+  zOrder.forEach((id, i) => {
+    if (!isAppWin(id)) return setVar(`--mdos-${id}-z`, String(10 + i));
+    const w = appWins.get(id);
+    // A pinned window ("keep on top") stays above every other window.
+    if (w) w.el.style.zIndex = String(w.rec.pinned ? 7900 : 10 + i);
+  });
   for (const id of WIN_IDS) setAttr($(WIN_SEL[id]), "data-mdos-focused", focused === id ? "true" : null);
+  for (const [id, w] of appWins) setAttr(w.el, "data-mdos-focused", focused === id ? "true" : null);
 }
 function windowVisible(id) {
+  if (isAppWin(id)) {
+    const rec = appRec(id);
+    return !!rec && !rec.min;
+  }
   if (id === "chats") return chatsOpen();
   if (id === "panel") return panelOpen();
   return !state.mainMinimized && !desktopHome;
@@ -776,7 +978,7 @@ function focusTopVisible() {
   updateMenubar();
 }
 function cycleWindows() {
-  const visible = WIN_IDS.filter(windowVisible);
+  const visible = winIds().filter(windowVisible);
   if (visible.length < 2) return;
   // Bring the back-most visible window forward.
   const back = zOrder.find((id) => visible.includes(id) && id !== focused);
@@ -789,8 +991,12 @@ function animateGeometry() {
 }
 function zoomWin(id) {
   const saved = savedRect(id);
-  if (saved?.snap) state.windows[winKey(id)] = { ...saved, snap: null };
-  else state.windows[winKey(id)] = { ...rectOf(id), snap: "max" };
+  if (saved?.snap) writeRect(id, { ...saved, snap: null });
+  else if (isAppWin(id)) {
+    // App records hold the restore size; the snap flag says "show maximised".
+    const r = rectOf(id);
+    writeRect(id, { ...r, snap: "max" });
+  } else writeRect(id, { ...rectOf(id), snap: "max" });
   animateGeometry();
   applyRect(id);
   save();
@@ -808,10 +1014,12 @@ function goHome() {
   closeOverlays();
   if (state.mainMinimized) setMainMinimized(false);
   // On touch screens Home stays mounted under open sheets; Marinara's Home
-  // button also closes those sheets there.
+  // button also closes those sheets there. Open small apps go to the background.
+  if (isTouch()) for (const rec of state.apps) if (!rec.min) setAppMinimized(`app:${rec.id}`, true);
   if (!homePageVisible() || (isTouch() && $(SEL.sheets))) click($(SEL.homeBtn));
 }
 function closeWin(id) {
+  if (isAppWin(id)) return closeApp(id);
   if (id === "chats") {
     if (chatsOpen()) click($(SEL.chatsBtn));
   } else if (id === "panel") {
@@ -824,7 +1032,8 @@ function closeWin(id) {
   marinara.setTimeout(focusTopVisible, 60);
 }
 function minimizeWin(id) {
-  if (id === "main") setMainMinimized(true);
+  if (isAppWin(id)) setAppMinimized(id, true);
+  else if (id === "main") setMainMinimized(true);
   else closeWin(id);
 }
 function showDesktop() {
@@ -835,6 +1044,10 @@ function showDesktop() {
 }
 
 function windowTitle(id) {
+  if (isAppWin(id)) {
+    const rec = appRec(id);
+    return rec ? appLabel(appById(rec.type)) : "";
+  }
   if (id === "chats") return appLabel(appById("chats"));
   if (id === "panel") {
     const active = activePanelId();
@@ -909,7 +1122,8 @@ const INTERACTIVE =
   'button, a, input, textarea, select, label, summary, [role="button"], [role="slider"], [role="tab"], [role="menuitem"], [contenteditable=""], [contenteditable="true"]';
 const isDragSurface = (target, id) =>
   !!target.closest(".mdos-titlebar") ||
-  (!target.closest(INTERACTIVE) && !!target.closest(id === "main" ? SEL.topbar : SEL.sideHeaders));
+  (!target.closest(INTERACTIVE) &&
+    !!target.closest(isAppWin(id) ? ".mdos-appwin-bar" : id === "main" ? SEL.topbar : SEL.sideHeaders));
 
 function onPointerDown(event) {
   if (mode === "off") return;
@@ -920,16 +1134,23 @@ function onPointerDown(event) {
   if (popEl && !target.closest(".mdos-pop")) closePop();
   if (event.button !== 0) return;
 
-  // Widgets: drag in edit mode (desktop only).
+  // Desktop icons drag any time (a click without movement opens them);
+  // widgets drag in edit mode. Desktop only.
+  const icon = target.closest(".mdos-dicon");
+  if (icon && isDesktop() && !target.closest(".mdos-wg-badge")) {
+    const rec = state.desk.find((d) => d.id === icon.dataset.did);
+    if (rec) return startItemDrag(event, icon, rec, "icon");
+  }
   const widget = target.closest(".mdos-wg");
   if (widget && editMode && isDesktop() && !target.closest(".mdos-wg-badge, textarea, input")) {
-    return startWidgetDrag(event, widget);
+    const w = state.widgets.find((x) => x.id === widget.dataset.wid);
+    if (w) return startItemDrag(event, widget, w, "widget");
   }
   if (!isDesktop()) return;
 
   const host = target.closest("[data-mdos-win]");
   const id = host?.getAttribute("data-mdos-win");
-  if (!id || !WIN_IDS.includes(id)) return;
+  if (!id || !(WIN_IDS.includes(id) || isAppWin(id))) return;
   if (!(id === "main" && desktopHome)) focusWin(id);
   if (id === "main" && desktopHome) return;
 
@@ -948,7 +1169,7 @@ function startGesture(event, id, gmode) {
     const restore = clampRect(validRect(saved) ? saved : defaultRect(id));
     const ratio = (event.clientX - start.x) / start.w;
     start = { ...restore, x: event.clientX - restore.w * ratio, y: start.y };
-    state.windows[winKey(id)] = { ...start, snap: null };
+    writeRect(id, { ...start, snap: null });
     applyRect(id);
   }
   gesture = { kind: "window", id, mode: gmode, sx: event.clientX, sy: event.clientY, start, rect: start, moved: false, snap: null };
@@ -956,16 +1177,15 @@ function startGesture(event, id, gmode) {
   html.dataset.mdosGesture = gmode === "move" ? "move" : `${gmode}-resize`;
 }
 
-function startWidgetDrag(event, el) {
+// Widgets and desktop icons both live in the widget layer and drag the same way.
+function startItemDrag(event, el, rec, kind) {
   event.preventDefault();
-  const w = state.widgets.find((x) => x.id === el.dataset.wid);
-  if (!w) return;
   const r = el.getBoundingClientRect();
   const layer = widgetLayer.getBoundingClientRect();
   gesture = {
-    kind: "widget",
+    kind,
     el,
-    w,
+    w: rec,
     sx: event.clientX,
     sy: event.clientY,
     start: { x: r.left - layer.left, y: r.top - layer.top },
@@ -997,14 +1217,13 @@ function applyGestureFrame() {
   gestureFrame = 0;
   const g = gesture;
   if (!g) return;
-  if (g.kind === "widget") {
+  if (g.kind === "widget" || g.kind === "icon") {
     g.el.style.translate = `${g.dx}px ${g.dy}px`;
     return;
   }
   const s = g.start;
   if (g.mode === "move") {
-    setVar(`--mdos-${g.id}-tx`, `${g.dx}px`);
-    setVar(`--mdos-${g.id}-ty`, `${Math.max(g.dy, MENUBAR_H + 2 - s.y)}px`);
+    setTranslate(g.id, g.dx, Math.max(g.dy, MENUBAR_H + 2 - s.y));
     g.snap =
       g.cy <= MENUBAR_H + SNAP_EDGE ? "max" : g.cx <= SNAP_EDGE ? "left" : g.cx >= innerWidth - SNAP_EDGE ? "right" : null;
     showSnapPreview(g.snap);
@@ -1027,7 +1246,7 @@ function applyGestureFrame() {
     }
   }
   g.rect = clampRect({ x, y, w, h: hh });
-  state.windows[winKey(g.id)] = { ...g.rect, snap: null };
+  writeRect(g.id, { ...g.rect, snap: null });
   applyRect(g.id);
 }
 
@@ -1041,29 +1260,31 @@ function onPointerUp() {
   }
   html.classList.remove("mdos-gesture");
   delete html.dataset.mdosGesture;
-  if (g.kind === "widget") {
+  if (g.kind === "widget" || g.kind === "icon") {
     g.el.classList.remove("is-dragging");
     g.el.style.translate = "";
     if (g.moved) {
       const snap = (v) => Math.round(v / 8) * 8;
       g.w.x = snap(g.start.x + g.dx);
       g.w.y = snap(g.start.y + g.dy);
-      clampWidget(g.w);
+      if (g.kind === "widget") clampWidget(g.w);
+      else clampIcon(g.w);
       placeWidget(g.el, g.w);
       save();
+    } else if (g.kind === "icon" && !editMode) {
+      launch(g.w.app);
     }
     return;
   }
   if (g.mode === "move") {
     if (g.moved && g.snap) {
-      state.windows[winKey(g.id)] = { ...g.start, snap: g.snap };
+      writeRect(g.id, { ...g.start, snap: g.snap });
       animateGeometry();
     } else if (g.moved) {
-      state.windows[winKey(g.id)] = clampRect({ ...g.start, x: g.start.x + g.dx, y: g.start.y + g.dy });
+      writeRect(g.id, clampRect({ ...g.start, x: g.start.x + g.dx, y: g.start.y + g.dy }));
     }
     applyRect(g.id);
-    setVar(`--mdos-${g.id}-tx`, "0px");
-    setVar(`--mdos-${g.id}-ty`, "0px");
+    setTranslate(g.id, 0, 0);
     showSnapPreview(null);
   }
   if (g.moved) save();
@@ -1300,6 +1521,14 @@ on(mbLeft, "mouseover", (event) => {
 function desktopMenuItems() {
   return [
     { label: L.editWidgets, action: () => setEditMode(true) },
+    { label: `${L.addApps}…`, action: () => openAddApps() },
+    { label: `${L.addBookmark}…`, action: () => openBookmarkForm() },
+    { label: `${L.homeLayout}…`, action: () => openHomeLayout() },
+    "-",
+    { label: L.notes, action: () => openApp("notes") },
+    { label: L.browser, action: () => openApp("browser") },
+    { label: L.youtube, action: () => openApp("youtube") },
+    "-",
     { label: `${L.wallpaper}…`, action: () => toggleCC(true, "wallpaper") },
     { label: `${L.customize}…`, action: () => toggleCC(true, "customize") },
     "-",
@@ -1315,6 +1544,14 @@ function onContextMenu(event) {
   if (dockItem) {
     event.preventDefault();
     return showMenuAt(dockMenuItems(dockItem.dataset.app), event.clientX, event.clientY - 10);
+  }
+  const deskIcon = target.closest(".mdos-dicon");
+  if (deskIcon) {
+    event.preventDefault();
+    const entry = state.desk.find((d) => d.id === deskIcon.dataset.did);
+    const app = entry && appById(entry.app);
+    if (app) showMenuAt([{ label: L.open, action: () => launch(app.id) }, ...appMenuExtras(app, entry)], event.clientX, event.clientY);
+    return;
   }
   const onDesktop =
     target === doc.body ||
@@ -1400,6 +1637,7 @@ function renderDock() {
   dockSignature = signature;
   dockItems.clear();
   const kids = APPS.map(dockItem);
+  kids.push(h("div", { class: "mdos-dock-sep", "aria-hidden": "true" }), ...UTIL_APPS.map(dockItem));
   if (recents.length) {
     kids.push(h("div", { class: "mdos-dock-sep", "aria-hidden": "true" }));
     for (const chat of recents) {
@@ -1488,6 +1726,7 @@ function bounce(id) {
 }
 
 function isAppRunning(id) {
+  if (APP_TYPES[id]) return state.apps.some((a) => a.type === id);
   if (id === "home") return homePageVisible();
   if (id === "chats") return chatsOpen() || (isTouch() && !!$('aside[data-component="ChatSidebarPanel"]'));
   if (PANEL_IDS.includes(id)) return (panelOpen() || (isTouch() && !!$(SEL.sheets))) && activePanelId() === id;
@@ -1502,8 +1741,28 @@ function dockMenuItems(id) {
   if (id.startsWith("chat:")) items.push({ label: L.open, action: () => launch(id) });
   else if (app) {
     items.push({ label: running && (id === "chats" || PANEL_IDS.includes(id)) ? L.close : L.open, action: () => launch(id, { toggle: true }) });
-    items.push("-", { label: L.editIcon, action: () => openIconEditor(app) });
+    if (APP_TYPES[id] && running) {
+      items.push({ label: L.close, action: () => state.apps.filter((a) => a.type === id).forEach((a) => closeApp(`app:${a.id}`)) });
+    }
+    items.push(...appMenuExtras(app));
   }
+  return items;
+}
+// Shared by the Dock, desktop icons and Launchpad.
+function appMenuExtras(app, deskEntry) {
+  const items = ["-"];
+  if (app.bm) {
+    items.push(
+      { label: L.openOutside, action: () => openExternal(app.bm.url) },
+      { label: L.rename, action: () => renameBookmark(app.bm) },
+      { label: L.remove, action: () => removeBookmark(app.bm.id) },
+    );
+  }
+  if (deskEntry) items.push({ label: L.removeFromDesktop, action: () => removeDeskIcon(deskEntry.id) });
+  else if (isDesktop() && !state.desk.some((d) => d.app === app.id)) {
+    items.push({ label: L.addToDesktop, action: () => addDeskIcon(app.id) });
+  }
+  items.push({ label: L.editIcon, action: () => openIconEditor(app) });
   return items;
 }
 
@@ -1523,6 +1782,11 @@ function launch(id, { toggle = false } = {}) {
     focusWin("main");
   } else if (id.startsWith("tab:")) {
     openHomeTab(id.slice(4));
+  } else if (APP_TYPES[id]) {
+    openApp(id);
+  } else if (id.startsWith("bm:")) {
+    const bm = state.bookmarks.find((b) => `bm:${b.id}` === id);
+    if (bm) openUrl(bm.url);
   } else if (id === "chats") {
     if (isTouch()) {
       if (!$('aside[data-component="ChatSidebarPanel"]')) click($(SEL.chatsBtn));
@@ -1642,7 +1906,7 @@ function appTile(a, i, onPick) {
         if (!isDesktop()) return;
         event.preventDefault();
         event.stopPropagation();
-        showMenuAt([{ label: L.editIcon, action: () => openIconEditor(a) }], event.clientX, event.clientY);
+        showMenuAt(appMenuExtras(a).slice(1), event.clientX, event.clientY);
       },
     },
     appIcon(a),
@@ -2082,7 +2346,17 @@ function placeWidget(el, w) {
 function renderWidgets() {
   if (isDesktop()) {
     autoPlace();
+    autoPlaceIcons();
+    toggleClass("mdos-has-icons", state.desk.length > 0);
     widgetLayer.replaceChildren(
+      ...state.desk
+        .map((d) => {
+          clampIcon(d);
+          const el = deskIconEl(d);
+          if (el) placeWidget(el, d);
+          return el;
+        })
+        .filter(Boolean),
       ...state.widgets.map((w) => {
         clampWidget(w);
         const el = widgetEl(w);
@@ -2261,6 +2535,8 @@ const editBar = h(
   "div",
   { id: "mdos-editbar", role: "toolbar", "aria-label": L.editWidgets },
   h("button", { type: "button", class: "mdos-btn", text: `+ ${L.addWidget}`, onclick: (e) => openWidgetGallery(e.currentTarget) }),
+  h("button", { type: "button", class: "mdos-btn", text: `+ ${L.addApps}`, onclick: (e) => openAddApps(e.currentTarget) }),
+  h("button", { type: "button", class: "mdos-btn", text: L.homeLayout, onclick: (e) => openHomeLayout(e.currentTarget) }),
   h("button", { type: "button", class: "mdos-btn", text: L.wallpaper, onclick: () => toggleCC(true, "wallpaper") }),
   h("button", { type: "button", class: "mdos-btn mdos-btn--primary", text: L.done, onclick: () => setEditMode(false) }),
 );
@@ -2273,6 +2549,607 @@ function setEditMode(next) {
   closeCC();
   if (!next) closePop();
   if (next && isDesktop()) goHome();
+}
+
+// ── Small apps: Notes, Web, YouTube ───────────────────────────
+
+// App windows live inside Marinara's shell element so they stack with its
+// windows (same z-order), but the nodes are ours.
+const appLayer = h("div", { id: "mdos-appwins" });
+function ensureAppLayer() {
+  const shell = $(SEL.shell);
+  if (shell && appLayer.parentNode !== shell) shell.append(appLayer);
+}
+const YT_ID = /^[\w-]{11}$/;
+function parseYouTube(input) {
+  const text = (input || "").trim();
+  if (YT_ID.test(text)) return { id: text, list: null };
+  let u;
+  try {
+    u = new URL(text.includes("://") ? text : `https://${text}`);
+  } catch {
+    return null;
+  }
+  const host = u.hostname.replace(/^(www|m|music)\./, "");
+  let id = null;
+  if (host === "youtu.be") id = u.pathname.slice(1).split("/")[0];
+  else if (/^youtube(-nocookie)?\.com$/.test(host)) {
+    id = u.searchParams.get("v") || (u.pathname.match(/^\/(?:embed|shorts|live|v)\/([\w-]{11})/) || [])[1] || null;
+  } else return null;
+  if (id && !YT_ID.test(id)) id = null;
+  const list = u.searchParams.get("list");
+  return id || list ? { id, list } : null;
+}
+function youTubeEmbed(yt, autoplay = false) {
+  const params = new URLSearchParams({ rel: "0", playsinline: "1" });
+  if (yt.list) params.set("list", yt.list);
+  if (autoplay) params.set("autoplay", "1");
+  return `https://www.youtube-nocookie.com/embed/${yt.id || "videoseries"}?${params}`;
+}
+function normalizeUrl(input) {
+  const text = (input || "").trim();
+  if (!text) return "";
+  if (/^https?:\/\//i.test(text)) return text;
+  if (/^[^\s/]+\.[^\s]{2,}$/.test(text)) return `https://${text}`;
+  return `https://duckduckgo.com/?q=${encodeURIComponent(text)}`;
+}
+// Marinara's security policy only lets its own pages and YouTube load in a
+// frame (CSP frame-src); everything else opens in a separate browser window.
+function embedSrc(url, autoplay) {
+  const yt = parseYouTube(url);
+  if (yt) return youTubeEmbed(yt, autoplay);
+  try {
+    if (new URL(url).origin === location.origin) return url;
+  } catch {
+    /* not a URL */
+  }
+  return null;
+}
+function openExternal(url) {
+  const w = Math.min(1200, screen.availWidth - 80);
+  const hh = Math.min(820, screen.availHeight - 80);
+  window.open(url, "_blank", `noopener,noreferrer,popup,width=${w},height=${hh}`);
+}
+function openUrl(url) {
+  if (parseYouTube(url)) openApp("youtube", { url, autoplay: true });
+  else openApp("browser", { url });
+}
+const toolBtn = (icon, label, onclick) =>
+  h("button", { type: "button", class: "mdos-tool", title: label, "aria-label": label, svg: svg(icon), onclick });
+function frame(src, title) {
+  return h("iframe", {
+    class: "mdos-frame",
+    src,
+    title,
+    allow: "autoplay; encrypted-media; picture-in-picture; fullscreen; clipboard-write",
+    allowfullscreen: true,
+    referrerpolicy: "strict-origin-when-cross-origin",
+  });
+}
+function urlField(win, placeholder, onGo) {
+  const input = h("input", { type: "text", class: "mdos-url", placeholder, "aria-label": placeholder, spellcheck: "false", autocomplete: "off" });
+  const form = h(
+    "form",
+    {
+      class: "mdos-url-form",
+      onsubmit: (event) => {
+        event.preventDefault();
+        onGo(input.value);
+      },
+    },
+    input,
+  );
+  win.title.replaceWith(form);
+  return input;
+}
+
+const APP_TYPES = {
+  notes: { mount: mountNotes },
+  browser: { mount: mountBrowser },
+  youtube: { mount: mountYouTube },
+};
+function makeLights(id) {
+  return h(
+    "div",
+    { class: "mdos-lights" },
+    ...["close", "minimize", "zoom"].map((act) =>
+      h("button", {
+        type: "button",
+        class: `mdos-light mdos-light--${act}`,
+        "aria-label": L[act],
+        title: L[act],
+        svg: LIGHT_GLYPHS[act],
+        onclick: (event) => {
+          event.stopPropagation();
+          if (act === "close") closeWin(id);
+          else if (act === "minimize") minimizeWin(id);
+          else zoomWin(id);
+        },
+      }),
+    ),
+  );
+}
+function openApp(type, opts = {}) {
+  if (!APP_TYPES[type] || mode === "off") return;
+  closeLaunchpad();
+  let rec = state.apps.find((a) => a.type === type);
+  if (!rec) {
+    rec = { id: newId(), type, x: null, y: null, w: null, h: null, snap: null, min: false, pinned: false };
+    state.apps.push(rec);
+  }
+  if (opts.url) rec.url = opts.url;
+  rec.min = false;
+  const id = `app:${rec.id}`;
+  const win = appWins.get(id) || renderAppWin(rec);
+  win.autoplay = !!opts.autoplay;
+  win.refresh?.();
+  setAttr(win.el, "aria-hidden", null);
+  focusWin(id);
+  bounce(type);
+  save();
+  syncSoon();
+}
+function renderAppWin(rec) {
+  ensureAppLayer();
+  const id = `app:${rec.id}`;
+  const app = appById(rec.type);
+  const tools = h("div", { class: "mdos-appwin-tools" });
+  const title = h("div", { class: "mdos-appwin-title", text: appLabel(app) });
+  const bar = h("div", { class: "mdos-appwin-bar" }, makeLights(id), title, tools);
+  const body = h("div", { class: "mdos-appwin-body" });
+  const grips = ["n", "e", "s", "w", "ne", "nw", "se", "sw"].map((dir) =>
+    h("div", { class: `mdos-grip mdos-grip--${dir}`, "data-mdos-grip": dir, "aria-hidden": "true" }),
+  );
+  const el = h(
+    "section",
+    { class: `mdos-appwin mdos-appwin--${rec.type}`, "data-mdos-win": id, role: "dialog", "aria-label": appLabel(app) },
+    bar,
+    body,
+    ...grips,
+  );
+  if (rec.min) el.setAttribute("aria-hidden", "true");
+  const win = { id, el, rec, bar, tools, title, body };
+  appWins.set(id, win);
+  APP_TYPES[rec.type].mount(win);
+  appLayer.append(el);
+  if (!zOrder.includes(id)) zOrder.push(id);
+  applyRect(id);
+  applyZ();
+  return win;
+}
+function closeApp(id) {
+  const win = appWins.get(id);
+  win?.dispose?.();
+  win?.el.remove();
+  appWins.delete(id);
+  state.apps = state.apps.filter((a) => `app:${a.id}` !== id);
+  zOrder = zOrder.filter((x) => x !== id);
+  save();
+  focusTopVisible();
+  syncSoon();
+}
+function setAppMinimized(id, min) {
+  const rec = appRec(id);
+  const win = appWins.get(id);
+  if (!rec || !win) return;
+  rec.min = min;
+  setAttr(win.el, "aria-hidden", min ? "true" : null);
+  save();
+  if (min) focusTopVisible();
+  else focusWin(id);
+  syncSoon();
+}
+const renderAllApps = () => state.apps.forEach((rec) => appWins.has(`app:${rec.id}`) || renderAppWin(rec));
+function removeAllAppWins() {
+  for (const [id, w] of appWins) {
+    w.dispose?.();
+    w.el.remove();
+    zOrder = zOrder.filter((x) => x !== id);
+  }
+  appWins.clear();
+}
+
+// Notes: a list of notes and an editor; saved to extension storage as you type.
+const noteDateFmt = new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+const noteTitle = (n) => (n.text || "").trim().split("\n")[0].slice(0, 60) || L.untitled;
+let notesWarned = false;
+function mountNotes(win) {
+  const list = h("div", { class: "mdos-notes-list", role: "listbox", "aria-label": L.notes });
+  const editor = h("textarea", { class: "mdos-notes-editor", placeholder: L.notePlaceholder, spellcheck: "false", "aria-label": L.notes });
+  const current = () => notesStore.notes.find((n) => n.id === win.rec.noteId) || null;
+  const sorted = () => [...notesStore.notes].sort((a, b) => (b.updated || 0) - (a.updated || 0));
+  const renderList = () =>
+    list.replaceChildren(
+      ...sorted().map((n) =>
+        h(
+          "button",
+          {
+            type: "button",
+            role: "option",
+            class: "mdos-notes-item",
+            "aria-selected": String(n.id === win.rec.noteId),
+            onclick: () => select(n.id),
+          },
+          h("b", { text: noteTitle(n) }),
+          h("span", { text: noteDateFmt.format(n.updated || Date.now()) }),
+        ),
+      ),
+    );
+  const select = (nid) => {
+    win.rec.noteId = nid;
+    save();
+    const n = current();
+    editor.value = n ? n.text : "";
+    editor.disabled = !n;
+    renderList();
+  };
+  const create = () => {
+    const n = { id: newId(), text: "", updated: Date.now() };
+    notesStore.notes.push(n);
+    saveNotes();
+    select(n.id);
+    editor.focus();
+  };
+  const remove = () => {
+    const n = current();
+    if (!n) return;
+    if (n.text.trim() && !window.confirm(`${L.deleteNote}?`)) return;
+    notesStore.notes = notesStore.notes.filter((x) => x.id !== n.id);
+    saveNotes();
+    select(sorted()[0]?.id || null);
+  };
+  let listTimer = 0;
+  editor.addEventListener("input", () => {
+    const n = current();
+    if (!n) return;
+    n.text = editor.value;
+    n.updated = Date.now();
+    saveNotes();
+    if (!notesWarned && imagesSize() > STORAGE_BUDGET) {
+      notesWarned = true;
+      window.alert(L.storageFull);
+    }
+    marinara.clearTimeout(listTimer);
+    listTimer = marinara.setTimeout(renderList, 400);
+  });
+  win.tools.append(toolBtn("plus", L.newNote, create), toolBtn("trash", L.deleteNote, remove));
+  win.body.append(list, editor);
+  if (!notesStore.notes.length) {
+    notesStore.notes.push({ id: newId(), text: "", updated: Date.now() });
+    saveNotes();
+  }
+  select(current() ? win.rec.noteId : sorted()[0].id);
+  win.dispose = () => marinara.clearTimeout(listTimer);
+}
+
+// Web: an address bar. YouTube and Marinara pages open in the window; other
+// sites can't be framed under Marinara's security policy, so they get a card
+// with "open in new window" and "add to home screen".
+function mountBrowser(win) {
+  const input = urlField(win, L.urlPlaceholder, (value) => go(normalizeUrl(value)));
+  const star = toolBtn("star", L.addToHome, () => win.rec.url && addBookmark({ url: win.rec.url }));
+  const ext = toolBtn("external", L.openOutside, () => win.rec.url && openExternal(win.rec.url));
+  win.tools.append(star, ext);
+  let shown = null;
+  const startPage = () => {
+    const tiles = bookmarkApps().map((a) =>
+      h(
+        "button",
+        { type: "button", class: "mdos-web-fav", onclick: () => go(a.bm.url) },
+        appIcon(a),
+        h("span", { text: appLabel(a) }),
+      ),
+    );
+    return h(
+      "div",
+      { class: "mdos-web-start" },
+      h("h3", { text: L.favorites }),
+      tiles.length ? h("div", { class: "mdos-web-favs" }, ...tiles) : h("p", { class: "mdos-web-note", text: L.noFavorites }),
+    );
+  };
+  const blocked = (url) =>
+    h(
+      "div",
+      { class: "mdos-web-card" },
+      appIcon({ id: "", letter: hostOf(url).charAt(0).toUpperCase(), favicon: url.startsWith("https:") ? `${new URL(url).origin}/favicon.ico` : null, g: [`hsl(${hueOf(hostOf(url))} 70% 62%)`, `hsl(${(hueOf(hostOf(url)) + 40) % 360} 65% 46%)`], label: () => hostOf(url) }),
+      h("h3", { text: hostOf(url) }),
+      h("p", { class: "mdos-web-url", text: url }),
+      h("p", { class: "mdos-web-note", text: L.cantEmbed }),
+      h(
+        "div",
+        { class: "mdos-row" },
+        h("button", { type: "button", class: "mdos-btn mdos-btn--primary", text: L.openOutside, onclick: () => openExternal(url) }),
+        h("button", { type: "button", class: "mdos-btn", text: L.addToHome, onclick: () => addBookmark({ url }) }),
+      ),
+    );
+  const render = () => {
+    const url = win.rec.url || "";
+    input.value = url;
+    star.disabled = ext.disabled = !url;
+    const src = url ? embedSrc(url, win.autoplay) : null;
+    const key = url ? src || `card:${url}` : `start:${state.bookmarks.length}`;
+    if (key === shown) return;
+    shown = key;
+    win.body.replaceChildren(!url ? startPage() : src ? frame(src, hostOf(url)) : blocked(url));
+  };
+  const go = (url) => {
+    win.rec.url = url;
+    win.autoplay = true;
+    save();
+    render();
+  };
+  win.refresh = render;
+  render();
+}
+
+// YouTube: paste a link; the player keeps playing while the window is
+// minimized. "Keep on top" pins it above every other window.
+function mountYouTube(win) {
+  const input = urlField(win, L.ytPlaceholder, (value) => {
+    if (!parseYouTube(value)) return;
+    win.rec.url = value.trim();
+    win.autoplay = true;
+    save();
+    render();
+  });
+  const pin = toolBtn("pin", L.pinOnTop, () => {
+    win.rec.pinned = !win.rec.pinned;
+    pin.setAttribute("aria-pressed", String(!!win.rec.pinned));
+    applyZ();
+    save();
+  });
+  pin.setAttribute("aria-pressed", String(!!win.rec.pinned));
+  const ext = toolBtn("external", L.openOutside, () => win.rec.url && openExternal(win.rec.url));
+  win.tools.append(pin, ext);
+  let shown = null;
+  const render = () => {
+    const yt = parseYouTube(win.rec.url || "");
+    input.value = win.rec.url || "";
+    const src = yt ? youTubeEmbed(yt, win.autoplay) : null;
+    const key = yt ? `${yt.id}|${yt.list}` : "hint";
+    if (key === shown) return;
+    shown = key;
+    win.body.replaceChildren(src ? frame(src, "YouTube") : h("div", { class: "mdos-web-start" }, h("p", { class: "mdos-web-note", text: L.ytHint })));
+  };
+  win.refresh = render;
+  render();
+}
+
+// ── Bookmarks & desktop icons ─────────────────────────────────
+
+function addBookmark({ url, title }) {
+  const clean = normalizeUrl(url);
+  if (!clean) return null;
+  let b = state.bookmarks.find((x) => x.url === clean);
+  if (!b) {
+    b = { id: newId(), url: clean, title: (title || hostOf(clean)).trim().slice(0, 40) };
+    state.bookmarks.push(b);
+  }
+  if (isDesktop() && !state.desk.some((d) => d.app === `bm:${b.id}`)) {
+    state.desk.push({ id: newId(), app: `bm:${b.id}`, x: null, y: null });
+  }
+  state.sbHidden = state.sbHidden.filter((id) => id !== `bm:${b.id}`);
+  save();
+  refreshHomeItems();
+  return b;
+}
+function removeBookmark(id) {
+  state.bookmarks = state.bookmarks.filter((b) => b.id !== id);
+  state.desk = state.desk.filter((d) => d.app !== `bm:${id}`);
+  delete state.icons[`bm:${id}`];
+  if (images.icons[`bm:${id}`]) {
+    delete images.icons[`bm:${id}`];
+    saveImages();
+  }
+  save();
+  refreshHomeItems();
+}
+function renameBookmark(b) {
+  const next = window.prompt(L.rename, b.title);
+  if (next == null || !next.trim()) return;
+  b.title = next.trim().slice(0, 40);
+  save();
+  refreshHomeItems();
+}
+function refreshHomeItems() {
+  renderWidgets();
+  if (sbEl) renderSpringboardApps();
+  for (const w of appWins.values()) w.refresh?.();
+}
+function openBookmarkForm(anchor) {
+  const title = h("input", { type: "text", class: "mdos-input", placeholder: L.bookmarkTitle, maxlength: "40" });
+  const url = h("input", { type: "url", class: "mdos-input", placeholder: L.bookmarkUrl, required: true });
+  const form = h(
+    "form",
+    {
+      class: "mdos-pop-body",
+      onsubmit: (event) => {
+        event.preventDefault();
+        if (addBookmark({ url: url.value, title: title.value })) closePop();
+      },
+    },
+    field(L.bookmarkTitle, title),
+    field(L.bookmarkUrl, url),
+    h("button", { type: "submit", class: "mdos-btn mdos-btn--primary", text: L.add }),
+  );
+  openPop(form, anchor, { title: L.addBookmark });
+  url.focus();
+}
+
+const ICON_W = 92;
+const ICON_H = 100;
+function clampIcon(d) {
+  d.x = Math.min(Math.max(d.x ?? 0, 4), innerWidth - ICON_W - 4);
+  d.y = Math.min(Math.max(d.y ?? 0, 4), innerHeight - MENUBAR_H - ICON_H - 10);
+}
+// Unplaced icons fill the left edge top-down, column by column, like a desktop.
+function autoPlaceIcons() {
+  const taken = state.desk.filter((d) => Number.isFinite(d.x) && Number.isFinite(d.y));
+  const maxY = innerHeight - MENUBAR_H - ICON_H - 90;
+  let x = 14;
+  let y = 12;
+  for (const d of state.desk) {
+    if (Number.isFinite(d.x) && Number.isFinite(d.y)) continue;
+    while (taken.some((t) => Math.abs(t.x - x) < ICON_W - 12 && Math.abs(t.y - y) < ICON_H - 12)) {
+      y += ICON_H;
+      if (y > maxY) {
+        y = 12;
+        x += ICON_W;
+      }
+    }
+    d.x = x;
+    d.y = y;
+    taken.push(d);
+  }
+}
+function deskIconEl(d) {
+  const app = appById(d.app);
+  if (!app) return null;
+  return h(
+    "div",
+    {
+      class: "mdos-dicon",
+      role: "button",
+      tabindex: "0",
+      "data-did": d.id,
+      "aria-label": appLabel(app),
+      onkeydown: (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          launch(app.id);
+        }
+      },
+    },
+    appIcon(app),
+    h("span", { class: "mdos-dicon-label", text: appLabel(app) }),
+    h("button", {
+      type: "button",
+      class: "mdos-wg-badge mdos-wg-remove",
+      "aria-label": L.removeFromDesktop,
+      text: "−",
+      onclick: (event) => {
+        event.stopPropagation();
+        removeDeskIcon(d.id);
+      },
+    }),
+  );
+}
+function addDeskIcon(appId) {
+  if (state.desk.some((d) => d.app === appId)) return;
+  state.desk.push({ id: newId(), app: appId, x: null, y: null });
+  save();
+  renderWidgets();
+}
+function removeDeskIcon(id) {
+  state.desk = state.desk.filter((d) => d.id !== id);
+  save();
+  renderWidgets();
+}
+
+// ── Home screen customization ─────────────────────────────────
+
+// Touch home screen: app order and apps taken off the grid.
+function springboardApps() {
+  const base = [
+    ...APPS.filter((a) => a.id !== "home"),
+    ...UTIL_APPS,
+    ...homeApps(),
+    ...bookmarkApps(),
+    ...TAIL_APPS.filter((a) => a.id !== "search"),
+    ...EXTRA_APPS.filter((a) => ["controlcenter", "widgets", "customize"].includes(a.id)),
+  ];
+  const rank = (a) => {
+    const i = state.sbOrder.indexOf(a.id);
+    return i < 0 ? 1e4 + base.indexOf(a) : i;
+  };
+  return base.filter((a) => !state.sbHidden.includes(a.id)).sort((a, b) => rank(a) - rank(b));
+}
+function moveSpringboardApp(id, delta) {
+  const ids = springboardApps().map((a) => a.id);
+  const i = ids.indexOf(id);
+  const j = i + delta;
+  if (i < 0 || j < 0 || j >= ids.length) return;
+  [ids[i], ids[j]] = [ids[j], ids[i]];
+  state.sbOrder = ids;
+  save();
+  renderSpringboardApps();
+}
+function hideFromHome(id) {
+  if (!state.sbHidden.includes(id)) state.sbHidden.push(id);
+  save();
+  renderSpringboardApps();
+}
+
+// "Add apps & bookmarks": every app not yet on the desktop (or hidden from the
+// touch home screen), plus a button to add a website.
+function openAddApps(anchor) {
+  const candidates = launchpadApps().filter((a) =>
+    isTouch() ? state.sbHidden.includes(a.id) : !state.desk.some((d) => d.app === a.id),
+  );
+  const grid = h(
+    "div",
+    { class: "mdos-iconpick" },
+    ...candidates.map((a, i) =>
+      appTile(a, i, (picked) => {
+        if (isTouch()) {
+          state.sbHidden = state.sbHidden.filter((x) => x !== picked.id);
+          save();
+          renderSpringboardApps();
+        } else addDeskIcon(picked.id);
+        grid.querySelector(`[data-app="${CSS.escape(picked.id)}"]`)?.remove();
+      }),
+    ),
+  );
+  const body = h(
+    "div",
+    { class: "mdos-pop-body" },
+    grid,
+    h("button", { type: "button", class: "mdos-btn", text: `+ ${L.addBookmark}`, onclick: () => openBookmarkForm(anchor) }),
+  );
+  openPop(body, anchor, { title: L.addApps, wide: true });
+}
+
+// "Home layout": where Marinara's Home blocks sit and what shows.
+function openHomeLayout(anchor) {
+  const toggle = (key, label) =>
+    h(
+      "label",
+      { class: "mdos-cc-toggle" },
+      h("span", { text: label }),
+      h("input", { type: "checkbox", role: "switch", checked: !!state[key], onchange: (e) => updateSetting(key, e.target.checked) }),
+    );
+  const body = h(
+    "div",
+    { class: "mdos-pop-body" },
+    field(L.boardPos, segmented(Object.entries(L.boardPositions), state.board, (v) => updateSetting("board", v))),
+    toggle("showCredits", L.showCredits),
+    toggle("showFeed", L.showFeed),
+    h(
+      "div",
+      { class: "mdos-row" },
+      h("button", {
+        type: "button",
+        class: "mdos-btn",
+        text: L.arrangeIcons,
+        onclick: () => {
+          for (const d of state.desk) d.x = d.y = null;
+          save();
+          renderWidgets();
+        },
+      }),
+      h("button", {
+        type: "button",
+        class: "mdos-btn",
+        text: L.arrangeWidgets,
+        onclick: () => {
+          for (const w of state.widgets) w.x = w.y = null;
+          save();
+          renderWidgets();
+        },
+      }),
+    ),
+  );
+  openPop(body, anchor, { title: L.homeLayout });
 }
 
 // ── Control Center ────────────────────────────────────────────
@@ -2437,6 +3314,17 @@ function buildCC() {
       toggle("iconView", L.iconView),
     ),
     card(
+      "home",
+      L.homeLayout,
+      h(
+        "div",
+        { class: "mdos-cc-row" },
+        h("button", { type: "button", class: "mdos-cc-btn mdos-cc-btn--wide", text: `${L.homeLayout}…`, onclick: () => { closeCC(); openHomeLayout(); } }),
+        h("button", { type: "button", class: "mdos-cc-btn mdos-cc-btn--wide", text: `${L.addApps}…`, onclick: () => { closeCC(); openAddApps(); } }),
+      ),
+      h("button", { type: "button", class: "mdos-cc-btn", text: `+ ${L.addBookmark}`, onclick: () => { closeCC(); openBookmarkForm(); } }),
+    ),
+    card(
       "dock",
       L.dock,
       h("label", { class: "mdos-cc-slider" }, h("span", { text: L.dockSize }), size),
@@ -2447,6 +3335,7 @@ function buildCC() {
     card(
       "performance",
       L.performance,
+      toggle("realGlass", L.realGlass),
       toggle("reduceTransparency", L.reduceTransparency),
       toggle("reduceMotion", L.reduceMotion),
       toggle("bootSplash", L.bootSplash),
@@ -2501,7 +3390,7 @@ function showAbout() {
       { class: "mdos-about-card" },
       h("div", { class: "mdos-about-logo", svg: LOGO }),
       h("h2", { text: "Marinara Desktop" }),
-      h("p", { class: "mdos-about-version", text: "2.0.0" }),
+      h("p", { class: "mdos-about-version", text: "2.1.0" }),
       h("p", { text: L.aboutBody }),
       h(
         "dl",
@@ -2533,8 +3422,31 @@ let sbWidgets = null;
 let sbApps = null;
 function renderSpringboardApps() {
   if (!sbApps) return;
-  const apps = [...APPS.filter((a) => a.id !== "home"), ...homeApps(), ...TAIL_APPS.filter((a) => a.id !== "search"), ...EXTRA_APPS.filter((a) => ["controlcenter", "widgets", "customize"].includes(a.id))];
-  sbApps.replaceChildren(...apps.map((a, i) => appTile(a, i, (picked) => launch(picked.id))));
+  // In edit mode each icon gets − (take off the home screen) and ◀ ▶ (move).
+  sbApps.replaceChildren(
+    ...springboardApps().map((a, i) =>
+      h(
+        "div",
+        { class: "mdos-sb-cell" },
+        appTile(a, i, (picked) => {
+          if (!editMode) launch(picked.id);
+        }),
+        h("button", {
+          type: "button",
+          class: "mdos-wg-badge mdos-wg-remove",
+          "aria-label": L.removeFromHome,
+          text: "−",
+          onclick: () => hideFromHome(a.id),
+        }),
+        h(
+          "div",
+          { class: "mdos-sb-move" },
+          h("button", { type: "button", "aria-label": "◀", text: "◀", onclick: () => moveSpringboardApp(a.id, -1) }),
+          h("button", { type: "button", "aria-label": "▶", text: "▶", onclick: () => moveSpringboardApp(a.id, 1) }),
+        ),
+      ),
+    ),
+  );
 }
 function ensureSpringboard() {
   const page = $(SEL.homePage);
@@ -2590,6 +3502,9 @@ function compactHelpers() {
     el.setAttribute("tabindex", "0");
     el.setAttribute("role", "note");
     el.setAttribute("aria-label", `${L.help}: ${text}`);
+    // Tagged here instead of a CSS :has() rule, which the browser would
+    // re-check on every DOM change anywhere on the page.
+    el.parentElement?.setAttribute("data-mdos-tip-row", "");
   }
 }
 
@@ -2619,6 +3534,10 @@ function applySettings() {
   toggleClass("mdos-icon-view", !!state.iconView);
   toggleClass("mdos-main-min", !!state.mainMinimized);
   toggleClass("mdos-no-blur", !!state.reduceTransparency);
+  toggleClass("mdos-real-glass", !!state.realGlass && !state.reduceTransparency);
+  toggleClass("mdos-no-credits", !state.showCredits);
+  toggleClass("mdos-no-feed", !state.showFeed);
+  html.dataset.mdosBoard = state.board;
   toggleClass("mdos-calm", reducedMotion());
   html.dataset.mdosIconStyle = state.iconStyle;
   html.dataset.mdosIconShape = state.iconShape;
@@ -2679,7 +3598,14 @@ function refreshMode() {
   if (next !== "off") {
     renderDock();
     renderWidgets();
-  } else widgetLayer.replaceChildren();
+    // Small-app windows come back where they were (their state is saved).
+    renderAllApps();
+    applyAllRects();
+  } else {
+    widgetLayer.replaceChildren();
+    removeAllAppWins();
+    appLayer.remove();
+  }
 }
 function setEnabled(enabled) {
   state.enabled = enabled;
@@ -2721,7 +3647,9 @@ function sync() {
 
   const onHome = homePageVisible();
   compactHelpers();
-  toggleClass("mdos-touch-home", isTouch() && onHome && !$(SEL.sheets));
+  ensureAppLayer();
+  const appOpen = state.apps.some((a) => !a.min);
+  toggleClass("mdos-touch-home", isTouch() && onHome && !$(SEL.sheets) && !appOpen);
   if (homeVisible()) readHomeApps();
 
   if (isTouch()) {
@@ -2782,25 +3710,20 @@ function watchMainView() {
 
 // Streaming replies rewrite the transcript many times a second; those
 // mutations never change the shell, so they are skipped cheaply.
-const CHURN = ".mari-messages-scroll, .mari-chat-area, .mari-home-feed-shell, #mac-credit-home, textarea";
-const observer = new MutationObserver((records) => {
-  for (const r of records) {
-    if (r.type === "attributes") {
-      syncSoon();
-      return;
-    }
-    const t = r.target;
-    if (t.nodeType === 1 && t.closest(CHURN)) continue;
-    syncSoon();
-    return;
-  }
-});
+// Performance: we never watch the page's child nodes, so a streaming reply,
+// which rewrites the transcript many times a second, costs nothing here.
+// Navigation flips a few aria attributes on Marinara's buttons and panels;
+// those wake a sync right away. Anything else (an editor or sheet mounting)
+// is caught by a cheap check every 700 ms, skipped while the tab is hidden.
+const observer = new MutationObserver(() => syncSoon());
 observer.observe(hostRoot || doc.body, {
   subtree: true,
-  childList: true,
   attributes: true,
   attributeFilter: ["aria-pressed", "aria-hidden", "aria-selected", "data-shell-overlay-mode"],
 });
+const pollTimer = marinara.setInterval(() => {
+  if (!doc.hidden && !gesture) syncSoon();
+}, 700);
 const viewTimer = marinara.setInterval(watchMainView, 800);
 
 // ── Global listeners ──────────────────────────────────────────
@@ -2908,16 +3831,28 @@ return () => {
   observer.disconnect();
   marinara.clearInterval(clockTimer);
   marinara.clearInterval(viewTimer);
-  marinara.clearTimeout(saveTimer);
-  marinara.clearTimeout(imageTimer);
+  marinara.clearInterval(pollTimer);
   marinara.clearTimeout(syncTimer);
   marinara.clearTimeout(dockHideTimer);
+  // Flush anything still waiting to be saved (a note typed a moment ago).
+  for (const [timer, key, value] of [
+    [saveTimer, "desktop", state],
+    [imageTimer, "desktopImages", images],
+    [notesTimer, "desktopNotes", notesStore],
+  ]) {
+    if (!timer) continue;
+    marinara.clearTimeout(timer);
+    marinara.storage.patch({ [key]: value }).catch(() => {});
+  }
   disposers.forEach((dispose) => dispose());
   removeChrome();
   removeSpringboard();
+  removeAllAppWins();
+  appLayer.remove();
   for (const el of $$("[data-mdos-tip]")) {
     for (const a of ["data-mdos-tip", "data-mdos-tip-open", "tabindex", "role", "aria-label"]) el.removeAttribute(a);
   }
+  for (const el of $$("[data-mdos-tip-row]")) el.removeAttribute("data-mdos-tip-row");
   ui.remove();
   wallpaper.remove();
   widgetLayer.remove();

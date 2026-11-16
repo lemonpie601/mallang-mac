@@ -192,9 +192,10 @@ html.mdos [data-mdos-win="panel"] {
 
 /* ── Character & persona libraries: icon grid ────────────────── */
 
-html.mdos.mdos-icon-view [data-mdos-win="panel"] :is(
-    div:has(> [data-drag-kind="character"]),
-    div:has(> [data-drag-kind="persona"])
+/* :has() is limited to the library's own list containers inside the panel. */
+html.mdos.mdos-icon-view [data-component="RightPanel"] :is(
+    .flex-col:has(> [data-drag-kind="character"]),
+    .flex-col:has(> [data-drag-kind="persona"])
   ) {
   display: grid !important;
   grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
@@ -300,10 +301,10 @@ html.mdos [data-component="HomeBrowserHub.TabList"] > [role="tab"][aria-selected
 
 /* "Drag characters into folders…" sits on the folder button's right end as a
    small info icon; hovering, focusing or tapping it shows the text. */
-html.mdos div:has(> .mari-folder-helper[data-mdos-tip]) {
+html.mdos [data-mdos-tip-row] {
   position: relative;
 }
-html.mdos div:has(> .mari-folder-helper[data-mdos-tip]) > div > button {
+html.mdos [data-mdos-tip-row] > div > button {
   padding-right: 32px !important;
 }
 html.mdos .mari-folder-helper[data-mdos-tip] {

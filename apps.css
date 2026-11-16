@@ -73,9 +73,10 @@ html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] .mari-mess
 html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] .mari-message-timestamp {
   display: none !important;
 }
-/* Each paragraph of a reply becomes its own bubble, like separate texts. */
+/* Each paragraph of a reply becomes its own bubble, like separate texts.
+   (No :has() here: this area changes constantly while a reply streams in.) */
 html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="assistant"] .mari-message-content > .space-y-1\.5 > *,
-html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="assistant"] .mari-message-content:not(:has(> .space-y-1\.5)) {
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="assistant"] .mari-message-content > :not(.space-y-1\.5) {
   width: fit-content;
   max-width: var(--mdos-bubble-max);
   padding: 7px 13px;
@@ -94,14 +95,9 @@ html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-mess
 html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="assistant"] .mari-message-content > .space-y-1\.5 > * {
   margin: 0 !important;
 }
-/* Pictures sit in the thread without a bubble. */
-html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] .mari-message-content > .space-y-1\.5 > :has(> img:only-child),
-html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] .mari-message-content > .space-y-1\.5 > :has(> * > img:only-child) {
-  padding: 0;
-  background: transparent;
-}
 html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] .mari-message-content img {
-  border-radius: 16px;
+  display: block;
+  border-radius: 14px;
 }
 /* Quiet message tools: they appear when you hover a message. */
 html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role]:not(:hover, :focus-within) .mari-message-actions {

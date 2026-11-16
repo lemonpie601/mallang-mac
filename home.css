@@ -22,7 +22,7 @@ html.mdos {
   --mdos-widget-fill-2: rgba(255, 255, 255, 0.3);
   --mdos-widget-line: rgba(255, 255, 255, 0.18);
   --mdos-widget-shadow: 0 12px 34px -12px rgba(0, 0, 0, 0.45), inset 0 0 0 0.5px rgba(255, 255, 255, 0.32);
-  --mdos-widget-blur: blur(20px) saturate(170%);
+  --mdos-widget-blur: none; /* real blur is opt-in: see html.mdos-real-glass */
   --mdos-widget-w: 340px;
 }
 html.mdos[data-mdos-wallpaper-tone="light"] {
@@ -33,6 +33,9 @@ html.mdos[data-mdos-wallpaper-tone="light"] {
   --mdos-widget-fill-2: rgba(0, 0, 0, 0.12);
   --mdos-widget-line: rgba(0, 0, 0, 0.08);
   --mdos-widget-shadow: 0 12px 30px -14px rgba(0, 0, 0, 0.28), inset 0 0 0 0.5px rgba(255, 255, 255, 0.7);
+}
+html.mdos-real-glass {
+  --mdos-widget-blur: blur(20px) saturate(170%);
 }
 html.mdos-no-blur {
   --mdos-widget-glass: rgba(34, 32, 42, 0.86);
@@ -805,4 +808,99 @@ html.mdos-desktop.mdos-edit #mdos-dock {
 }
 .mdos-gallery-item:hover .mdos-wg.is-sample {
   box-shadow: 0 0 0 3px var(--mdos-accent, #0a84ff), var(--mdos-widget-shadow) !important;
+}
+
+/* ── Desktop icons (apps & bookmarks on the desktop) ─────────── */
+
+.mdos-dicon {
+  position: absolute;
+  width: 92px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 2px;
+  border-radius: 10px;
+  pointer-events: auto;
+  cursor: default;
+  user-select: none;
+  outline: none;
+}
+.mdos-dicon .mdos-app-icon {
+  width: 58px;
+  height: 58px;
+}
+.mdos-dicon-label {
+  max-width: 88px;
+  font: 600 12px/1.25 var(--mdos-font);
+  color: #fff;
+  text-align: center;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-all;
+}
+html[data-mdos-wallpaper-tone="light"] .mdos-dicon-label {
+  color: #1d1d1f;
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.8);
+}
+.mdos-dicon:hover,
+.mdos-dicon:focus-visible {
+  background: rgba(255, 255, 255, 0.16);
+}
+.mdos-dicon:focus-visible {
+  box-shadow: 0 0 0 2px var(--mdos-accent, #0a84ff);
+}
+.mdos-dicon.is-dragging {
+  opacity: 0.85;
+  z-index: 5;
+}
+.mdos-dicon .mdos-wg-badge {
+  top: 0;
+  left: 10px;
+}
+html.mdos-edit .mdos-dicon .mdos-wg-badge {
+  display: grid;
+}
+html.mdos-edit .mdos-dicon {
+  animation: mdos-jiggle 0.3s ease-in-out infinite alternate;
+}
+html.mdos-calm .mdos-dicon {
+  animation: none !important;
+}
+
+/* ── Home layout options ─────────────────────────────────────── */
+
+/* Leave the left edge for desktop icons. */
+html.mdos-desktop-home.mdos-has-icons [data-component="HomeBrowserHub.HomePage"] > div.relative {
+  padding-left: 120px !important;
+}
+/* Centre: the board sits between the icon column and the widget column. */
+html.mdos-desktop-home[data-mdos-board="center"] [data-component="HomeBrowserHub.HomePage"] {
+  box-sizing: border-box;
+  padding: 0 calc(var(--mdos-widget-w) + 48px) 0 110px !important;
+}
+html.mdos-desktop-home[data-mdos-board="center"] [data-component="HomeBrowserHub.HomePage"] > div.relative {
+  max-width: 1000px !important;
+  margin-inline: auto !important;
+  padding-left: 20px !important;
+}
+/* Hidden / one kind of block switched off. */
+:is(html.mdos-desktop-home, html.mdos-touch-home)[data-mdos-board="hidden"] :is(.mari-home-feed-shell, #mac-credit-home),
+:is(html.mdos-desktop-home, html.mdos-touch-home).mdos-no-credits #mac-credit-home,
+:is(html.mdos-desktop-home, html.mdos-touch-home).mdos-no-feed .mari-home-feed-shell {
+  display: none !important;
+}
+html.mdos-desktop-home:is(.mdos-no-feed, .mdos-no-credits) [data-component="HomeBrowserHub.HomePage"] > div.relative {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+html.mdos-desktop-home:is(.mdos-no-feed, .mdos-no-credits) [data-component="HomeBrowserHub.HomePage"] > div.relative > * {
+  grid-column: 1 !important;
+  grid-row: auto !important;
+}
+html.mdos-desktop-home.mdos-no-credits [data-component="HomeBrowserHub.HomePage"] > div.relative {
+  max-width: calc(var(--mdos-widget-w) + 160px) !important;
 }
