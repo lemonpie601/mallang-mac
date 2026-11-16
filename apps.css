@@ -227,8 +227,14 @@ html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="rol
   letter-spacing: -0.003em;
   color: var(--mdos-ink) !important;
   text-wrap: pretty;
-  word-break: keep-all;
+  word-break: normal;
   overflow-wrap: anywhere;
+}
+/* Optional (Chat design → "Break lines between words only"): Korean words
+   stay whole, but Japanese and Chinese then break only at punctuation, so
+   dialogue lines end at full stops. Off by default. */
+html.mdos[data-mdos-rp-wrap="words"]:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] .mari-message-content {
+  word-break: keep-all;
 }
 html.mdos[data-mdos-rp-justify="on"]:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] .mari-message-content {
   text-align: justify;
@@ -311,10 +317,35 @@ html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .mari
 html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .marinara-chat-input-shell :is(button, svg) {
   color: var(--mdos-ink-2);
 }
-/* Narrow windows and phones: a full-width column with tighter margins. */
+/* Narrow windows and phones: the column spans the pane minus the side
+   margin set in Chat design (--mdos-rp-gutter, default 14 px). Marinara's
+   own row gutters, transcript padding and avatar track are dropped so that
+   margin is the only one. */
 @container (max-width: 640px) {
   html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] {
-    --mari-roleplay-message-column-width: calc(100cqw - 20px) !important;
+    --mari-roleplay-row-gutter: 0px !important;
+    --mari-roleplay-message-column-width: calc(100cqw - 2 * var(--mdos-rp-gutter, 14px)) !important;
+  }
+  html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] .mari-messages-scroll {
+    padding-inline: 0 !important;
+  }
+  html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] .mari-roleplay-message-row {
+    --mari-roleplay-avatar-slot: 0rem !important;
+    --mari-roleplay-avatar-gap: 0rem !important;
+    --mari-roleplay-avatar-space: 0rem !important;
+    /* The margin is row padding, not a column width: some themes force the
+       message body to width: 100%. */
+    padding-inline: var(--mdos-rp-gutter, 14px) !important;
+  }
+  html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] .mari-roleplay-message-row > :is(.mari-message-avatar, .mari-roleplay-avatar-spacer) {
+    display: none !important;
+  }
+  html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] .mari-roleplay-message-body {
+    max-width: 100% !important;
+  }
+  html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] .mari-roleplay-message-row:not(.mari-message-user) .mari-rp-bubble,
+  html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] .mari-roleplay-message-row:not(.mari-message-user) .mari-rp-bubble > div {
+    padding-inline: 0 !important;
   }
   html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] .mari-message-content {
     font-size: min(var(--mdos-rp-size, 16px), 15.5px) !important;

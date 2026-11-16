@@ -214,6 +214,12 @@ const L = KO
       actionsHover: "메시지 버튼은 가리킬 때만",
       actItalic: "행동(* *) 기울이기",
       readerLayout: "읽기 화면",
+      sideMargin: "좌우 여백",
+      sideMarginHint: "좁은 창과 휴대폰에서 글 양옆의 여백이에요. 0이면 화면 끝까지 써요.",
+      lineWrap: "줄바꿈",
+      wrapChars: "글자 단위",
+      wrapWords: "단어 단위",
+      lineWrapHint: "글자 단위는 줄 끝까지 채우고 아무 글자에서나 줄을 바꿔요(영어 단어는 자르지 않아요). 단어 단위는 한국어 단어를 자르지 않지만, 일본어·중국어 문장은 마침표 같은 문장부호에서만 줄이 바뀌어요.",
       pvThem: "오늘 뭐 했어?",
       pvMe: "마리나라 꾸미기 하고 있었어!",
       pvThem2: "오 진짜? 보여 줘 ✨",
@@ -446,6 +452,12 @@ const L = KO
       actionsHover: "Message buttons on hover only",
       actItalic: "Italic actions (* *)",
       readerLayout: "Reading view",
+      sideMargin: "Side margins",
+      sideMarginHint: "Space on each side of the text in narrow windows and on phones; 0 uses the full width.",
+      lineWrap: "Line breaks",
+      wrapChars: "Any character",
+      wrapWords: "Between words",
+      lineWrapHint: "Any character fills each line and breaks wherever needed (English words stay whole). Between words keeps Korean words whole, but Japanese and Chinese then break only at punctuation such as full stops.",
       pvThem: "What did you do today?",
       pvMe: "Decorating my Marinara!",
       pvThem2: "Ooh, show me ✨",
@@ -4616,6 +4628,20 @@ function chatDesignSection(win, { group, row, hint, btn, rerender }) {
         row(L.textSize, range("size", 13, 24, 1, 16, "px")),
         row(L.lineHeight, range("line", 1.3, 2.4, 0.05, 1.8)),
         row(L.columnWidth, range("width", 480, 1000, 20, 640, "px")),
+        row(L.sideMargin, range("gutter", 0, 48, 2, 14, "px")),
+        hint(L.sideMarginHint),
+        row(
+          L.lineWrap,
+          segmented(
+            [
+              ["", L.wrapChars],
+              ["words", L.wrapWords],
+            ],
+            spec.wrap || "",
+            (v) => commit({ wrap: v }),
+          ),
+        ),
+        hint(L.lineWrapHint),
       ),
       group(
         L.readerLayout,
@@ -5044,6 +5070,8 @@ function applyChatStyle() {
   v("--mdos-rp-nar", rp.nar);
   v("--mdos-rp-act", rp.act);
   html.dataset.mdosRpJustify = rp.justify ? "on" : "";
+  html.dataset.mdosRpWrap = rp.wrap === "words" ? "words" : "";
+  v("--mdos-rp-gutter", rp.gutter != null && rp.gutter !== "" ? `${rp.gutter}px` : null);
   html.dataset.mdosRpActions = rp.actionsAlways ? "" : "hover";
   html.dataset.mdosRpActItalic = rp.actUpright ? "off" : "";
   html.dataset.mdosRpTone = state.rpTone ? "on" : "";
