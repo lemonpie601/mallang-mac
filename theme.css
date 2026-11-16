@@ -19,7 +19,7 @@ html.mdos[data-theme="light"] {
   --mdos-card: #f5f5f7;
   --mdos-card-raised: #ffffff;
   --mdos-sidebar-vib: rgba(238, 236, 243, 0.74);
-  --mdos-panel-bg: rgba(250, 250, 252, 0.94);
+  --mdos-panel-bg: #fafafc;
   --mdos-popover: rgba(252, 252, 254, 0.9);
   --mdos-fg: #1d1d1f;
   --mdos-fg-2: #6e6e73;
@@ -43,7 +43,7 @@ html.mdos:not([data-theme="light"]) {
   --mdos-card: #2a2a2e;
   --mdos-card-raised: #323236;
   --mdos-sidebar-vib: rgba(38, 38, 44, 0.7);
-  --mdos-panel-bg: rgba(34, 34, 38, 0.94);
+  --mdos-panel-bg: #222226;
   --mdos-popover: rgba(46, 46, 52, 0.9);
   --mdos-fg: #f5f5f7;
   --mdos-fg-2: #a1a1a8;
@@ -247,7 +247,7 @@ html.mdos [data-mdos-win] :is(.mari-sidebar-header, .mari-right-panel-header) > 
 }
 html.mdos [data-mdos-win="main"] [data-component="TopBar"] {
   background: var(--mdos-win-bg) !important;
-  box-shadow: inset 0 -0.5px 0 var(--mdos-sep);
+  box-shadow: none; /* merges with the chat header below into one toolbar */
 }
 html.mdos [data-mdos-win="main"] [data-component="TopBar"] > .absolute.bottom-0 {
   display: none !important;

@@ -1617,3 +1617,275 @@ html.mdos-calm .mdos-wg {
   color: #b9b9c0;
   text-align: center;
 }
+
+/* ── Grid placement ──────────────────────────────────────────── */
+
+.mdos-wg.is-settling,
+.mdos-dicon.is-settling {
+  transition:
+    left 220ms var(--mdos-ease),
+    top 220ms var(--mdos-ease);
+}
+/* While arranging in grid mode, faint dots show where cells are. */
+html.mdos-desktop.mdos-edit[data-mdos-layout="grid"] #mdos-widgets {
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.35) 1.4px, transparent 1.8px);
+  background-size: 180px 180px;
+  background-position: calc(100% - 24px + 10px) 6px;
+}
+
+/* ── Control Center extras ───────────────────────────────────── */
+
+.mdos-cc-accent--theme {
+  background:
+    radial-gradient(circle at 50% 50%, var(--c) 0 42%, transparent 44%),
+    conic-gradient(#ffd36b, #ff7ab0, #8e9cff, #6ef08d, #ffd36b);
+}
+.mdos-cc-btn--accent {
+  background: var(--mdos-accent, #0a84ff);
+  color: #fff;
+}
+.mdos-cc-btn--accent:hover {
+  background: color-mix(in srgb, var(--mdos-accent, #0a84ff) 85%, #fff);
+}
+.mdos-pop-note {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  opacity: 0.75;
+}
+
+/* ── Customize window ────────────────────────────────────────── */
+
+.mdos-set {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 210px minmax(0, 1fr);
+}
+.mdos-set-nav {
+  overflow-y: auto;
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--mdos-card, #f5f5f7);
+  border-right: 1px solid var(--mdos-sep, rgba(0, 0, 0, 0.1));
+}
+.mdos-set-nav-item {
+  all: unset;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 32px;
+  padding: 0 8px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: default;
+}
+.mdos-set-nav-item .mdos-app-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  box-shadow: none;
+}
+.mdos-set-nav-item .mdos-app-icon svg {
+  width: 64%;
+  height: 64%;
+}
+.mdos-set-nav-item:hover {
+  background: var(--mdos-fill, rgba(0, 0, 0, 0.05));
+}
+.mdos-set-nav-item[aria-current="true"] {
+  background: var(--mdos-accent, #0a84ff);
+  color: #fff;
+}
+.mdos-set-nav-item:focus-visible {
+  outline: 2px solid var(--mdos-accent, #0a84ff);
+}
+.mdos-set-pane {
+  overflow-y: auto;
+  padding: 20px 24px 28px;
+  display: grid;
+  align-content: start;
+  gap: 14px;
+}
+.mdos-set-group {
+  display: grid;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--mdos-card, #f5f5f7);
+  box-shadow: inset 0 0 0 0.5px var(--mdos-sep, rgba(0, 0, 0, 0.08));
+}
+.mdos-set-group h3 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+}
+.mdos-set-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 28px;
+}
+.mdos-set-row > span {
+  font-size: 13px;
+}
+.mdos-set-hint {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--mdos-fg-2, #6e6e73);
+}
+.mdos-set-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mdos-set-range input {
+  width: 160px;
+  accent-color: var(--mdos-accent, #0a84ff);
+}
+.mdos-set-range output {
+  min-width: 46px;
+  text-align: right;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--mdos-fg-2, #6e6e73);
+}
+.mdos-color {
+  width: 44px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: none;
+  cursor: pointer;
+}
+@container mdos-app (max-width: 560px) {
+  .mdos-set {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  .mdos-set-nav {
+    flex-direction: row;
+    overflow-x: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--mdos-sep, rgba(0, 0, 0, 0.1));
+  }
+  .mdos-set-nav-item span:last-child {
+    white-space: nowrap;
+  }
+}
+
+/* Controls inside light/dark app windows (popovers keep their dark look). */
+.mdos-appwin :is(.mdos-seg) {
+  background: var(--mdos-fill, rgba(0, 0, 0, 0.06));
+}
+.mdos-appwin .mdos-seg-btn {
+  color: var(--mdos-fg, #1d1d1f);
+}
+.mdos-appwin .mdos-seg-btn[aria-checked="true"] {
+  background: var(--mdos-control, #fff);
+  box-shadow: var(--mdos-control-shadow, 0 0.5px 1.5px rgba(0, 0, 0, 0.16));
+}
+.mdos-appwin .mdos-input,
+.mdos-appwin .mdos-cc-input,
+.mdos-appwin .mdos-cc-select {
+  color: var(--mdos-fg, #1d1d1f);
+  background: var(--mdos-field, #fff);
+  border: 0.5px solid var(--mdos-sep-strong, rgba(0, 0, 0, 0.16));
+  color-scheme: light;
+}
+/* Explicit option colours: the native list ignores inherited text colour. */
+.mdos-appwin .mdos-cc-select option {
+  color: #1d1d1f;
+  background: #ffffff;
+}
+html:not([data-theme="light"]) .mdos-appwin :is(.mdos-input, .mdos-cc-input, .mdos-cc-select) {
+  color-scheme: dark;
+}
+html:not([data-theme="light"]) .mdos-appwin .mdos-cc-select option {
+  color: #f5f5f7;
+  background: #2a2a2e;
+}
+.mdos-appwin .mdos-cc-toggle input {
+  background: var(--mdos-fill-2, rgba(0, 0, 0, 0.12));
+}
+.mdos-appwin .mdos-cc-toggle input:checked {
+  background: #34c759;
+}
+.mdos-appwin .mdos-cc-btn {
+  color: var(--mdos-fg, #1d1d1f);
+  background: var(--mdos-fill-2, rgba(0, 0, 0, 0.08));
+}
+.mdos-appwin .mdos-cc-swatches {
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+}
+.mdos-appwin .mdos-cc-accents {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.mdos-appwin .mdos-cc-accent[aria-checked="true"] {
+  box-shadow:
+    inset 0 0 0 0.5px rgba(0, 0, 0, 0.25),
+    0 0 0 2px var(--mdos-win-bg, #fff),
+    0 0 0 4px var(--mdos-accent, #0a84ff);
+}
+.mdos-appwin .mdos-about-keys {
+  margin: 4px 0;
+}
+
+/* YouTube search results */
+.mdos-yt-results {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  align-content: start;
+  gap: 14px;
+  background: var(--mdos-win-bg, #fff);
+  color: var(--mdos-fg, #1d1d1f);
+}
+.mdos-yt-results > .mdos-web-note {
+  grid-column: 1 / -1;
+  text-align: left;
+}
+.mdos-yt-item {
+  all: unset;
+  display: grid;
+  gap: 4px;
+  cursor: pointer;
+  border-radius: 10px;
+}
+.mdos-yt-item img,
+.mdos-yt-thumb {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 10px;
+  background: #222;
+}
+.mdos-yt-item b {
+  font-size: 13px;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.mdos-yt-item span {
+  font-size: 11.5px;
+  color: var(--mdos-fg-2, #6e6e73);
+}
+.mdos-yt-item:hover img {
+  filter: brightness(0.9);
+}
+.mdos-yt-item:focus-visible {
+  outline: 2px solid var(--mdos-accent, #0a84ff);
+  outline-offset: 3px;
+}

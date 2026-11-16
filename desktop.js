@@ -162,6 +162,59 @@ const L = KO
       arrangeWidgets: "위젯 자동 정렬",
       realGlass: "진짜 유리 효과 (느릴 수 있음)",
       apps: "앱",
+      settingsTitle: "꾸미기",
+      openSettings: "꾸미기 설정 열기…",
+      themeSync: "테마 라이브러리와 색상 동기화",
+      themeSyncHint: "마리나라 설정 → 모양 → 테마 라이브러리에서 적용한 테마의 색·글꼴·배경을 따라가요. 테마를 바꾸면 바로 반영돼요.",
+      themeNow: "지금 적용된 테마",
+      themeNone: "기본 테마 (마리나라 강조색만 따라가요)",
+      themeAccent: "테마",
+      layoutMode: "위젯·아이콘 배치",
+      layoutModes: { grid: "그리드", free: "자유" },
+      chatDesign: "채팅 꾸미기",
+      convo: "대화",
+      roleplay: "롤플",
+      presets: "프리셋",
+      font: "글꼴",
+      fonts: { "": "기본", system: "시스템", serif: "명조", rounded: "둥근", hand: "손글씨", mono: "고정폭", theme: "테마 글꼴", custom: "직접 입력" },
+      customFont: "글꼴 이름 (예: Pretendard)",
+      textSize: "글자 크기",
+      lineHeight: "줄 간격",
+      myBubble: "내 말풍선",
+      theirBubble: "상대 말풍선",
+      bubbleText: "글자",
+      corner: "모서리",
+      chatBg: "채팅 배경",
+      chatBgModes: { "": "기본", color: "색", wallpaper: "배경화면 비치게", image: "이미지" },
+      avatars: "프로필 사진",
+      avatarModes: { circle: "동그라미", rounded: "둥근 사각", hidden: "숨기기" },
+      showNames: "이름 보이기",
+      columnWidth: "글 폭",
+      paper: "종이 색",
+      ink: "글자 색",
+      preview: "미리보기",
+      resetChat: "기본 디자인으로",
+      cvPresets: { base: "기본", yellow: "노랑 말풍선", green: "초록 말풍선", dark: "다크", pastel: "파스텔" },
+      rpPresets: { book: "종이책", parchment: "양피지", night: "밤", typewriter: "타자기", novel: "소설 앱" },
+      pvThem: "오늘 뭐 했어?",
+      pvMe: "마리나라 꾸미기 하고 있었어!",
+      pvThem2: "오 진짜? 보여 줘 ✨",
+      pvRp: "창밖으로 비가 내리기 시작했다. 그는 찻잔을 내려놓고 조용히 웃었다. \"오늘은 여기서 쉬어 가요.\"",
+      ytMode: "YouTube 사용 방식",
+      ytModes: { link: "링크만", api: "API 키로 검색", account: "내 계정으로" },
+      ytApiKey: "YouTube Data API 키",
+      ytApiHint: "Google Cloud 콘솔에서 만든 YouTube Data API v3 키를 넣으면 앱 안에서 검색할 수 있어요. 키는 이 확장의 저장 공간에만 저장돼요.",
+      ytAccountHint: "로그인한 YouTube 계정으로 재생해요(광고 없음·기록 등). 브라우저가 다른 사이트 쿠키를 막으면 창 안 플레이어에는 로그인이 안 보일 수 있어요.",
+      ytLogin: "YouTube 로그인",
+      ytOpenSite: "YouTube 열기",
+      ytSearchPlaceholder: "검색어나 링크 입력",
+      ytNoKey: "검색하려면 설정에서 API 키를 넣어 주세요. 링크는 바로 재생돼요.",
+      ytSearching: "검색 중…",
+      ytError: "검색하지 못했어요",
+      ytResults: "검색 결과",
+      ytSettings: "YouTube 설정",
+      quick: "빠른 설정",
+      allSettings: "모든 꾸미기 설정",
       greeting: (hour) =>
         hour < 5 ? "늦은 밤이에요" : hour < 12 ? "좋은 아침이에요" : hour < 18 ? "좋은 오후예요" : "좋은 저녁이에요",
       shortcutList: [
@@ -316,6 +369,59 @@ const L = KO
       arrangeWidgets: "Arrange widgets",
       realGlass: "Real glass blur (can be slow)",
       apps: "Apps",
+      settingsTitle: "Customize",
+      openSettings: "Open Customize…",
+      themeSync: "Sync colours with the theme library",
+      themeSyncHint: "Follows the colours, font and background of the theme applied in Marinara's Settings → Appearance → Theme library, and updates when you switch themes.",
+      themeNow: "Applied theme",
+      themeNone: "Default theme (follows Marinara's accent only)",
+      themeAccent: "Theme",
+      layoutMode: "Widget & icon placement",
+      layoutModes: { grid: "Grid", free: "Free" },
+      chatDesign: "Chat design",
+      convo: "Conversation",
+      roleplay: "Roleplay",
+      presets: "Presets",
+      font: "Font",
+      fonts: { "": "Default", system: "System", serif: "Serif", rounded: "Rounded", hand: "Handwriting", mono: "Monospace", theme: "Theme font", custom: "Custom" },
+      customFont: "Font name (e.g. Inter)",
+      textSize: "Text size",
+      lineHeight: "Line height",
+      myBubble: "My bubble",
+      theirBubble: "Their bubble",
+      bubbleText: "Text",
+      corner: "Corners",
+      chatBg: "Chat background",
+      chatBgModes: { "": "Default", color: "Colour", wallpaper: "Show wallpaper", image: "Image" },
+      avatars: "Avatars",
+      avatarModes: { circle: "Circle", rounded: "Rounded", hidden: "Hidden" },
+      showNames: "Show names",
+      columnWidth: "Column width",
+      paper: "Paper",
+      ink: "Ink",
+      preview: "Preview",
+      resetChat: "Reset to default",
+      cvPresets: { base: "Default", yellow: "Yellow bubbles", green: "Green bubbles", dark: "Dark", pastel: "Pastel" },
+      rpPresets: { book: "Paperback", parchment: "Parchment", night: "Night", typewriter: "Typewriter", novel: "Novel app" },
+      pvThem: "What did you do today?",
+      pvMe: "Decorating my Marinara!",
+      pvThem2: "Ooh, show me ✨",
+      pvRp: "Rain began to fall outside the window. He set down his teacup and smiled quietly. \"Rest here for tonight.\"",
+      ytMode: "How YouTube works",
+      ytModes: { link: "Links only", api: "Search with API key", account: "My account" },
+      ytApiKey: "YouTube Data API key",
+      ytApiHint: "Add a YouTube Data API v3 key from the Google Cloud console to search inside the app. The key is stored only in this extension's storage.",
+      ytAccountHint: "Plays with your signed-in YouTube account (no ads, history…). If the browser blocks third-party cookies, the in-window player may not show you as signed in.",
+      ytLogin: "Sign in to YouTube",
+      ytOpenSite: "Open YouTube",
+      ytSearchPlaceholder: "Search or paste a link",
+      ytNoKey: "Add an API key in settings to search. Links play right away.",
+      ytSearching: "Searching…",
+      ytError: "Search failed",
+      ytResults: "Results",
+      ytSettings: "YouTube settings",
+      quick: "Quick settings",
+      allSettings: "All customize settings",
       greeting: (hour) =>
         hour < 5 ? "Burning the midnight oil" : hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening",
       shortcutList: [
@@ -396,13 +502,15 @@ const WALLPAPERS = [
   {
     id: "theme",
     name: L.themeWallpaper,
-    css: "var(--marinara-app-background-paint, var(--background))",
+    // Built at runtime from the applied theme's colours (themeWallpaperCss).
+    css: "linear-gradient(135deg, var(--mdos-accent, #ec4b97), var(--mdos-win-bg, #faf8ff))",
     dark: null,
   },
 ];
 
 // "marinara" keeps the app's own accent; the rest replace it everywhere.
 const ACCENTS = [
+  { id: "theme", color: null, theme: true, name: L.themeAccent },
   { id: "blue", color: "#0a84ff", name: KO ? "파랑" : "Blue" },
   { id: "purple", color: "#a259e6", name: KO ? "보라" : "Purple" },
   { id: "pink", color: "#ec4b8f", name: KO ? "분홍" : "Pink" },
@@ -546,7 +654,7 @@ const appById = (id) => allApps().find((a) => a.id === id);
 const DEFAULTS = {
   enabled: true,
   wallpaper: "dusk",
-  accent: "blue",
+  accent: "theme",
   dockSize: 54,
   magnify: true,
   dockAutohide: true,
@@ -573,6 +681,10 @@ const DEFAULTS = {
   showCredits: true,
   showFeed: true,
   realGlass: false,
+  themeSync: true, // follow the theme applied in Marinara's theme library
+  layoutMode: "grid", // widgets & desktop icons: grid | free
+  chat: { convo: {}, rp: {} }, // chat design overrides (empty = default)
+  yt: { mode: "link", apiKey: "" },
 };
 let stored = {};
 try {
@@ -586,6 +698,7 @@ state.icons = { ...(state.icons || {}) };
 // Images live under their own storage key so ordinary saves stay small.
 const images = {
   wallpaper: "",
+  chatBg: "",
   icons: {},
   photos: {},
   ...(stored.desktopImages && typeof stored.desktopImages === "object" ? stored.desktopImages : {}),
@@ -616,6 +729,8 @@ if (!state.launcherSeeded) {
 }
 
 for (const key of ["apps", "bookmarks", "sbOrder", "sbHidden"]) if (!Array.isArray(state[key])) state[key] = [];
+state.chat = { convo: { ...(state.chat?.convo || {}) }, rp: { ...(state.chat?.rp || {}) } };
+state.yt = { mode: "link", apiKey: "", ...(state.yt || {}) };
 if (!Array.isArray(state.desk)) {
   state.desk = UTIL_APPS.map((a) => ({ id: newId(), app: a.id, x: null, y: null }));
 }
@@ -857,7 +972,7 @@ const isAppWin = (id) => typeof id === "string" && id.startsWith("app:");
 const appRec = (id) => state.apps.find((a) => `app:${a.id}` === id);
 const appWins = new Map(); // "app:<id>" → { el, rec, … }
 const winIds = () => [...WIN_IDS, ...appWins.keys()];
-const APP_SIZES = { notes: [660, 460], browser: [1000, 660], youtube: [640, 404] };
+const APP_SIZES = { notes: [660, 460], browser: [1000, 660], youtube: [640, 404], customize: [880, 620] };
 function defaultAppRect(rec) {
   const a = area();
   const [w0, h0] = APP_SIZES[rec?.type] || [640, 460];
@@ -1269,6 +1384,14 @@ function onPointerUp() {
       g.w.y = snap(g.start.y + g.dy);
       if (g.kind === "widget") clampWidget(g.w);
       else clampIcon(g.w);
+      if (state.layoutMode === "grid") {
+        const list = g.kind === "widget" ? state.widgets : state.desk;
+        snapToGrid(g.w, g.kind, list.filter((o) => o !== g.w));
+        if (!reducedMotion()) {
+          g.el.classList.add("is-settling");
+          marinara.setTimeout(() => g.el.classList.remove("is-settling"), 260);
+        }
+      }
       placeWidget(g.el, g.w);
       save();
     } else if (g.kind === "icon" && !editMode) {
@@ -2339,6 +2462,59 @@ function autoPlace() {
     else y += wh + gap;
   }
 }
+// ── Grid placement ────────────────────────────────────────────
+// Widgets snap to 160 px cells with 20 px gaps, counted from the right edge
+// so the widget column lines up; desktop icons snap to their own grid from
+// the left. Dropping on an occupied spot takes the nearest free cell.
+const WG_CELL = 180;
+const IC_CELL_W = 96;
+const IC_CELL_H = 104;
+const wgSpan = (w) => ({ s: [1, 1], m: [2, 1], l: [2, 2] })[w.size] || [1, 1];
+const wgX = (k) => innerWidth - 24 - 160 - k * WG_CELL;
+function snapToGrid(item, kind, others) {
+  const isIcon = kind === "icon";
+  const [cw, ch] = isIcon ? [1, 1] : wgSpan(item);
+  const maxK = isIcon
+    ? Math.max(0, Math.floor((innerWidth - 14 - ICON_W) / IC_CELL_W))
+    : Math.max(cw - 1, Math.floor((innerWidth - 24 - 160 - 16) / WG_CELL));
+  const maxJ = Math.max(0, Math.floor((innerHeight - MENUBAR_H - 90 - (isIcon ? ICON_H : ch * WG_CELL - 20)) / (isIcon ? IC_CELL_H : WG_CELL)));
+  const cellOf = (x, y, span) =>
+    isIcon
+      ? [Math.round((x - 14) / IC_CELL_W), Math.round((y - 12) / IC_CELL_H)]
+      : [Math.max(span - 1, Math.round((innerWidth - 24 - 160 - x) / WG_CELL)), Math.round((y - 16) / WG_CELL)];
+  const used = new Set();
+  for (const o of others) {
+    if (!Number.isFinite(o.x) || !Number.isFinite(o.y)) continue;
+    const [ow, oh] = isIcon ? [1, 1] : wgSpan(o);
+    const [ok, oj] = cellOf(o.x, o.y, ow);
+    for (let a = 0; a < ow; a++) for (let b = 0; b < oh; b++) used.add(`${isIcon ? ok + a : ok - a},${oj + b}`);
+  }
+  const fits = (k, j) => {
+    if (k < (isIcon ? 0 : cw - 1) || k > maxK || j < 0 || j > maxJ) return false;
+    for (let a = 0; a < cw; a++) for (let b = 0; b < ch; b++) if (used.has(`${isIcon ? k + a : k - a},${j + b}`)) return false;
+    return true;
+  };
+  const [k0, j0] = cellOf(item.x ?? 0, item.y ?? 0, cw);
+  for (let r = 0; r <= 12; r++) {
+    for (let dk = -r; dk <= r; dk++) {
+      for (let dj = -r; dj <= r; dj++) {
+        if (Math.max(Math.abs(dk), Math.abs(dj)) !== r) continue;
+        const k = k0 + dk;
+        const j = j0 + dj;
+        if (!fits(k, j)) continue;
+        item.x = isIcon ? 14 + k * IC_CELL_W : wgX(k);
+        item.y = isIcon ? 12 + j * IC_CELL_H : 16 + j * WG_CELL;
+        return;
+      }
+    }
+  }
+}
+function snapAll() {
+  if (state.layoutMode !== "grid") return;
+  state.widgets.forEach((w, i) => snapToGrid(w, "widget", state.widgets.slice(0, i)));
+  state.desk.forEach((d, i) => snapToGrid(d, "icon", state.desk.slice(0, i)));
+}
+
 function placeWidget(el, w) {
   el.style.left = `${w.x}px`;
   el.style.top = `${w.y}px`;
@@ -2347,6 +2523,7 @@ function renderWidgets() {
   if (isDesktop()) {
     autoPlace();
     autoPlaceIcons();
+    snapAll();
     toggleClass("mdos-has-icons", state.desk.length > 0);
     widgetLayer.replaceChildren(
       ...state.desk
@@ -2584,7 +2761,10 @@ function youTubeEmbed(yt, autoplay = false) {
   const params = new URLSearchParams({ rel: "0", playsinline: "1" });
   if (yt.list) params.set("list", yt.list);
   if (autoplay) params.set("autoplay", "1");
-  return `https://www.youtube-nocookie.com/embed/${yt.id || "videoseries"}?${params}`;
+  // "My account" mode uses youtube.com so a signed-in session can apply;
+  // otherwise the privacy-enhanced (no-cookie) player.
+  const host = state.yt.mode === "account" ? "www.youtube.com" : "www.youtube-nocookie.com";
+  return `https://${host}/embed/${yt.id || "videoseries"}?${params}`;
 }
 function normalizeUrl(input) {
   const text = (input || "").trim();
@@ -2647,6 +2827,7 @@ const APP_TYPES = {
   notes: { mount: mountNotes },
   browser: { mount: mountBrowser },
   youtube: { mount: mountYouTube },
+  customize: { mount: (win) => mountCustomize(win) },
 };
 function makeLights(id) {
   return h(
@@ -2678,11 +2859,13 @@ function openApp(type, opts = {}) {
     state.apps.push(rec);
   }
   if (opts.url) rec.url = opts.url;
+  if (opts.section) rec.section = opts.section;
   rec.min = false;
   const id = `app:${rec.id}`;
   const win = appWins.get(id) || renderAppWin(rec);
   win.autoplay = !!opts.autoplay;
-  win.refresh?.();
+  if (opts.section) win.openSection?.(opts.section);
+  else win.refresh?.();
   setAttr(win.el, "aria-hidden", null);
   focusWin(id);
   bounce(type);
@@ -2882,15 +3065,105 @@ function mountBrowser(win) {
   render();
 }
 
-// YouTube: paste a link; the player keeps playing while the window is
-// minimized. "Keep on top" pins it above every other window.
+// YouTube: three ways to use it (YouTube settings ⚙):
+//   link    — paste a link; privacy-enhanced player.
+//   api     — search inside the app with your own YouTube Data API key.
+//   account — youtube.com player, so a signed-in YouTube session can apply.
+// The player keeps playing while minimized; 📌 keeps the window on top.
+async function searchYouTube(query) {
+  const params = new URLSearchParams({ part: "snippet", type: "video", maxResults: "24", q: query, key: state.yt.apiKey });
+  const doFetch = typeof marinara.fetch === "function" ? marinara.fetch : window.fetch.bind(window);
+  const res = await doFetch(`https://www.googleapis.com/youtube/v3/search?${params}`);
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data?.error?.message || `HTTP ${res.status}`);
+  return (data.items || [])
+    .filter((it) => it.id?.videoId)
+    .map((it) => ({
+      id: it.id.videoId,
+      title: it.snippet?.title || "",
+      channel: it.snippet?.channelTitle || "",
+      thumb: it.snippet?.thumbnails?.medium?.url || it.snippet?.thumbnails?.default?.url || "",
+    }));
+}
+// Titles from the API arrive HTML-escaped; decode them as text, never markup.
+const decodeEntities = (text) => new DOMParser().parseFromString(`<!doctype html><body>${text}`, "text/html").body.textContent || "";
+function openYouTubeSettings(anchor) {
+  const key = h("input", {
+    type: "password",
+    class: "mdos-input",
+    placeholder: L.ytApiKey,
+    autocomplete: "off",
+    value: state.yt.apiKey || "",
+    onchange: (e) => {
+      state.yt.apiKey = e.target.value.trim();
+      save();
+    },
+  });
+  const body = h(
+    "div",
+    { class: "mdos-pop-body" },
+    field(
+      L.ytMode,
+      segmented(Object.entries(L.ytModes), state.yt.mode, (v) => {
+        state.yt.mode = v;
+        save();
+        for (const w of appWins.values()) if (w.rec.type === "youtube") w.refresh?.(true);
+        openYouTubeSettings(anchor);
+      }),
+    ),
+    state.yt.mode === "api" ? field(L.ytApiKey, key) : null,
+    state.yt.mode === "api" ? h("p", { class: "mdos-pop-note", text: L.ytApiHint }) : null,
+    state.yt.mode === "account" ? h("p", { class: "mdos-pop-note", text: L.ytAccountHint }) : null,
+    state.yt.mode === "account"
+      ? h(
+          "div",
+          { class: "mdos-row" },
+          h("button", {
+            type: "button",
+            class: "mdos-btn mdos-btn--primary",
+            text: L.ytLogin,
+            onclick: () => openExternal("https://accounts.google.com/ServiceLogin?service=youtube&continue=https%3A%2F%2Fwww.youtube.com%2F"),
+          }),
+          h("button", { type: "button", class: "mdos-btn", text: L.ytOpenSite, onclick: () => openExternal("https://www.youtube.com/") }),
+        )
+      : null,
+  );
+  openPop(body, anchor, { title: L.ytSettings });
+}
 function mountYouTube(win) {
-  const input = urlField(win, L.ytPlaceholder, (value) => {
-    if (!parseYouTube(value)) return;
-    win.rec.url = value.trim();
-    win.autoplay = true;
-    save();
-    render();
+  let results = null; // last search results, kept so "back" can return to them
+  let status = "";
+  const input = urlField(win, L.ytPlaceholder, async (value) => {
+    const text = value.trim();
+    if (!text) return;
+    if (parseYouTube(text)) {
+      win.rec.url = text;
+      win.autoplay = true;
+      win.view = "player";
+      save();
+      return render();
+    }
+    if (state.yt.mode !== "api" || !state.yt.apiKey) {
+      status = L.ytNoKey;
+      win.view = "results";
+      return render(true);
+    }
+    status = L.ytSearching;
+    win.view = "results";
+    render(true);
+    try {
+      results = await searchYouTube(text);
+      status = results.length ? "" : "0";
+    } catch (error) {
+      results = null;
+      status = `${L.ytError}: ${error.message}`;
+    }
+    render(true);
+  });
+  const settingsBtn = toolBtn("sliders", L.ytSettings, (e) => openYouTubeSettings(e.currentTarget));
+  const listBtn = toolBtn("launchpad", L.ytResults, () => {
+    win.view = win.view === "results" ? "player" : "results";
+    render(true);
   });
   const pin = toolBtn("pin", L.pinOnTop, () => {
     win.rec.pinned = !win.rec.pinned;
@@ -2900,16 +3173,50 @@ function mountYouTube(win) {
   });
   pin.setAttribute("aria-pressed", String(!!win.rec.pinned));
   const ext = toolBtn("external", L.openOutside, () => win.rec.url && openExternal(win.rec.url));
-  win.tools.append(pin, ext);
+  win.tools.append(listBtn, settingsBtn, pin, ext);
   let shown = null;
-  const render = () => {
+  const resultsView = () =>
+    h(
+      "div",
+      { class: "mdos-yt-results" },
+      status ? h("p", { class: "mdos-web-note", text: status === "0" ? "—" : status }) : null,
+      ...(results || []).map((r) =>
+        h(
+          "button",
+          {
+            type: "button",
+            class: "mdos-yt-item",
+            onclick: () => {
+              win.rec.url = `https://youtu.be/${r.id}`;
+              win.autoplay = true;
+              win.view = "player";
+              save();
+              render();
+            },
+          },
+          r.thumb ? h("img", { src: r.thumb, alt: "", loading: "lazy", referrerpolicy: "no-referrer" }) : h("span", { class: "mdos-yt-thumb" }),
+          h("b", { text: decodeEntities(r.title) }),
+          h("span", { text: decodeEntities(r.channel) }),
+        ),
+      ),
+    );
+  const render = (force = false) => {
+    input.placeholder = state.yt.mode === "api" ? L.ytSearchPlaceholder : L.ytPlaceholder;
+    input.setAttribute("aria-label", input.placeholder);
+    listBtn.hidden = !(results || status);
+    listBtn.setAttribute("aria-pressed", String(win.view === "results"));
+    if (win.view === "results") {
+      shown = "results";
+      return win.body.replaceChildren(resultsView());
+    }
     const yt = parseYouTube(win.rec.url || "");
     input.value = win.rec.url || "";
     const src = yt ? youTubeEmbed(yt, win.autoplay) : null;
-    const key = yt ? `${yt.id}|${yt.list}` : "hint";
-    if (key === shown) return;
+    const key = yt ? `${state.yt.mode}|${yt.id}|${yt.list}` : `hint|${state.yt.mode}`;
+    if (key === shown && !force) return;
     shown = key;
-    win.body.replaceChildren(src ? frame(src, "YouTube") : h("div", { class: "mdos-web-start" }, h("p", { class: "mdos-web-note", text: L.ytHint })));
+    const hint = state.yt.mode === "api" && !state.yt.apiKey ? `${L.ytHint} ${L.ytNoKey}` : L.ytHint;
+    win.body.replaceChildren(src ? frame(src, "YouTube") : h("div", { class: "mdos-web-start" }, h("p", { class: "mdos-web-note", text: hint })));
   };
   win.refresh = render;
   render();
@@ -3152,49 +3459,49 @@ function openHomeLayout(anchor) {
   openPop(body, anchor, { title: L.homeLayout });
 }
 
-// ── Control Center ────────────────────────────────────────────
+// ── Shared setting controls ───────────────────────────────────
 
-let ccEl = null;
-function toggleCC(forceOpen, section) {
-  if (ccEl && !forceOpen) return closeCC();
-  closeMenu();
-  closeLaunchpad();
-  if (!ccEl) buildCC();
-  if (section) {
-    const target = ccEl.querySelector(`[data-section="${section}"]`);
-    target?.scrollIntoView({ block: "start" });
-    target?.classList.add("is-flash");
-    marinara.setTimeout(() => target?.classList.remove("is-flash"), 900);
-  }
+function settingToggle(key, label, onChange) {
+  return h(
+    "label",
+    { class: "mdos-cc-toggle" },
+    h("span", { text: label }),
+    h("input", {
+      type: "checkbox",
+      role: "switch",
+      checked: !!state[key],
+      onchange: (event) => {
+        updateSetting(key, event.target.checked);
+        onChange?.(event.target.checked);
+      },
+    }),
+  );
 }
-function buildCC() {
-  const toggle = (key, label) =>
-    h(
-      "label",
-      { class: "mdos-cc-toggle" },
-      h("span", { text: label }),
-      h("input", {
-        type: "checkbox",
-        role: "switch",
-        checked: !!state[key],
-        onchange: (event) => updateSetting(key, event.target.checked),
-      }),
-    );
-  const card = (section, title, ...kids) => h("section", { class: "mdos-cc-card", "data-section": section }, h("h3", { text: title }), ...kids);
-
-  const accents = h(
+function settingSelect(key, options, onChange) {
+  const el = h("select", {
+    class: "mdos-cc-select",
+    onchange: (e) => {
+      updateSetting(key, e.target.value);
+      onChange?.(e.target.value);
+    },
+  });
+  for (const [v, label] of options) el.append(h("option", { value: v, text: label, selected: state[key] === v }));
+  return el;
+}
+function accentRow() {
+  return h(
     "div",
     { class: "mdos-cc-accents", role: "radiogroup", "aria-label": L.accent },
     ...ACCENTS.map((accent) =>
       h("button", {
         type: "button",
         role: "radio",
-        class: `mdos-cc-accent${accent.color ? "" : " mdos-cc-accent--app"}`,
+        class: `mdos-cc-accent${accent.color ? "" : accent.theme ? " mdos-cc-accent--theme" : " mdos-cc-accent--app"}`,
         title: accent.name,
         "aria-label": accent.name,
         "aria-checked": String(state.accent === accent.id),
         "data-accent": accent.id,
-        style: accent.color ? `--c:${accent.color}` : "",
+        style: accent.color ? `--c:${accent.color}` : accent.theme ? `--c:${themePalette.accent || "#0a84ff"}` : "",
         onclick: () => {
           updateSetting("accent", accent.id);
           refreshCC();
@@ -3202,7 +3509,9 @@ function buildCC() {
       }),
     ),
   );
-  const swatches = h(
+}
+function wallpaperSwatches() {
+  return h(
     "div",
     { class: "mdos-cc-swatches", role: "radiogroup", "aria-label": L.wallpaper },
     ...WALLPAPERS.map((wp) =>
@@ -3214,7 +3523,7 @@ function buildCC() {
         "aria-label": wp.name,
         "aria-checked": String(!images.wallpaper && state.wallpaper === wp.id),
         "data-wp": wp.id,
-        style: `background:${wp.css}`,
+        style: `background:${wp.id === "theme" ? themeWallpaperCss() : wp.css}`,
         onclick: () => {
           if (images.wallpaper) {
             images.wallpaper = "";
@@ -3226,125 +3535,101 @@ function buildCC() {
       }),
     ),
   );
+}
+function wallpaperImageControls() {
   const urlInput = h("input", { type: "url", class: "mdos-cc-input", placeholder: L.imageUrl, "aria-label": L.imageUrl });
-  const urlRow = h(
-    "form",
-    {
-      class: "mdos-cc-row",
-      onsubmit: (event) => {
-        event.preventDefault();
-        const url = urlInput.value.trim();
-        if (!/^https:\/\/[^\s"'()\\]+$/i.test(url)) {
-          urlInput.setCustomValidity(L.badUrl);
-          urlInput.reportValidity();
-          return;
-        }
-        urlInput.setCustomValidity("");
-        if (storeImage(() => (images.wallpaper = url))) {
-          applyWallpaper();
-          refreshCC();
-        }
+  return [
+    h(
+      "div",
+      { class: "mdos-cc-row" },
+      h("button", {
+        type: "button",
+        class: "mdos-cc-btn mdos-cc-btn--wide",
+        text: L.customImage,
+        onclick: () =>
+          pickImage(
+            (data) => {
+              if (storeImage(() => (images.wallpaper = data))) {
+                applyWallpaper();
+                refreshCC();
+              }
+            },
+            { maxSide: 2200, maxBytes: 450_000 },
+          ),
+      }),
+    ),
+    h(
+      "form",
+      {
+        class: "mdos-cc-row",
+        onsubmit: (event) => {
+          event.preventDefault();
+          const url = urlInput.value.trim();
+          if (!/^https:\/\/[^\s"'()\\]+$/i.test(url)) {
+            urlInput.setCustomValidity(L.badUrl);
+            urlInput.reportValidity();
+            return;
+          }
+          urlInput.setCustomValidity("");
+          if (storeImage(() => (images.wallpaper = url))) {
+            applyWallpaper();
+            refreshCC();
+          }
+        },
       },
-    },
-    urlInput,
-    h("button", { type: "submit", class: "mdos-cc-btn", text: L.apply }),
-  );
-  const size = h("input", {
-    type: "range",
-    min: "40",
-    max: "80",
-    step: "2",
-    value: String(state.dockSize),
-    "aria-label": L.dockSize,
-    oninput: (event) => updateSetting("dockSize", Number(event.target.value)),
-  });
-  const select = (key, options) => {
-    const el = h("select", { class: "mdos-cc-select", onchange: (e) => updateSetting(key, e.target.value) });
-    for (const [v, label] of options) el.append(h("option", { value: v, text: label, selected: state[key] === v }));
-    return el;
-  };
+      urlInput,
+      h("button", { type: "submit", class: "mdos-cc-btn", text: L.apply }),
+    ),
+  ];
+}
+function refreshCC() {
+  for (const el of $$(".mdos-cc-swatch[data-wp]")) {
+    el.setAttribute("aria-checked", String(!images.wallpaper && state.wallpaper === el.dataset.wp));
+  }
+  for (const el of $$(".mdos-cc-accent[data-accent]")) {
+    el.setAttribute("aria-checked", String(state.accent === el.dataset.accent));
+  }
+}
 
+// ── Control Center (quick settings) ───────────────────────────
+
+let ccEl = null;
+function toggleCC(forceOpen, section) {
+  // Detailed settings live in the Customize window.
+  if (section) {
+    closeCC();
+    return openApp("customize", { section });
+  }
+  if (ccEl && !forceOpen) return closeCC();
+  closeMenu();
+  closeLaunchpad();
+  if (!ccEl) buildCC();
+}
+function buildCC() {
+  const card = (title, ...kids) => h("section", { class: "mdos-cc-card" }, title ? h("h3", { text: title }) : null, ...kids);
   ccEl = h(
     "div",
     { id: "mdos-cc", role: "dialog", "aria-label": L.controlCenter },
+    card(L.accent, accentRow()),
+    card(L.wallpaper, wallpaperSwatches()),
     card(
-      "appearance",
-      L.appearance,
-      h("div", { class: "mdos-cc-sub", text: L.accent }),
-      accents,
-      h("label", { class: "mdos-cc-slider" }, h("span", { text: L.convoStyle }), select("convoStyle", [["messages", L.convoMessages], ["marinara", L.convoMarinara]])),
-      h("label", { class: "mdos-cc-slider" }, h("span", { text: L.rpStyle }), select("rpStyle", [["book", L.rpBook], ["night", L.rpNight], ["clean", L.rpClean]])),
-    ),
-    card(
-      "wallpaper",
-      L.wallpaper,
-      swatches,
+      L.quick,
+      settingToggle("themeSync", L.themeSync, (on) => on && updateSetting("accent", "theme")),
+      settingToggle("dockAutohide", L.autohide),
+      settingToggle("realGlass", L.realGlass),
       h(
-        "div",
-        { class: "mdos-cc-row" },
-        h("button", {
-          type: "button",
-          class: "mdos-cc-btn mdos-cc-btn--wide",
-          text: L.customImage,
-          onclick: () =>
-            pickImage(
-              (data) => {
-                if (storeImage(() => (images.wallpaper = data))) {
-                  applyWallpaper();
-                  refreshCC();
-                }
-              },
-              { maxSide: 2200, maxBytes: 450_000 },
-            ),
-        }),
+        "label",
+        { class: "mdos-cc-slider" },
+        h("span", { text: L.layoutMode }),
+        settingSelect("layoutMode", Object.entries(L.layoutModes), () => renderWidgets()),
       ),
-      urlRow,
-    ),
-    card(
-      "customize",
-      L.customize,
-      h("label", { class: "mdos-cc-slider" }, h("span", { text: L.iconStyle }), select("iconStyle", Object.entries(L.iconStyles))),
-      h("label", { class: "mdos-cc-slider" }, h("span", { text: L.iconShape }), select("iconShape", Object.entries(L.iconShapes))),
-      h(
-        "div",
-        { class: "mdos-cc-row" },
-        h("button", { type: "button", class: "mdos-cc-btn mdos-cc-btn--wide", text: L.editIcons, onclick: () => { closeCC(); openIconPicker(); } }),
-        h("button", { type: "button", class: "mdos-cc-btn mdos-cc-btn--wide", text: L.editWidgets, onclick: () => setEditMode(true) }),
-      ),
-      toggle("iconView", L.iconView),
-    ),
-    card(
-      "home",
-      L.homeLayout,
-      h(
-        "div",
-        { class: "mdos-cc-row" },
-        h("button", { type: "button", class: "mdos-cc-btn mdos-cc-btn--wide", text: `${L.homeLayout}…`, onclick: () => { closeCC(); openHomeLayout(); } }),
-        h("button", { type: "button", class: "mdos-cc-btn mdos-cc-btn--wide", text: `${L.addApps}…`, onclick: () => { closeCC(); openAddApps(); } }),
-      ),
-      h("button", { type: "button", class: "mdos-cc-btn", text: `+ ${L.addBookmark}`, onclick: () => { closeCC(); openBookmarkForm(); } }),
-    ),
-    card(
-      "dock",
-      L.dock,
-      h("label", { class: "mdos-cc-slider" }, h("span", { text: L.dockSize }), size),
-      toggle("dockAutohide", L.autohide),
-      toggle("magnify", L.magnify),
-      toggle("dockRecents", L.recents),
-    ),
-    card(
-      "performance",
-      L.performance,
-      toggle("realGlass", L.realGlass),
-      toggle("reduceTransparency", L.reduceTransparency),
-      toggle("reduceMotion", L.reduceMotion),
-      toggle("bootSplash", L.bootSplash),
     ),
     h(
       "section",
       { class: "mdos-cc-card mdos-cc-actions" },
+      h("button", { type: "button", class: "mdos-cc-btn mdos-cc-btn--accent", text: L.openSettings, onclick: () => { closeCC(); openApp("customize"); } }),
+      h("button", { type: "button", class: "mdos-cc-btn", text: L.editWidgets, onclick: () => setEditMode(true) }),
       isDesktop() ? h("button", { type: "button", class: "mdos-cc-btn", text: L.tile, onclick: tileWindows }) : null,
-      isDesktop() ? h("button", { type: "button", class: "mdos-cc-btn", text: L.resetLayout, onclick: resetLayout }) : null,
       h("button", { type: "button", class: "mdos-cc-btn", text: L.classic, onclick: () => setEnabled(false) }),
     ),
     isTouch() ? h("button", { type: "button", class: "mdos-cc-btn mdos-cc-done", text: L.done, onclick: () => closeCC() }) : null,
@@ -3352,19 +3637,386 @@ function buildCC() {
   ui.append(ccEl);
   raf(() => ccEl?.classList.add("is-open"));
 }
-function refreshCC() {
-  if (!ccEl) return;
-  ccEl.querySelectorAll(".mdos-cc-swatch").forEach((el) => {
-    el.setAttribute("aria-checked", String(!images.wallpaper && state.wallpaper === el.dataset.wp));
-  });
-  ccEl.querySelectorAll(".mdos-cc-accent").forEach((el) => {
-    el.setAttribute("aria-checked", String(state.accent === el.dataset.accent));
-  });
-}
 function closeCC() {
   if (!ccEl) return;
   ccEl.remove();
   ccEl = null;
+}
+
+// ── Customize window (all settings) ───────────────────────────
+
+const SET_SECTIONS = [
+  ["appearance", () => L.appearance, "brush", "#ff7ab0", "#b25cff"],
+  ["wallpaper", () => L.wallpaper, "wallpaper", "#7ad7ff", "#2f7cf2"],
+  ["home", () => L.homeLayout, "widgets", "#ffd36b", "#ff8a3d"],
+  ["chat", () => L.chatDesign, "chat", "#6ef08d", "#17a84d"],
+  ["dock", () => L.dock, "launchpad", "#9aa6bb", "#4f5a70"],
+  ["youtube", () => "YouTube", "play", "#ff6b6b", "#d91c1c"],
+  ["performance", () => L.performance, "sliders", "#8e9cff", "#4b5ae0"],
+  ["about", () => L.aboutShort, "info", "#c9ced8", "#868d9b"],
+];
+function openSettings(section) {
+  openApp("customize", { section });
+}
+function mountCustomize(win) {
+  const nav = h("nav", { class: "mdos-set-nav", "aria-label": L.settingsTitle });
+  const pane = h("div", { class: "mdos-set-pane" });
+  const group = (title, ...kids) => h("section", { class: "mdos-set-group" }, title ? h("h3", { text: title }) : null, ...kids);
+  const row = (label, control) => h("div", { class: "mdos-set-row" }, h("span", { text: label }), control);
+  const hint = (text) => h("p", { class: "mdos-set-hint", text });
+  const btn = (text, onclick, primary) => h("button", { type: "button", class: `mdos-btn${primary ? " mdos-btn--primary" : ""}`, text, onclick });
+  const show = (id) => {
+    win.rec.section = id;
+    save();
+    for (const b of nav.children) b.setAttribute("aria-current", String(b.dataset.section === id));
+    pane.replaceChildren(...(SECTION_BUILDERS[id] || SECTION_BUILDERS.appearance)());
+    pane.scrollTop = 0;
+  };
+  const SECTION_BUILDERS = {
+    appearance: () => {
+      const status = h("p", { class: "mdos-set-hint" });
+      fetch("/api/themes", { credentials: "same-origin" })
+        .then((r) => (r.ok ? r.json() : []))
+        .then((list) => {
+          const active = Array.isArray(list) ? list.find((t) => t.isActive) : null;
+          const applied = doc.getElementById("marinara-custom-theme");
+          status.textContent = `${L.themeNow}: ${applied && active ? active.name : L.themeNone}`;
+        })
+        .catch(() => (status.textContent = ""));
+      return [
+        group(
+          null,
+          settingToggle("themeSync", L.themeSync, (on) => {
+            if (on) updateSetting("accent", "theme");
+            show("appearance");
+          }),
+          status,
+          hint(L.themeSyncHint),
+        ),
+        group(L.accent, accentRow()),
+        group(
+          L.customize,
+          row(L.iconStyle, settingSelect("iconStyle", Object.entries(L.iconStyles))),
+          row(L.iconShape, settingSelect("iconShape", Object.entries(L.iconShapes))),
+          settingToggle("iconView", L.iconView),
+          h("div", { class: "mdos-row" }, btn(L.editIcons, () => openIconPicker())),
+        ),
+      ];
+    },
+    wallpaper: () => [group(L.wallpaper, wallpaperSwatches(), ...wallpaperImageControls())],
+    home: () => [
+      group(
+        L.layoutMode,
+        segmented(Object.entries(L.layoutModes), state.layoutMode, (v) => {
+          updateSetting("layoutMode", v);
+          renderWidgets();
+        }),
+      ),
+      group(
+        L.homeLayout,
+        row(L.boardPos, segmented(Object.entries(L.boardPositions), state.board, (v) => updateSetting("board", v))),
+        settingToggle("showCredits", L.showCredits),
+        settingToggle("showFeed", L.showFeed),
+        h(
+          "div",
+          { class: "mdos-row" },
+          btn(L.arrangeIcons, () => {
+            for (const d of state.desk) d.x = d.y = null;
+            save();
+            renderWidgets();
+          }),
+          btn(L.arrangeWidgets, () => {
+            for (const w of state.widgets) w.x = w.y = null;
+            save();
+            renderWidgets();
+          }),
+        ),
+      ),
+      group(
+        L.editWidgets,
+        h(
+          "div",
+          { class: "mdos-row" },
+          btn(L.editWidgets, () => setEditMode(true), true),
+          btn(`${L.addApps}…`, (e) => openAddApps(e.currentTarget)),
+          btn(`${L.addBookmark}…`, (e) => openBookmarkForm(e.currentTarget)),
+        ),
+      ),
+    ],
+    chat: () => chatDesignSection(win, { group, row, hint, btn, rerender: () => show("chat") }),
+    dock: () => [
+      group(
+        L.dock,
+        row(
+          L.dockSize,
+          h("input", {
+            type: "range",
+            min: "40",
+            max: "80",
+            step: "2",
+            value: String(state.dockSize),
+            "aria-label": L.dockSize,
+            oninput: (e) => updateSetting("dockSize", Number(e.target.value)),
+          }),
+        ),
+        settingToggle("dockAutohide", L.autohide),
+        settingToggle("magnify", L.magnify),
+        settingToggle("dockRecents", L.recents),
+      ),
+    ],
+    youtube: () => {
+      const key = h("input", {
+        type: "password",
+        class: "mdos-input",
+        placeholder: L.ytApiKey,
+        autocomplete: "off",
+        value: state.yt.apiKey || "",
+        onchange: (e) => {
+          state.yt.apiKey = e.target.value.trim();
+          save();
+        },
+      });
+      return [
+        group(
+          L.ytMode,
+          segmented(Object.entries(L.ytModes), state.yt.mode, (v) => {
+            state.yt.mode = v;
+            save();
+            for (const w of appWins.values()) if (w.rec.type === "youtube") w.refresh?.(true);
+            show("youtube");
+          }),
+          state.yt.mode === "api" ? field(L.ytApiKey, key) : null,
+          state.yt.mode === "api" ? hint(L.ytApiHint) : null,
+          state.yt.mode === "account" ? hint(L.ytAccountHint) : null,
+          state.yt.mode === "account"
+            ? h(
+                "div",
+                { class: "mdos-row" },
+                btn(L.ytLogin, () => openExternal("https://accounts.google.com/ServiceLogin?service=youtube&continue=https%3A%2F%2Fwww.youtube.com%2F"), true),
+                btn(L.ytOpenSite, () => openExternal("https://www.youtube.com/")),
+              )
+            : null,
+        ),
+      ];
+    },
+    performance: () => [
+      group(
+        L.performance,
+        settingToggle("realGlass", L.realGlass),
+        settingToggle("reduceTransparency", L.reduceTransparency),
+        settingToggle("reduceMotion", L.reduceMotion),
+        settingToggle("bootSplash", L.bootSplash),
+      ),
+    ],
+    about: () => [
+      group(
+        "Marinara Desktop 2.2.0",
+        hint(L.aboutBody),
+        h("dl", { class: "mdos-about-keys" }, ...L.shortcutList.flatMap(([k, v]) => [h("dt", { text: k }), h("dd", { text: v })])),
+        h("div", { class: "mdos-row" }, btn(L.classic, () => setEnabled(false)), isDesktop() ? btn(L.resetLayout, resetLayout) : null),
+      ),
+    ],
+  };
+  for (const [id, label, icon, g1, g2] of SET_SECTIONS) {
+    nav.append(
+      h(
+        "button",
+        { type: "button", class: "mdos-set-nav-item", "data-section": id, onclick: () => show(id) },
+        h("span", { class: "mdos-app-icon", style: `--g1:${g1};--g2:${g2}`, svg: svg(icon) }),
+        h("span", { text: label() }),
+      ),
+    );
+  }
+  win.body.append(h("div", { class: "mdos-set" }, nav, pane));
+  win.refresh = () => {
+    if (win.rec.section && nav.querySelector(`[aria-current="true"]`)?.dataset.section !== win.rec.section) show(win.rec.section);
+  };
+  win.openSection = show;
+  show(win.rec.section || "appearance");
+}
+
+// Chat design: presets, controls and a live preview; changes also apply to
+// the real chat behind the window as you make them.
+function chatDesignSection(win, { group, row, hint, btn, rerender }) {
+  const target = win.rec.chatTarget || "convo";
+  const spec = state.chat[target];
+  const commit = (patch, redraw = false) => {
+    Object.assign(spec, patch);
+    for (const k of Object.keys(spec)) if (spec[k] === "" || spec[k] == null) delete spec[k];
+    save();
+    applyChatStyle();
+    if (redraw) rerender();
+  };
+  const toHex = (value, fallback) => {
+    const c = toColor(value) || toColor(fallback) || "rgb(0, 0, 0)";
+    const m = c.match(/[\d.]+/g) || [0, 0, 0];
+    return `#${m.slice(0, 3).map((v) => Number(v).toString(16).padStart(2, "0")).join("")}`;
+  };
+  const color = (key, fallback) =>
+    h("input", { type: "color", class: "mdos-color", value: toHex(spec[key], fallback), oninput: (e) => commit({ [key]: e.target.value }) });
+  const range = (key, min, max, step, fallback, unit = "") => {
+    const out = h("output", { text: `${spec[key] ?? fallback}${unit}` });
+    return h(
+      "div",
+      { class: "mdos-set-range" },
+      h("input", {
+        type: "range",
+        min: String(min),
+        max: String(max),
+        step: String(step),
+        value: String(spec[key] ?? fallback),
+        oninput: (e) => {
+          out.textContent = `${e.target.value}${unit}`;
+          commit({ [key]: Number(e.target.value) });
+        },
+      }),
+      out,
+    );
+  };
+  const fontPicker = () => {
+    const sel = h("select", {
+      class: "mdos-cc-select",
+      onchange: (e) => commit({ font: e.target.value }, true),
+    });
+    for (const [v, label] of Object.entries(L.fonts)) sel.append(h("option", { value: v, text: label, selected: (spec.font || "") === v }));
+    const custom = h("input", {
+      type: "text",
+      class: "mdos-input",
+      placeholder: L.customFont,
+      value: spec.customFont || "",
+      onchange: (e) => commit({ customFont: e.target.value.trim() }),
+    });
+    return [row(L.font, sel), spec.font === "custom" ? custom : null];
+  };
+  const preview = h(
+    "div",
+    { class: `mdos-cv-preview mdos-cv-preview--${target}`, "aria-label": L.preview },
+    target === "convo"
+      ? [
+          h("div", { class: "mdos-pv-row mdos-pv-them" }, h("span", { class: "mdos-pv-avatar" }), h("div", { class: "mdos-pv-col" }, h("small", { class: "mdos-pv-name", text: "Mari" }), h("p", { class: "mdos-pv-bubble", text: L.pvThem }), h("p", { class: "mdos-pv-bubble", text: L.pvThem2 }))),
+          h("div", { class: "mdos-pv-row mdos-pv-me" }, h("p", { class: "mdos-pv-bubble", text: L.pvMe })),
+        ]
+      : [h("small", { class: "mdos-pv-name", text: "MARI" }), h("p", { class: "mdos-pv-rp", text: L.pvRp })],
+  );
+  const out = [
+    group(
+      null,
+      segmented(
+        [
+          ["convo", L.convo],
+          ["rp", L.roleplay],
+        ],
+        target,
+        (v) => {
+          win.rec.chatTarget = v;
+          save();
+          rerender();
+        },
+      ),
+      preview,
+    ),
+  ];
+  if (target === "convo") {
+    out.push(
+      group(
+        L.presets,
+        h(
+          "div",
+          { class: "mdos-row" },
+          ...Object.entries(L.cvPresets).map(([id, label]) =>
+            btn(label, () => {
+              state.chat.convo = { ...CV_PRESETS[id] };
+              save();
+              applyChatStyle();
+              rerender();
+            }),
+          ),
+        ),
+        row(L.convoStyle, settingSelect("convoStyle", [["messages", L.convoMessages], ["marinara", L.convoMarinara]])),
+      ),
+      group(
+        L.font,
+        ...fontPicker(),
+        row(L.textSize, range("size", 12, 22, 1, 15, "px")),
+        row(L.corner, range("radius", 2, 26, 1, 18, "px")),
+        row(L.columnWidth, range("width", 520, 1200, 20, 860, "px")),
+      ),
+      group(
+        L.myBubble,
+        row(L.myBubble, color("me", "var(--mdos-accent)")),
+        row(L.bubbleText, color("meFg", "#ffffff")),
+        row(L.theirBubble, color("them", "var(--mdos-bubble-other)")),
+        row(L.bubbleText, color("themFg", "var(--mdos-bubble-other-fg)")),
+      ),
+      group(
+        L.chatBg,
+        segmented(Object.entries(L.chatBgModes), spec.bgMode || "", (v) => commit({ bgMode: v }, true)),
+        spec.bgMode === "color" ? row(L.chatBg, color("bg", "var(--mdos-win-bg)")) : null,
+        spec.bgMode === "image"
+          ? btn(L.pickImage, () =>
+              pickImage(
+                (data) => {
+                  if (storeImage(() => (images.chatBg = data))) applyChatStyle();
+                },
+                { maxSide: 1600, maxBytes: 260_000 },
+              ),
+            )
+          : null,
+        row(L.avatars, segmented(Object.entries(L.avatarModes), spec.avatars || "circle", (v) => commit({ avatars: v }))),
+        h(
+          "label",
+          { class: "mdos-cc-toggle" },
+          h("span", { text: L.showNames }),
+          h("input", { type: "checkbox", role: "switch", checked: spec.names !== false, onchange: (e) => commit({ names: e.target.checked ? "" : false }) }),
+        ),
+      ),
+    );
+  } else {
+    out.push(
+      group(
+        L.presets,
+        h(
+          "div",
+          { class: "mdos-row" },
+          ...Object.entries(L.rpPresets).map(([id, label]) =>
+            btn(label, () => {
+              const { style, ...rest } = RP_PRESETS[id];
+              state.chat.rp = { ...rest };
+              updateSetting("rpStyle", style);
+              applyChatStyle();
+              rerender();
+            }),
+          ),
+        ),
+        row(L.rpStyle, settingSelect("rpStyle", [["book", L.rpBook], ["night", L.rpNight], ["clean", L.rpClean]], () => rerender())),
+      ),
+      group(
+        L.font,
+        ...fontPicker(),
+        row(L.textSize, range("size", 13, 24, 1, 17, "px")),
+        row(L.lineHeight, range("line", 1.3, 2.4, 0.05, 1.85)),
+        row(L.columnWidth, range("width", 480, 1000, 20, 700, "px")),
+      ),
+      group(L.paper, row(L.paper, color("paper", "var(--mdos-paper)")), row(L.ink, color("ink", "var(--mdos-ink)"))),
+    );
+  }
+  out.push(
+    h(
+      "div",
+      { class: "mdos-row" },
+      btn(L.resetChat, () => {
+        state.chat[target] = {};
+        if (target === "convo" && images.chatBg) {
+          images.chatBg = "";
+          saveImages();
+        }
+        save();
+        applyChatStyle();
+        rerender();
+      }),
+    ),
+  );
+  return out;
 }
 
 // ── About / shortcuts ─────────────────────────────────────────
@@ -3390,7 +4042,7 @@ function showAbout() {
       { class: "mdos-about-card" },
       h("div", { class: "mdos-about-logo", svg: LOGO }),
       h("h2", { text: "Marinara Desktop" }),
-      h("p", { class: "mdos-about-version", text: "2.1.0" }),
+      h("p", { class: "mdos-about-version", text: "2.2.0" }),
       h("p", { text: L.aboutBody }),
       h(
         "dl",
@@ -3515,20 +4167,219 @@ function updateSetting(key, value) {
   applySettings();
   save();
 }
+// ── Theme library sync ────────────────────────────────────────
+//
+// Marinara injects the theme applied in Settings → Appearance → Theme library
+// as <style id="marinara-custom-theme">. We read its root-level variables,
+// resolve them to real colours and feed them to our design: accent, window
+// surfaces, text, font, and the "theme" wallpaper. Our own token overrides
+// on <html> don't affect this, because we read the theme's CSS text itself.
+
+let themePalette = {};
+let themeCssSeen = null;
+const colorProbe = h("span", { style: "display:none" });
+ui.append(colorProbe);
+function toColor(value) {
+  if (!value) return null;
+  colorProbe.style.color = "";
+  colorProbe.style.color = value;
+  if (!colorProbe.style.color) return null;
+  const out = getComputedStyle(colorProbe).color;
+  return out && out !== "rgba(0, 0, 0, 0)" ? out : null;
+}
+const luminance = (rgb) => {
+  const m = (rgb || "").match(/[\d.]+/g);
+  if (!m) return 0.5;
+  const [r, g, b] = m.slice(0, 3).map((v) => {
+    const c = Number(v) / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+function readThemeVars(cssText) {
+  const vars = {};
+  let font = null;
+  const sheet = new CSSStyleSheet();
+  try {
+    sheet.replaceSync(cssText.replace(/@import[^;]+;/g, ""));
+  } catch {
+    return { vars, font };
+  }
+  const dark = html.dataset.theme !== "light";
+  const rootish = /^(:root|html|body|\[data-theme(=["']?(light|dark)["']?)?\]|:root\[data-theme(=["']?(light|dark)["']?)?\]|html\[data-theme(=["']?(light|dark)["']?)?\])$/i;
+  const visit = (rules) => {
+    for (const rule of rules) {
+      if (rule.cssRules && !rule.selectorText) {
+        visit(rule.cssRules); // @media / @supports blocks
+        continue;
+      }
+      if (!rule.selectorText || !rule.style) continue;
+      const parts = rule.selectorText.split(",").map((s) => s.trim());
+      const applies = parts.some((p) => {
+        if (!rootish.test(p)) return false;
+        if (/light/i.test(p)) return !dark;
+        if (/dark/i.test(p)) return dark;
+        return true;
+      });
+      if (!applies) continue;
+      for (const name of rule.style) {
+        if (name.startsWith("--")) vars[name] = rule.style.getPropertyValue(name).trim();
+        else if (name === "font-family") font = rule.style.getPropertyValue(name).trim();
+      }
+    }
+  };
+  visit(sheet.cssRules);
+  return { vars, font };
+}
+function resolveVars(value, vars, depth = 0) {
+  if (!value || depth > 6) return value;
+  return value.replace(/var\(\s*(--[\w-]+)\s*(?:,\s*([^()]*(?:\([^()]*\)[^()]*)*))?\)/g, (_, name, fallback) =>
+    vars[name] != null ? resolveVars(vars[name], vars, depth + 1) : fallback != null ? resolveVars(fallback.trim(), vars, depth + 1) : "",
+  );
+}
+function computeThemePalette() {
+  const style = doc.getElementById("marinara-custom-theme");
+  const cssText = style?.textContent || "";
+  const palette = {};
+  if (cssText) {
+    const { vars, font } = readThemeVars(cssText);
+    const pick = (...names) => {
+      for (const n of names) {
+        const c = toColor(resolveVars(vars[n], vars));
+        if (c) return c;
+      }
+      return null;
+    };
+    palette.accent = pick("--marinara-app-accent-solid", "--marinara-app-accent-static", "--primary", "--marinara-chat-chrome-accent");
+    palette.bg = pick("--background");
+    palette.card = pick("--card", "--popover");
+    palette.fg = pick("--foreground", "--card-foreground");
+    palette.muted = pick("--muted-foreground");
+    palette.sidebar = pick("--sidebar", "--card");
+    // Decor: a background picture or gradient the theme paints behind the app.
+    const paint = resolveVars(vars["--marinara-app-background-paint"] || "", vars);
+    if (/url\(|gradient\(/i.test(paint)) palette.decor = paint;
+    if (font) palette.font = resolveVars(font, vars).replace(/!important/g, "").trim() || null;
+    palette.name = style.dataset.themeName || null;
+  }
+  // No custom theme (or it sets no accent): Marinara's own accent setting.
+  palette.accent ||= toColor(html.style.getPropertyValue("--marinara-app-accent-static").trim()) || null;
+  return palette;
+}
+function themeWallpaperCss() {
+  const p = themePalette;
+  if (p.decor) return p.decor;
+  const accent = p.accent || "#0a84ff";
+  const bg = p.bg || "#2b1242";
+  const light = luminance(bg) > 0.5;
+  return light
+    ? `radial-gradient(100% 80% at 15% 10%, color-mix(in srgb, ${accent} 35%, white) 0%, transparent 60%), radial-gradient(90% 80% at 88% 22%, color-mix(in srgb, ${accent} 55%, white) 0%, transparent 62%), linear-gradient(180deg, ${bg}, color-mix(in srgb, ${bg} 85%, ${accent}))`
+    : `radial-gradient(100% 80% at 15% 10%, color-mix(in srgb, ${accent} 70%, white) 0%, transparent 55%), radial-gradient(90% 80% at 88% 22%, ${accent} 0%, transparent 60%), linear-gradient(170deg, color-mix(in srgb, ${bg} 70%, ${accent}), ${bg})`;
+}
+const SYNC_VARS = ["--mdos-win-bg", "--mdos-card", "--mdos-fg", "--mdos-fg-2", "--mdos-panel-bg", "--mdos-sidebar-vib", "--mdos-ui-font"];
+function applyThemeSync() {
+  themePalette = computeThemePalette();
+  const p = themePalette;
+  const on = state.themeSync;
+  const set = (name, value) => (on && value ? setVar(name, value) : html.style.removeProperty(name));
+  // Surfaces follow the theme only when it defines them; text stays readable.
+  set("--mdos-win-bg", p.bg);
+  set("--mdos-card", p.card);
+  set("--mdos-fg", p.bg && p.fg ? p.fg : null);
+  set("--mdos-fg-2", p.bg && p.muted ? p.muted : null);
+  set("--mdos-panel-bg", p.sidebar || p.bg);
+  set("--mdos-sidebar-vib", p.sidebar ? `color-mix(in srgb, ${p.sidebar} 80%, transparent)` : null);
+  set("--mdos-ui-font", p.font ? `${p.font}, -apple-system, "Segoe UI", Pretendard, "Malgun Gothic", system-ui, sans-serif` : null);
+  toggleClass("mdos-theme-sync", on);
+}
+function refreshTheme() {
+  const css = doc.getElementById("marinara-custom-theme")?.textContent || "";
+  const key = `${css.length}:${css.slice(0, 200)}:${html.dataset.theme}:${html.style.getPropertyValue("--marinara-app-accent-static")}`;
+  if (key === themeCssSeen) return;
+  themeCssSeen = key;
+  applyThemeSync();
+  applyAccent();
+  applyWallpaper();
+  applyChatStyle();
+}
+// Theme switches replace the <style> in <head>; light/dark flips data-theme.
+const themeObserver = new MutationObserver(() => refreshTheme());
+themeObserver.observe(doc.head, { childList: true, subtree: true, characterData: true });
+themeObserver.observe(html, { attributes: true, attributeFilter: ["data-theme"] });
+
 function applyAccent() {
   const accent = ACCENTS.find((a) => a.id === state.accent) || ACCENTS[0];
-  toggleClass("mdos-accent", !!accent.color);
-  setVar("--mdos-accent", accent.color || "var(--primary)");
+  const color = accent.theme ? themePalette.accent || "#0a84ff" : accent.color;
+  toggleClass("mdos-accent", !!color);
+  setVar("--mdos-accent", color || "var(--primary)");
 }
 function applyWallpaper() {
   const image = images.wallpaper;
   const wp = WALLPAPERS.find((w) => w.id === state.wallpaper) || WALLPAPERS[0];
-  setVar("--mdos-wallpaper", image ? `center / cover no-repeat url(${JSON.stringify(image)}), #111` : wp.css);
-  html.dataset.mdosWallpaperTone = image ? "dark" : wp.dark === false ? "light" : "dark";
+  const css = image ? `center / cover no-repeat url(${JSON.stringify(image)}), #111` : wp.id === "theme" ? themeWallpaperCss() : wp.css;
+  setVar("--mdos-wallpaper", css);
+  const tone = image ? "dark" : wp.id === "theme" ? (luminance(themePalette.bg) > 0.5 && !themePalette.decor ? "light" : "dark") : wp.dark === false ? "light" : "dark";
+  html.dataset.mdosWallpaperTone = tone;
+}
+
+// ── Chat design ───────────────────────────────────────────────
+
+const FONT_STACKS = {
+  system: "var(--mdos-ui-font)",
+  serif: '"Iowan Old Style", "Palatino Linotype", Georgia, "Nanum Myeongjo", "Noto Serif KR", Batang, serif',
+  rounded: '"SF Pro Rounded", Nunito, "NanumSquareRound", Jua, "Arial Rounded MT Bold", var(--mdos-ui-font)',
+  hand: '"Nanum Pen Script", Gaegu, "Segoe Print", "Comic Sans MS", cursive',
+  mono: 'ui-monospace, "SF Mono", D2Coding, Consolas, monospace',
+};
+const fontStack = (spec) => {
+  if (!spec?.font) return null;
+  if (spec.font === "theme") return themePalette.font || null;
+  if (spec.font === "custom") return spec.customFont ? `${JSON.stringify(spec.customFont.replace(/["\\]/g, ""))}, var(--mdos-ui-font)` : null;
+  return FONT_STACKS[spec.font] || null;
+};
+const CV_PRESETS = {
+  base: {},
+  yellow: { me: "#fee500", meFg: "#191919", them: "#ffffff", themFg: "#191919", bgMode: "color", bg: "#b2c7da", radius: 16 },
+  green: { me: "#06c755", meFg: "#ffffff", them: "#ffffff", themFg: "#1d1d1f", bgMode: "color", bg: "#8fb3dd", radius: 20 },
+  dark: { me: "", them: "#2c2c2e", themFg: "#f5f5f7", bgMode: "color", bg: "#000000" },
+  pastel: { me: "#ffc8dd", meFg: "#5a2a3a", them: "#e2f0cb", themFg: "#2f4a1f", bgMode: "color", bg: "#fff7fb", radius: 22, font: "rounded" },
+};
+const RP_PRESETS = {
+  book: { style: "book" },
+  parchment: { style: "book", paper: "#efe0bf", ink: "#3b2a14", font: "serif" },
+  night: { style: "night" },
+  typewriter: { style: "book", paper: "#f6f5ef", ink: "#222222", font: "mono", size: 15, line: 1.7 },
+  novel: { style: "book", paper: "#ffffff", ink: "#1d1d1f", font: "system", size: 17, line: 1.9 },
+};
+function applyChatStyle() {
+  const cv = state.chat.convo;
+  const rp = state.chat.rp;
+  const v = (name, value) => (value ? setVar(name, value) : html.style.removeProperty(name));
+  v("--mdos-cv-font", fontStack(cv));
+  v("--mdos-cv-size", cv.size ? `${cv.size}px` : null);
+  v("--mdos-cv-me", cv.me);
+  v("--mdos-cv-me-fg", cv.meFg);
+  v("--mdos-cv-them", cv.them);
+  v("--mdos-cv-them-fg", cv.themFg);
+  v("--mdos-cv-radius", cv.radius != null && cv.radius !== "" ? `${cv.radius}px` : null);
+  v("--mdos-cv-width", cv.width ? `${cv.width}px` : null);
+  v("--mdos-cv-bg", cv.bgMode === "color" ? cv.bg : cv.bgMode === "image" && images.chatBg ? `center / cover no-repeat url(${JSON.stringify(images.chatBg)})` : null);
+  html.dataset.mdosCvBg = cv.bgMode || "";
+  html.dataset.mdosCvAvatar = cv.avatars || "circle";
+  toggleClass("mdos-cv-no-names", cv.names === false);
+  v("--mdos-rp-font", fontStack(rp));
+  v("--mdos-rp-size", rp.size ? `${rp.size}px` : null);
+  v("--mdos-rp-line", rp.line ? String(rp.line) : null);
+  v("--mdos-rp-paper", rp.paper);
+  v("--mdos-rp-ink", rp.ink);
+  v("--mdos-rp-width", rp.width ? `${rp.width}px` : null);
 }
 function applySettings() {
+  applyThemeSync();
   applyAccent();
   applyWallpaper();
+  applyChatStyle();
+  html.dataset.mdosLayout = state.layoutMode;
   setVar("--mdos-dock-size", `${state.dockSize}px`);
   toggleClass("mdos-dock-autohide", !!state.dockAutohide);
   toggleClass("mdos-icon-view", !!state.iconView);
@@ -3648,6 +4499,8 @@ function sync() {
   const onHome = homePageVisible();
   compactHelpers();
   ensureAppLayer();
+  // Tagged here (not CSS :has) for the "show wallpaper" chat background.
+  toggleClass("mdos-in-convo", !!$('[data-chat-mode="conversation"]'));
   const appOpen = state.apps.some((a) => !a.min);
   toggleClass("mdos-touch-home", isTouch() && onHome && !$(SEL.sheets) && !appOpen);
   if (homeVisible()) readHomeApps();
@@ -3829,6 +4682,7 @@ return () => {
   disposed = true;
   mode = "off";
   observer.disconnect();
+  themeObserver.disconnect();
   marinara.clearInterval(clockTimer);
   marinara.clearInterval(viewTimer);
   marinara.clearInterval(pollTimer);

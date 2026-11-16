@@ -259,12 +259,12 @@ html.mdos.mdos-icon-view [data-mdos-win="panel"] :is([data-drag-kind="character"
 /* ── Chat: centred reading column, floating composer ─────────── */
 
 html.mdos [data-mdos-win="main"] [data-component="ChatArea.Conversation"] .mari-messages-scroll > * {
-  max-width: 860px;
+  max-width: var(--mdos-cv-width, 860px);
   margin-inline: auto;
 }
 html.mdos [data-mdos-win="main"] .mari-chat-input.chat-input-container {
   width: 100%;
-  max-width: 880px;
+  max-width: calc(var(--mdos-cv-width, 860px) + 20px);
   margin-inline: auto;
   padding-bottom: 14px !important;
 }

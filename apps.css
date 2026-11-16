@@ -9,13 +9,24 @@
    Roleplay (data-mdos-rp="book" | "night"): an e-book reader —
      paper (or night) page, serif text in a comfortable column, names
      as small caps, your turns marked like a highlighted passage.
+
+   Every look can be changed in Customize → Chat design. Those choices
+   arrive as variables on <html> (--mdos-cv-* and --mdos-rp-*); when a
+   variable is unset the default design below is used.
+
+   Performance: no :has() selectors here — this area changes many times
+   a second while a reply streams in.
    ────────────────────────────────────────────────────────────── */
 
 /* ── Conversation: messaging app ─────────────────────────────── */
 
 html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] {
   --mdos-bubble-max: min(74%, 560px);
-  background: var(--mdos-win-bg) !important;
+  --mdos-cv-bubble-me: var(--mdos-cv-me, var(--mdos-accent, #0a84ff));
+  --mdos-cv-bubble-me-fg: var(--mdos-cv-me-fg, #ffffff);
+  --mdos-cv-bubble-them: var(--mdos-cv-them, var(--mdos-bubble-other));
+  --mdos-cv-bubble-them-fg: var(--mdos-cv-them-fg, var(--mdos-bubble-other-fg));
+  background: var(--mdos-cv-bg, var(--mdos-win-bg)) !important;
 }
 html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] .mari-message {
   padding-block: 1px !important;
@@ -24,6 +35,9 @@ html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] .mari-mess
 html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-component="ConversationMessage.Content"] {
   gap: 8px !important;
   align-items: flex-end;
+}
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] .mari-message-content {
+  font-family: var(--mdos-cv-font, inherit) !important;
 }
 
 /* Your messages: right side, accent bubble, no avatar or name. */
@@ -42,17 +56,17 @@ html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-mess
   width: fit-content;
   max-width: var(--mdos-bubble-max);
   padding: 7px 13px;
-  border-radius: 18px;
-  background: var(--mdos-accent, #0a84ff);
-  color: #fff !important;
-  font-size: 15px !important;
+  border-radius: var(--mdos-cv-radius, 18px);
+  background: var(--mdos-cv-bubble-me);
+  color: var(--mdos-cv-bubble-me-fg) !important;
+  font-size: var(--mdos-cv-size, 15px) !important;
   line-height: 1.4 !important;
 }
 html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="user"] .mari-message-content * {
   color: inherit !important;
 }
 
-/* Their messages: small round avatar at the bottom, grey bubbles. */
+/* Their messages: small avatar at the bottom, one bubble per paragraph. */
 html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="assistant"] .mari-message-avatar {
   width: 30px !important;
   align-self: flex-end;
@@ -62,8 +76,17 @@ html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-mess
   height: 30px !important;
   border-radius: 50% !important;
 }
+html.mdos[data-mdos-convo="messages"][data-mdos-cv-avatar="rounded"] [data-chat-mode="conversation"] .mari-message-avatar > button {
+  border-radius: 9px !important;
+}
+html.mdos[data-mdos-convo="messages"][data-mdos-cv-avatar="hidden"] [data-chat-mode="conversation"] .mari-message-avatar {
+  display: none !important;
+}
 html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="assistant"] .mari-message-meta {
   margin: 0 0 3px 12px !important;
+}
+html.mdos.mdos-cv-no-names[data-mdos-convo="messages"] [data-chat-mode="conversation"] .mari-message-meta {
+  display: none !important;
 }
 html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] .mari-message-name {
   font-size: 11px !important;
@@ -73,17 +96,15 @@ html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] .mari-mess
 html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] .mari-message-timestamp {
   display: none !important;
 }
-/* Each paragraph of a reply becomes its own bubble, like separate texts.
-   (No :has() here: this area changes constantly while a reply streams in.) */
 html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="assistant"] .mari-message-content > .space-y-1\.5 > *,
 html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="assistant"] .mari-message-content > :not(.space-y-1\.5) {
   width: fit-content;
   max-width: var(--mdos-bubble-max);
   padding: 7px 13px;
-  border-radius: 18px;
-  background: var(--mdos-bubble-other);
-  color: var(--mdos-bubble-other-fg);
-  font-size: 15px !important;
+  border-radius: var(--mdos-cv-radius, 18px);
+  background: var(--mdos-cv-bubble-them);
+  color: var(--mdos-cv-bubble-them-fg);
+  font-size: var(--mdos-cv-size, 15px) !important;
   line-height: 1.4 !important;
 }
 html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="assistant"] .mari-message-content > .space-y-1\.5 {
@@ -118,14 +139,8 @@ html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] .mari-conv
 /* Header: translucent bar with the contact in the middle. */
 html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] .mari-messages-scroll > .sticky.top-0 {
   justify-content: center !important;
-  background: color-mix(in srgb, var(--mdos-win-bg) 82%, transparent);
-  backdrop-filter: blur(16px) saturate(170%);
-  -webkit-backdrop-filter: blur(16px) saturate(170%);
+  background: color-mix(in srgb, var(--mdos-win-bg) 86%, transparent);
   box-shadow: inset 0 -0.5px 0 var(--mdos-sep);
-}
-html.mdos.mdos-no-blur[data-mdos-convo="messages"] [data-chat-mode="conversation"] .mari-messages-scroll > .sticky.top-0 {
-  background: var(--mdos-win-bg);
-  backdrop-filter: none;
 }
 html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-conversation-header-identity] button {
   border: 0 !important;
@@ -134,25 +149,35 @@ html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-conv
   font-weight: 600 !important;
 }
 
+/* "Show wallpaper" chat background: the chat window turns clear. */
+html.mdos-in-convo[data-mdos-cv-bg="wallpaper"] :is([data-mdos-win="main"], [data-mdos-win="main"] .mari-app-background-paint, [data-mdos-win="main"] [data-component="TopBar"], [data-chat-mode="conversation"]) {
+  background: transparent !important;
+}
+html.mdos-in-convo[data-mdos-cv-bg="wallpaper"] [data-mdos-win="main"] {
+  background: color-mix(in srgb, var(--mdos-win-bg) 18%, transparent) !important;
+}
+html.mdos-in-convo[data-mdos-cv-bg="wallpaper"] [data-chat-mode="conversation"] :is(.mari-message-name, .mari-conversation-transcript-chrome-text) {
+  color: #fff !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+}
+
 /* ── Roleplay: e-book reader ─────────────────────────────────── */
 
 html.mdos[data-mdos-rp="book"] {
-  --mdos-paper: #fbf6ea;
-  --mdos-paper-2: #f3ecdb;
-  --mdos-ink: #2d261c;
-  --mdos-ink-2: #8a7b62;
+  --mdos-paper: var(--mdos-rp-paper, #fbf6ea);
+  --mdos-ink: var(--mdos-rp-ink, #2d261c);
   --mdos-mark: rgba(255, 205, 80, 0.26);
   --mdos-mark-edge: #e3ae35;
 }
 html.mdos[data-mdos-rp="night"] {
-  --mdos-paper: #1c1a17;
-  --mdos-paper-2: #26231f;
-  --mdos-ink: #e8e1d1;
-  --mdos-ink-2: #9a8f7a;
+  --mdos-paper: var(--mdos-rp-paper, #1c1a17);
+  --mdos-ink: var(--mdos-rp-ink, #e8e1d1);
   --mdos-mark: rgba(255, 205, 80, 0.12);
   --mdos-mark-edge: #b88a2a;
 }
 html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) {
+  --mdos-paper-2: color-mix(in srgb, var(--mdos-paper) 92%, var(--mdos-ink));
+  --mdos-ink-2: color-mix(in srgb, var(--mdos-ink) 55%, var(--mdos-paper));
   --mdos-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "AppleMyungjo", "Nanum Myeongjo", "Noto Serif KR",
     "Noto Serif CJK KR", Batang, "바탕", serif;
 }
@@ -160,8 +185,12 @@ html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area {
   background: var(--mdos-paper) !important;
   color: var(--mdos-ink);
 }
+/* Weather effects draw over the page; a book doesn't need them. */
+html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area > canvas {
+  display: none !important;
+}
 html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] {
-  --mari-roleplay-message-column-width: min(700px, 100cqw - 48px) !important;
+  --mari-roleplay-message-column-width: min(var(--mdos-rp-width, 700px), 100cqw - 48px) !important;
 }
 html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] .mari-rp-bubble {
   background: transparent !important;
@@ -174,12 +203,11 @@ html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="rol
   padding: 4px 2px !important;
 }
 html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] .mari-message-content {
-  font-family: var(--mdos-serif) !important;
-  font-size: 17px !important;
-  line-height: 1.85 !important;
+  font-family: var(--mdos-rp-font, var(--mdos-serif)) !important;
+  font-size: var(--mdos-rp-size, 17px) !important;
+  line-height: var(--mdos-rp-line, 1.85) !important;
   color: var(--mdos-ink) !important;
   text-wrap: pretty;
-  hanging-punctuation: first;
 }
 /* Names as small caps above each passage; times and model names fade back. */
 html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-row .mari-message-name {
@@ -219,6 +247,99 @@ html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .mari
   box-shadow: none !important;
 }
 html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .mari-chat-input-textarea {
-  font-family: var(--mdos-serif) !important;
+  font-family: var(--mdos-rp-font, var(--mdos-serif)) !important;
   color: var(--mdos-ink) !important;
+}
+
+/* ── Live preview in Customize → Chat design ─────────────────── */
+
+.mdos-cv-preview {
+  margin-top: 12px;
+  padding: 16px;
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 0.5px var(--mdos-sep);
+  display: grid;
+  gap: 8px;
+}
+.mdos-cv-preview--convo {
+  --pv-me: var(--mdos-cv-me, var(--mdos-accent, #0a84ff));
+  --pv-me-fg: var(--mdos-cv-me-fg, #fff);
+  --pv-them: var(--mdos-cv-them, var(--mdos-bubble-other));
+  --pv-them-fg: var(--mdos-cv-them-fg, var(--mdos-bubble-other-fg));
+  background: var(--mdos-cv-bg, var(--mdos-win-bg));
+  font-family: var(--mdos-cv-font, inherit);
+}
+html[data-mdos-cv-bg="wallpaper"] .mdos-cv-preview--convo {
+  background: var(--mdos-wallpaper);
+}
+.mdos-pv-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+.mdos-pv-me {
+  justify-content: flex-end;
+}
+.mdos-pv-col {
+  display: grid;
+  gap: 3px;
+  justify-items: start;
+}
+.mdos-pv-avatar {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(160deg, #ffb35c, #f06a1d);
+}
+html[data-mdos-cv-avatar="rounded"] .mdos-pv-avatar {
+  border-radius: 8px;
+}
+html[data-mdos-cv-avatar="hidden"] .mdos-pv-avatar {
+  display: none;
+}
+.mdos-pv-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--mdos-fg-2);
+  margin-left: 4px;
+}
+html.mdos-cv-no-names .mdos-cv-preview--convo .mdos-pv-name {
+  display: none;
+}
+.mdos-pv-bubble {
+  margin: 0;
+  max-width: 78%;
+  padding: 7px 13px;
+  border-radius: var(--mdos-cv-radius, 18px);
+  font-size: var(--mdos-cv-size, 15px);
+  line-height: 1.4;
+  background: var(--pv-them);
+  color: var(--pv-them-fg);
+}
+.mdos-pv-me .mdos-pv-bubble {
+  background: var(--pv-me);
+  color: var(--pv-me-fg);
+}
+.mdos-cv-preview--rp {
+  --pv-paper: var(--mdos-rp-paper, #fbf6ea);
+  --pv-ink: var(--mdos-rp-ink, #2d261c);
+  background: var(--pv-paper);
+  color: var(--pv-ink);
+  padding: 22px 26px;
+}
+html[data-mdos-rp="night"] .mdos-cv-preview--rp {
+  --pv-paper: var(--mdos-rp-paper, #1c1a17);
+  --pv-ink: var(--mdos-rp-ink, #e8e1d1);
+}
+.mdos-cv-preview--rp .mdos-pv-name {
+  margin: 0;
+  letter-spacing: 0.14em;
+  color: color-mix(in srgb, var(--pv-ink) 55%, var(--pv-paper));
+}
+.mdos-pv-rp {
+  margin: 0;
+  font-family: var(--mdos-rp-font, "Iowan Old Style", Georgia, "Nanum Myeongjo", Batang, serif);
+  font-size: var(--mdos-rp-size, 17px);
+  line-height: var(--mdos-rp-line, 1.85);
 }
