@@ -118,7 +118,11 @@ const L = KO
         greeting: "인사말",
         credits: "API 크레딧",
         locker: "확장 보관함",
+        ledger: "API 가계부",
+        credit: "크레딧",
       },
+      creditPick: "보여 줄 크레딧",
+      ledgerTopUse: "많이 쓴 곳",
       lockerEmpty: "보관함에 담긴 확장 버튼이 없어요",
       creditsEmpty: "홈을 한 번 열면 크레딧이 여기 표시돼요",
       pickPhoto: "사진을 골라 주세요",
@@ -346,7 +350,11 @@ const L = KO
         greeting: "Greeting",
         credits: "API credits",
         locker: "Extension locker",
+        ledger: "API budget",
+        credit: "Credit",
       },
+      creditPick: "Credit to show",
+      ledgerTopUse: "Top uses",
       lockerEmpty: "No extension buttons in the locker yet",
       creditsEmpty: "Open Home once to load your credits here",
       pickPhoto: "Choose a photo",
@@ -2333,7 +2341,7 @@ function openIconPicker() {
 // ── Widgets ───────────────────────────────────────────────────
 
 let editMode = false;
-const WIDGET_TYPES = ["launcher", "clock", "analog", "calendar", "greeting", "dday", "note", "photo", "credits", "locker"];
+const WIDGET_TYPES = ["launcher", "clock", "analog", "calendar", "greeting", "dday", "note", "photo", "credits", "ledger", "credit", "locker"];
 // New chat launcher: the three buttons of Marinara's (hidden) Home greeting.
 const LAUNCH_MODES = [
   { icon: "chat", g: ["#6ef08d", "#17a84d"] },
@@ -2501,8 +2509,7 @@ function widgetBody(w) {
       ];
     }
     case "credits": {
-      // A summary of the credit extension's cards, cached from the last time
-      // Home was showing, so it stays on the desktop beside open windows.
+      // All credit cards as a list, synced from the credit extension.
       const c = state.credits;
       const head = h("div", { class: "mdos-wg-label mdos-cr-head" }, h("span", { text: L.widgetNames.credits }), c?.total ? h("b", { text: c.total }) : null);
       if (!c?.rows?.length) return [head, h("div", { class: "mdos-wg-empty", text: L.creditsEmpty })];
@@ -2523,6 +2530,47 @@ function widgetBody(w) {
           ),
         ),
       ];
+    }
+    case "credit": {
+      // One credit card, chosen in the widget's settings (by the credit
+      // extension's own card id, so it survives reordering there).
+      const rows = state.credits?.rows || [];
+      const r = rows.find((x) => x.id && x.id === w.card) || rows[0];
+      if (!r) return [h("div", { class: "mdos-wg-label", text: L.widgetNames.credit }), h("div", { class: "mdos-wg-empty", text: L.creditsEmpty })];
+      return [
+        h("div", { class: "mdos-wg-label mdos-crd-brand", text: r.brand }),
+        r.sub ? h("div", { class: "mdos-wg-sub mdos-crd-sub", text: r.sub }) : null,
+        w.size !== "s" && r.lines?.length
+          ? h("div", { class: "mdos-crd-lines" }, ...r.lines.slice(0, 2).map((line) => h("div", { text: line })))
+          : null,
+        h("div", { class: "mdos-crd-amount" }, h("b", { text: r.amount || "—" }), r.of ? h("span", { text: r.of }) : null),
+        r.pct != null ? h("i", { class: "mdos-crd-bar", style: `--p:${r.pct}%` }) : null,
+      ];
+    }
+    case "ledger": {
+      // The credit extension's "API 가계부", synced: month total, change,
+      // today / month-end, the daily heat map and where the money went.
+      const d = state.ledger;
+      const head = h("div", { class: "mdos-wg-label mdos-lg-head" }, h("span", { text: L.widgetNames.ledger }), d?.month ? h("em", { text: d.month }) : null);
+      if (!d?.total) return [head, h("div", { class: "mdos-wg-empty", text: L.creditsEmpty })];
+      const total = h("div", { class: "mdos-lg-total" }, h("b", { text: d.total }), d.usd ? h("span", { text: d.usd }) : null);
+      const chip = d.chip
+        ? h("div", { class: "mdos-lg-cmp" }, h("span", { class: `mdos-lg-chip${d.up ? " is-up" : d.down ? " is-down" : ""}`, text: d.chip }), w.size === "s" ? null : h("small", { text: d.cmpNote || "" }))
+        : null;
+      if (w.size === "s") return [head, total, chip];
+      const facts = h("div", { class: "mdos-lg-facts" }, ...(d.facts || []).slice(0, w.size === "l" ? 4 : 2).map(([k, v]) => h("span", {}, k, h("b", { text: v }))));
+      if (w.size === "m") return [head, total, chip, facts];
+      const cal = h("div", { class: "mdos-lg-cal", style: `--off:${d.cal?.offset || 0}` });
+      (d.cal?.days || []).forEach((day, i) =>
+        cal.append(h("i", { class: `lv${day.lv}${day.today ? " is-today" : ""}`, style: i === 0 ? `grid-column-start:${(d.cal.offset || 0) + 1}` : "", title: day.t || "" })),
+      );
+      const uses = h(
+        "div",
+        { class: "mdos-lg-uses" },
+        h("div", { class: "mdos-lg-uses-title", text: L.ledgerTopUse }),
+        ...(d.uses || []).slice(0, 4).map((u) => h("div", { class: "mdos-lg-use" }, h("i", { style: `background:${u.color}` }), h("span", { text: u.name }), h("b", { text: u.pct }))),
+      );
+      return [head, total, chip, h("div", { class: "mdos-lg-grid" }, cal, uses), facts];
     }
     default:
       return [];
@@ -2561,36 +2609,87 @@ function refreshLocker() {
     for (const el of $$(`.mdos-wg[data-wid="${w.id}"] .mdos-wg-body`)) el.replaceChildren(...widgetBody(w));
   }
 }
-// Reads the credit extension's cards (#mac-credit-home) while Home shows them.
+// Reads the credit extension's cards (#mac-credit-home) while Home is
+// mounted — also when its board is switched off, since the cards stay in the
+// page. The result is cached, so the widgets keep showing it anywhere.
+const textOf = (el) => (el?.textContent || "").replace(/\s+/g, " ").trim();
+function scrapeLedger(card) {
+  if (!card) return null;
+  const facts = [];
+  for (const row of card.querySelectorAll(".mac-led-facts")) {
+    let label = "";
+    for (const n of row.childNodes) {
+      if (n.nodeType === 1 && n.tagName === "B") {
+        facts.push([label.replace(/[·\s]+$/g, "").replace(/^[·\s]+/g, "").slice(0, 24), textOf(n).slice(0, 24)]);
+        label = "";
+      } else label += n.textContent;
+    }
+  }
+  const days = [...card.querySelectorAll(".mac-cal .mac-cal-day")].map((b) => ({
+    lv: Number((b.className.match(/lv(\d)/) || [0, 0])[1]),
+    today: b.classList.contains("is-today"),
+    t: `${textOf(b.querySelector("span"))} · ${textOf(b.querySelector("small"))}`.slice(0, 24),
+  }));
+  const first = card.querySelector(".mac-cal .mac-cal-day");
+  const start = first ? parseInt(getComputedStyle(first).gridColumnStart, 10) : 1;
+  const chip = card.querySelector(".mac-led-chip");
+  return {
+    month: textOf(card.querySelector(".mac-led-nav b")).slice(0, 20),
+    total: textOf(card.querySelector(".mac-led-total b")).slice(0, 24),
+    usd: textOf(card.querySelector(".mac-led-total em")).slice(0, 20),
+    chip: textOf(chip).slice(0, 16),
+    up: !!chip?.classList.contains("is-up"),
+    down: !!chip?.classList.contains("is-down"),
+    cmpNote: textOf(card.querySelector(".mac-led-cmp small")).slice(0, 30),
+    facts: facts.slice(0, 6),
+    cal: { offset: Number.isFinite(start) ? Math.max(0, start - 1) : 0, days: days.slice(0, 31) },
+    uses: [...card.querySelectorAll(".mac-pie-legend li")].slice(0, 5).map((li) => ({
+      name: textOf(li.querySelector("span")).slice(0, 18),
+      pct: textOf(li.querySelector("b")).slice(0, 8),
+      color: getComputedStyle(li.querySelector("i") || li).backgroundColor,
+    })),
+  };
+}
 function scrapeCredits() {
   const home = $("#mac-credit-home");
   if (!home) return;
   const rows = [];
   for (const card of home.querySelectorAll(".mlh-crcard")) {
-    const brand = card.querySelector(".mlh-cr-brand b")?.textContent.trim();
+    const brand = textOf(card.querySelector(".mlh-cr-brand b"));
     if (!brand) continue;
-    const amount =
-      card.querySelector(".mlh-cr-big b")?.textContent.trim() ||
-      card.querySelector(".mlh-cr-big")?.textContent.trim() ||
-      card.querySelector(".mlh-rc-line b")?.textContent.trim() ||
-      "";
+    const amount = textOf(card.querySelector(".mlh-cr-big b")) || textOf(card.querySelector(".mlh-cr-big")) || textOf(card.querySelector(".mlh-rc-line b")) || "";
     const pct = parseFloat(card.querySelector(".mlh-cr-bar i")?.style.width);
-    rows.push({ brand: brand.slice(0, 40), amount: amount.slice(0, 40), pct: Number.isFinite(pct) ? Math.round(pct) : null });
+    rows.push({
+      id: (card.dataset.widgetId || "").slice(0, 40),
+      brand: brand.slice(0, 40),
+      sub: textOf(card.querySelector(".mlh-cr-brand em")).slice(0, 40),
+      amount: amount.slice(0, 40),
+      of: textOf(card.querySelector(".mlh-cr-big span")).slice(0, 24),
+      lines: [...card.querySelectorAll(".mlh-cr > .mlh-rc-line")].slice(0, 2).map((l) => textOf(l).slice(0, 40)),
+      pct: Number.isFinite(pct) ? Math.round(pct) : null,
+    });
   }
-  const total = home.querySelector(".mac-led-total b")?.textContent.trim().slice(0, 30) || "";
-  const next = { total, rows: rows.slice(0, 12) };
-  if (JSON.stringify(next) === JSON.stringify(state.credits || null)) return;
-  state.credits = next;
+  const total = textOf(home.querySelector(".mac-led-total b")).slice(0, 30);
+  const credits = { total, rows: rows.slice(0, 12) };
+  const ledger = scrapeLedger(home.querySelector(".mlh-rcptcard"));
+  const changed = JSON.stringify(credits) !== JSON.stringify(state.credits || null) || JSON.stringify(ledger) !== JSON.stringify(state.ledger || null);
+  if (!changed) return;
+  state.credits = credits;
+  state.ledger = ledger;
   save();
-  if (!state.creditsSeeded && rows.length) {
+  // 2.4: the budget and credit cards become desktop widgets (once). The
+  // board's own cards are switched off; Home layout can bring them back.
+  if (!state.creditWidgetsV && (ledger?.total || rows.length)) {
+    state.creditWidgetsV = 1;
     state.creditsSeeded = true;
-    if (!state.widgets.some((w) => w.type === "credits")) {
-      state.widgets.push({ id: newId(), type: "credits", size: "m", style: "glass", x: null, y: null });
-      return renderWidgets();
-    }
+    if (ledger?.total && !state.widgets.some((w) => w.type === "ledger")) state.widgets.push({ id: newId(), type: "ledger", size: "l", style: "glass", x: null, y: null });
+    if (rows.length && !state.widgets.some((w) => w.type === "credits")) state.widgets.push({ id: newId(), type: "credits", size: "m", style: "glass", x: null, y: null });
+    state.showCredits = false;
+    applySettings();
+    return renderWidgets();
   }
   for (const w of state.widgets) {
-    if (w.type !== "credits") continue;
+    if (!["credits", "credit", "ledger"].includes(w.type)) continue;
     for (const el of $$(`.mdos-wg[data-wid="${w.id}"] .mdos-wg-body`)) el.replaceChildren(...widgetBody(w));
   }
 }
@@ -2891,6 +2990,24 @@ function openWidgetEditor(w, anchor) {
             rerender();
           }),
         ),
+    w.type === "credit"
+      ? field(
+          L.creditPick,
+          (() => {
+            const sel = h("select", {
+              class: "mdos-cc-select",
+              onchange: (e) => {
+                w.card = e.target.value;
+                rerender();
+              },
+            });
+            for (const r of state.credits?.rows || []) {
+              sel.append(h("option", { value: r.id, text: r.sub ? `${r.brand} · ${r.sub}` : r.brand, selected: r.id === w.card }));
+            }
+            return sel;
+          })(),
+        )
+      : null,
     w.type === "dday"
       ? field(
           L.title,

@@ -909,10 +909,8 @@ html.mdos-desktop-home.mdos-no-credits [data-component="HomeBrowserHub.HomePage"
 /* ── API credits widget ──────────────────────────────────────── */
 /* On the bare desktop the credit extension's own cards show, so the summary
    steps aside (keeping its grid spot) except while arranging widgets. */
-html.mdos-desktop-home:not(.mdos-edit) #mdos-widgets .mdos-wg--credits,
-html.mdos-touch-home #mdos-sb .mdos-wg--credits {
-  visibility: hidden;
-}
+/* (The summary used to hide on Home next to the real cards; since 2.4 the
+   cards themselves live on the desktop as widgets, so it always shows.) */
 .mdos-cr-head {
   display: flex;
   align-items: baseline;
@@ -1231,4 +1229,226 @@ html.mdos-desktop-home #mac-credit-home .mlh-crcard:not(:hover, :focus-within) .
 :is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard:not(:nth-child(4n + 2)):is(:hover, :focus-within) .mlh-cr-brand,
 html.mdos-touch-home #mac-credit-home .mlh-crcard:not(:nth-child(4n + 2)) .mlh-cr-brand {
   padding-right: 0;
+}
+
+/* ── Single credit widget ────────────────────────────────────── */
+/* The bar runs along the widget's bottom edge; on the phone home grid the
+   widget isn't positioned yet, so it becomes the bar's anchor there. */
+#mdos-sb .mdos-wg--credit {
+  position: relative;
+}
+.mdos-crd-brand {
+  display: flex !important;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.mdos-crd-brand::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--mdos-accent);
+}
+.mdos-crd-sub {
+  margin-top: 3px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 11px !important;
+}
+.mdos-crd-lines {
+  display: grid;
+  gap: 2px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--mdos-widget-ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.mdos-crd-amount {
+  margin-top: auto;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 2px 6px;
+}
+.mdos-crd-amount b {
+  font: 700 26px/1.1 var(--mdos-font);
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  color: var(--mdos-widget-ink);
+}
+.mdos-wg--m .mdos-crd-amount b,
+.mdos-wg--l .mdos-crd-amount b {
+  font-size: 34px;
+}
+.mdos-crd-amount span {
+  font-size: 12px;
+  color: var(--mdos-widget-ink-2);
+}
+.mdos-crd-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 5px;
+  background: linear-gradient(90deg, var(--mdos-accent) var(--p), color-mix(in srgb, var(--mdos-widget-ink) 10%, transparent) var(--p));
+}
+
+/* ── API budget (ledger) widget ──────────────────────────────── */
+.mdos-lg-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.mdos-lg-head em {
+  font-style: normal;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--mdos-widget-ink-2);
+}
+.mdos-lg-total {
+  margin-top: 10px;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 2px 8px;
+}
+.mdos-lg-total b {
+  font: 700 34px/1.05 var(--mdos-font);
+  letter-spacing: -0.025em;
+  font-variant-numeric: tabular-nums;
+  color: var(--mdos-widget-ink);
+  white-space: nowrap;
+}
+.mdos-wg--s .mdos-lg-total b {
+  font-size: 26px;
+}
+.mdos-lg-total span {
+  font-size: 13px;
+  color: var(--mdos-widget-ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.mdos-lg-cmp {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.mdos-wg--s .mdos-lg-cmp {
+  margin-top: auto;
+}
+.mdos-lg-chip {
+  flex: none;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font: 700 11.5px/1.4 var(--mdos-font);
+  background: var(--mdos-widget-fill);
+  color: var(--mdos-widget-ink);
+}
+.mdos-lg-chip.is-up {
+  background: color-mix(in srgb, #ff453a 16%, transparent);
+  color: #d63a30;
+}
+.mdos-lg-chip.is-down {
+  background: color-mix(in srgb, #30d158 18%, transparent);
+  color: #1f9e48;
+}
+.mdos-lg-cmp small {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 11px;
+  color: var(--mdos-widget-ink-2);
+}
+.mdos-lg-facts {
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  font-size: 11.5px;
+  color: var(--mdos-widget-ink-2);
+}
+.mdos-lg-facts span {
+  display: inline-flex;
+  gap: 4px;
+  white-space: nowrap;
+}
+.mdos-lg-facts b {
+  color: var(--mdos-widget-ink);
+  font-variant-numeric: tabular-nums;
+}
+.mdos-lg-grid {
+  margin: 14px 0 12px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+/* Heat map: one square a day, Monday first, darker = more spent. */
+.mdos-lg-cal {
+  display: grid;
+  grid-template-columns: repeat(7, 15px);
+  grid-auto-rows: 15px;
+  gap: 3px;
+}
+.mdos-lg-cal i {
+  border-radius: 4px;
+  background: var(--mdos-widget-fill);
+}
+.mdos-lg-cal i.lv1 {
+  background: color-mix(in srgb, var(--mdos-accent) 26%, transparent);
+}
+.mdos-lg-cal i.lv2 {
+  background: color-mix(in srgb, var(--mdos-accent) 46%, transparent);
+}
+.mdos-lg-cal i.lv3 {
+  background: color-mix(in srgb, var(--mdos-accent) 70%, transparent);
+}
+.mdos-lg-cal i.lv4 {
+  background: var(--mdos-accent);
+}
+.mdos-lg-cal i.is-today {
+  outline: 2px solid var(--mdos-widget-ink);
+  outline-offset: 1px;
+}
+.mdos-lg-uses {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+.mdos-lg-uses-title {
+  font: 700 10.5px/1.2 var(--mdos-font);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--mdos-widget-ink-2);
+}
+.mdos-lg-use {
+  display: grid;
+  grid-template-columns: 8px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+}
+.mdos-lg-use i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.mdos-lg-use span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--mdos-widget-ink);
+}
+.mdos-lg-use b {
+  font-variant-numeric: tabular-nums;
+  color: var(--mdos-widget-ink-2);
+  font-weight: 600;
 }
