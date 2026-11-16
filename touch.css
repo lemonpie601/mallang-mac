@@ -110,7 +110,7 @@ html.mdos-touch #mdos-dock {
   transform: translate(-50%, calc(100% + 40px));
   transition: transform 300ms var(--mdos-ease);
 }
-html.mdos-touch.mdos-touch-home #mdos-dock {
+html.mdos-touch.mdos-touch-home:not(.mdos-touch-sheet) #mdos-dock {
   transform: translateX(-50%);
 }
 html.mdos-touch #mdos-dock .mdos-dock-item:not([data-touch="1"]),
@@ -133,7 +133,7 @@ html.mdos-touch .mdos-dock-item {
 
 /* ── Home indicator (inside apps) ────────────────────────────── */
 
-html.mdos-touch:not(.mdos-touch-home) #mdos-homebar {
+html.mdos-touch:is(:not(.mdos-touch-home), .mdos-touch-sheet) #mdos-homebar {
   all: unset;
   display: block;
   position: fixed;
@@ -159,7 +159,7 @@ html.mdos-touch:not(.mdos-touch-home) #mdos-homebar {
   background: color-mix(in srgb, var(--foreground) 55%, transparent);
 }
 /* Leave room so the indicator never sits on the message box. */
-html.mdos-touch:not(.mdos-touch-home) .chat-input-container {
+html.mdos-touch:is(:not(.mdos-touch-home), .mdos-touch-sheet) .chat-input-container {
   padding-bottom: 22px !important;
 }
 

@@ -5239,7 +5239,11 @@ function sync() {
   toggleClass("mdos-in-convo", !!$('[data-chat-mode="conversation"]'));
   toggleClass("mdos-in-rp", !!$('[data-chat-mode="roleplay"]'));
   const appOpen = state.apps.some((a) => !a.min);
-  toggleClass("mdos-touch-home", isTouch() && onHome && !$(SEL.sheets) && !appOpen);
+  // The home screen stays styled under open sheets: a sheet sliding away must
+  // reveal our home, not Marinara's default one. Only the Dock and the home
+  // indicator follow whether a sheet is open (mdos-touch-sheet).
+  toggleClass("mdos-touch-home", isTouch() && onHome && !appOpen);
+  toggleClass("mdos-touch-sheet", isTouch() && !!$(SEL.sheets));
   if (homeVisible()) readHomeApps();
   const hubApp = !!hubAppTab();
   toggleClass("mdos-hub-app", hubApp);
