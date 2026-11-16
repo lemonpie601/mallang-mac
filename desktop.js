@@ -5044,11 +5044,29 @@ const RP_PRESETS = {
   typewriter: { style: "book", paper: "#f6f5ef", ink: "#222222", font: "mono", size: 15, line: 1.7 },
   novel: { style: "book", paper: "#ffffff", ink: "#3a3a3c" },
 };
+// Fonts uploaded in Marinara (Settings → fonts) are registered through the
+// FontFace API a moment after start-up, when the chat text is already laid
+// out, and the browser doesn't always go back and use them: the chat font
+// looked unset until it was typed in again. When the set of registered fonts
+// changes, the font stack switches to an equivalent spelling, which makes the
+// text pick the new faces up.
+let fontBump = false;
+let fontCount = doc.fonts?.size ?? 0;
+function refreshChatFonts() {
+  const n = doc.fonts?.size ?? 0;
+  if (n === fontCount) return;
+  fontCount = n;
+  if (!state.chat.rp.font && !state.chat.convo.font) return;
+  fontBump = !fontBump;
+  applyChatStyle();
+}
 function applyChatStyle() {
   const cv = state.chat.convo;
   const rp = state.chat.rp;
   const v = (name, value) => (value ? setVar(name, value) : html.style.removeProperty(name));
-  v("--mdos-cv-font", fontStack(cv));
+  // fontBump flips an equivalent spelling of the stack (see refreshChatFonts).
+  const bumped = (stack) => (stack && fontBump ? `${stack}, sans-serif` : stack);
+  v("--mdos-cv-font", bumped(fontStack(cv)));
   v("--mdos-cv-size", cv.size ? `${cv.size}px` : null);
   v("--mdos-cv-me", cv.me);
   v("--mdos-cv-me-fg", cv.meFg);
@@ -5060,7 +5078,7 @@ function applyChatStyle() {
   html.dataset.mdosCvBg = cv.bgMode || "";
   html.dataset.mdosCvAvatar = cv.avatars || "circle";
   toggleClass("mdos-cv-no-names", cv.names === false);
-  v("--mdos-rp-font", fontStack(rp));
+  v("--mdos-rp-font", bumped(fontStack(rp)));
   v("--mdos-rp-size", rp.size ? `${rp.size}px` : null);
   v("--mdos-rp-line", rp.line ? String(rp.line) : null);
   v("--mdos-rp-paper", rp.paper);
@@ -5262,6 +5280,7 @@ function sync() {
 
   const onHome = homePageVisible();
   compactHelpers();
+  refreshChatFonts();
   ensureAppLayer();
   // Tagged here (not CSS :has) for the "show wallpaper" chat background.
   toggleClass("mdos-in-convo", !!$('[data-chat-mode="conversation"]'));
