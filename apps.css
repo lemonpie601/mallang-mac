@@ -506,3 +506,23 @@ html[data-mdos-rp-tone="on"] .mdos-cv-preview--rp .mdos-pv-rp em {
 html[data-mdos-rp-tone="on"] .mdos-cv-preview--rp .mdos-pv-dlg {
   color: var(--mdos-rp-dlg, var(--pv-ink));
 }
+
+/* ── Phone: full-width composer ──────────────────────────────── */
+/* On phones the roleplay composer runs edge to edge, like a phone app's
+   message bar: no side margins, rounded only at the top, flush with the
+   bottom of the screen with room left for the home indicator. */
+html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] .mari-roleplay-input-column {
+  width: 100% !important;
+  max-width: none !important;
+  margin-inline: 0 !important;
+  padding-inline: 0 !important;
+}
+html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] .mari-roleplay-input-column > .mari-chat-input {
+  padding: 0 !important;
+}
+html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .marinara-chat-input-shell {
+  border-radius: 18px 18px 0 0 !important;
+  border-width: 1px 0 0 !important;
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px) !important;
+  box-shadow: 0 -6px 20px -14px color-mix(in srgb, var(--mdos-ink) 45%, transparent) !important;
+}
