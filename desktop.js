@@ -768,7 +768,7 @@ if (!Array.isArray(state.widgets)) {
 if (!state.launcherSeeded) {
   if (!state.widgets.some((w) => w.type === "launcher")) {
     state.widgets.unshift({ id: newId(), type: "launcher", size: "m", style: "glass", x: null, y: null });
-    for (const w of state.widgets) w.x = w.y = null;
+    for (const w of state.widgets) w.x = w.y = null, (w.manual = false);
   }
   state.launcherSeeded = true;
 }
@@ -1473,8 +1473,10 @@ function onPointerUp() {
       const snap = (v) => Math.round(v / 8) * 8;
       g.w.x = snap(g.start.x + g.dx);
       g.w.y = snap(g.start.y + g.dy);
-      if (g.kind === "widget") clampWidget(g.w);
-      else clampIcon(g.w);
+      if (g.kind === "widget") {
+        clampWidget(g.w);
+        g.w.manual = true;
+      } else clampIcon(g.w);
       if (state.layoutMode === "grid") {
         const list = g.kind === "widget" ? state.widgets : state.desk;
         snapToGrid(g.w, g.kind, list.filter((o) => o !== g.w));
@@ -2765,9 +2767,21 @@ function reanchorWidgets() {
     save();
   }
 }
+// Home's board (feed + credit cards) ends 20 px before the widget column.
+// Measured, because the board's own left edge moves with the icon column.
+function fitBoard() {
+  const board = desktopHome && $(`${SEL.homePage} > div.relative`);
+  if (!board) return;
+  const xs = state.widgets.filter((w) => Number.isFinite(w.x) && w.x > innerWidth * 0.3).map((w) => w.x);
+  const right = xs.length ? Math.min(...xs) - 20 : innerWidth - 24;
+  setVar("--mdos-board-max", `${Math.max(360, Math.round(right - board.getBoundingClientRect().left))}px`);
+}
 function renderWidgets() {
   if (isDesktop()) {
     reanchorWidgets();
+    // Widgets the user never dragged are packed afresh for this window size;
+    // dragged ones (manual) keep their place.
+    for (const w of state.widgets) if (!w.manual) w.x = w.y = null;
     autoPlace();
     autoPlaceIcons();
     snapAll();
@@ -2775,6 +2789,7 @@ function renderWidgets() {
     // Home's own board (feed, credit cards) stops short of the widget column.
     const col = state.widgets.filter((w) => Number.isFinite(w.x) && w.x > innerWidth * 0.3).map((w) => w.x);
     setVar("--mdos-widget-reserve", `${col.length ? Math.max(0, innerWidth - Math.min(...col)) + 12 : 24}px`);
+    fitBoard();
     toggleClass("mdos-has-icons", state.desk.length > 0);
     widgetLayer.replaceChildren(
       ...state.desk
@@ -2806,11 +2821,6 @@ function addWidget(type, size) {
   const w = { id: newId(), type, size, style: type === "note" ? "note" : "glass", x: null, y: null };
   if (type === "dday") Object.assign(w, { title: L.ddayDefault, date: "", style: "accent" });
   if (type === "note") w.color = NOTE_COLORS[0];
-  if (isDesktop()) {
-    const [ww, wh] = WIDGET_SIZES[size];
-    w.x = Math.round((innerWidth - ww) / 2 / 8) * 8;
-    w.y = Math.round((innerHeight - MENUBAR_H - wh) / 3 / 8) * 8;
-  }
   state.widgets.push(w);
   save();
   renderWidgets();
@@ -3878,7 +3888,7 @@ function openHomeLayout(anchor) {
         class: "mdos-btn",
         text: L.arrangeWidgets,
         onclick: () => {
-          for (const w of state.widgets) w.x = w.y = null;
+          for (const w of state.widgets) w.x = w.y = null, (w.manual = false);
           save();
           renderWidgets();
         },
@@ -4155,7 +4165,7 @@ function mountCustomize(win) {
             renderWidgets();
           }),
           btn(L.arrangeWidgets, () => {
-            for (const w of state.widgets) w.x = w.y = null;
+            for (const w of state.widgets) w.x = w.y = null, (w.manual = false);
             save();
             renderWidgets();
           }),
@@ -5014,6 +5024,7 @@ function setDesktopHome(on) {
   if (desktopHome === on) return;
   desktopHome = on;
   toggleClass("mdos-desktop-home", on);
+  if (on) raf(fitBoard);
   if (on && state.mainMinimized) setMainMinimized(false);
   if (on) focusTopVisible();
   updateMenubar();

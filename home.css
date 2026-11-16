@@ -95,8 +95,8 @@ html.mdos-desktop-home [data-component="HomeBrowserHub.HomePage"] > div.relative
   gap: 20px;
   /* Leaves our widget column (340 px + 24 px margin) free on the right; at 1440 px
      the cards get ~650 px, enough for the credit extension's two columns. */
-  /* --mdos-widget-reserve: width of our widget columns (desktop.js). */
-  max-width: min(1180px, calc(100vw - var(--mdos-widget-reserve, 388px)));
+  /* --mdos-board-max: measured room up to the widget column (desktop.js fitBoard). */
+  max-width: min(1180px, var(--mdos-board-max, calc(100vw - var(--mdos-widget-reserve, 388px))));
   padding: 22px 20px 120px !important;
 }
 html.mdos-desktop-home [data-component="HomeBrowserHub.HomePage"] > div.relative > .mari-home-hero {
@@ -1099,4 +1099,42 @@ html.mdos-desktop-home #mac-credit-home:not(:hover, :focus-within) > header butt
 }
 :is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mlh-cr-bar i {
   border-radius: 0 3px 3px 0 !important;
+}
+
+/* ── Board fit (narrow windows) ──────────────────────────────── */
+/* Feed and credit cards sit side by side while the credits get at least
+   380 px; with less room the credits drop below the feed instead of being
+   squeezed into a sliver (titles wrapping letter by letter). */
+html.mdos-desktop-home:not([data-mdos-board="center"]) [data-component="HomeBrowserHub.HomePage"] > div.relative {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+}
+html.mdos-desktop-home:not([data-mdos-board="center"]) [data-component="HomeBrowserHub.HomePage"] > div.relative > .mari-home-feed-shell {
+  flex: 0 0 var(--mdos-widget-w);
+  max-width: 100%;
+  order: -1;
+}
+html.mdos-desktop-home:not([data-mdos-board="center"]) [data-component="HomeBrowserHub.HomePage"] > div.relative > #mac-credit-home {
+  flex: 1 1 380px;
+  min-width: min(100%, 380px);
+}
+/* Recent chats: in the 340 px widget column each card is ~150 px wide, and
+   Marinara's 85 px avatar in the bottom corner covered the name and preview.
+   It becomes a small circle in the top corner instead. */
+:is(html.mdos-desktop-home, html.mdos-touch-home) [data-component="RecentChats"] > * > span.absolute.rounded-full {
+  top: 8px !important;
+  right: 8px !important;
+  bottom: auto !important;
+  width: 36px !important;
+  height: 36px !important;
+  border-width: 1.5px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18) !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) [data-component="RecentChats"] > * > :not(span.absolute) {
+  padding-right: 0;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) [data-component="RecentChats"] > * :is(h3, h4, [class*="font-semibold"], [class*="font-bold"]) {
+  padding-right: 34px;
 }
