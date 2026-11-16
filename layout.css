@@ -1,0 +1,364 @@
+/* ──────────────────────────────────────────────────────────────
+   Marinara Desktop — layout changes inside the windows.
+
+   theme.css changes colours and control shapes; this file moves
+   things around:
+   - Chats: Messages-style sidebar (actions in the title bar,
+     compact search, full-colour selected row).
+   - Settings: two-pane System Settings layout when the window is wide.
+   - Character / persona libraries: Finder-style icon grid.
+   - Chat: centred reading column with a floating composer.
+   - Home: browser tabs become a segmented toolbar.
+   ────────────────────────────────────────────────────────────── */
+
+/* The windows' red light already closes them; drop the duplicate X buttons. */
+html.mdos [data-mdos-win] :is(.mari-sidebar-header, .mari-right-panel-header) button:has(> .lucide-x) {
+  display: none !important;
+}
+
+/* ── Chats: Messages-style sidebar ───────────────────────────── */
+
+html.mdos [data-mdos-win="chats"] .mari-chat-sidebar {
+  position: relative;
+}
+/* New / import / select move up into the title bar as small icon buttons. */
+html.mdos [data-mdos-win="chats"] .mari-chat-sidebar > div:has(> .mari-chat-mode-action) {
+  position: absolute !important;
+  z-index: 5;
+  top: calc((var(--mdos-side-header-h) - 26px) / 2);
+  right: 12px;
+  padding: 0 !important;
+  gap: 4px !important;
+}
+html.mdos [data-mdos-win="chats"] .mari-chat-sidebar > div:has(> .mari-chat-mode-action) > button {
+  flex: none !important;
+  width: 26px !important;
+  height: 26px !important;
+  min-height: 26px !important;
+  padding: 0 !important;
+  border-radius: 7px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--mdos-fg-2) !important;
+}
+html.mdos [data-mdos-win="chats"] .mari-chat-sidebar > div:has(> .mari-chat-mode-action) > button:hover {
+  background: var(--mdos-fill-2) !important;
+  color: var(--mdos-fg) !important;
+}
+html.mdos [data-mdos-win="chats"] .mari-chat-sidebar > div:has(> .mari-chat-mode-action) > button svg {
+  width: 16px !important;
+  height: 16px !important;
+  color: currentColor !important;
+}
+/* "New chat" keeps a filled accent so it reads as the main action. */
+html.mdos [data-mdos-win="chats"] .mari-chat-sidebar > div:has(> .mari-chat-mode-action) > .mari-chat-mode-action {
+  background: var(--mdos-accent) !important;
+  color: #fff !important;
+}
+/* Leave room for the three title-bar buttons. */
+html.mdos [data-mdos-win="chats"] .mari-sidebar-header {
+  padding-right: 104px !important;
+}
+
+/* Search / sort row and folder button: compact. */
+html.mdos [data-mdos-win="chats"] .mari-chat-sidebar :is(input.mari-chrome-field, select.mari-chrome-field) {
+  height: 28px !important;
+}
+html.mdos [data-mdos-win="chats"] .mari-chat-sidebar .mari-chrome-control--small.h-10 {
+  height: 28px !important;
+  width: 28px !important;
+  min-height: 28px !important;
+}
+html.mdos [data-mdos-win="chats"] .mari-chat-sidebar .mari-chrome-control--small:not(.h-10):not(.mari-chrome-control--icon) {
+  justify-content: flex-start !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--mdos-fg-2) !important;
+  font-size: 12px !important;
+}
+
+/* Chat rows: taller, calmer, and the open chat gets the accent like a source list. */
+html.mdos [data-mdos-win="chats"] [data-drag-kind="chat"] {
+  min-height: 46px;
+  margin-inline: 2px;
+  border-radius: 8px !important;
+}
+html.mdos [data-mdos-win="chats"] [data-drag-kind="chat"]:is([class~="bg-[var(--marinara-chat-chrome-highlight-bg)]"]) {
+  background: var(--mdos-accent) !important;
+}
+html.mdos [data-mdos-win="chats"] [data-drag-kind="chat"]:is([class~="bg-[var(--marinara-chat-chrome-highlight-bg)]"]) * {
+  color: #fff !important;
+}
+
+/* ── Settings: two panes when the window is wide enough ─────── */
+
+html.mdos [data-mdos-win="panel"] {
+  container: mdos-panel / inline-size;
+}
+
+@container mdos-panel (min-width: 620px) {
+  html.mdos .mari-settings-panel-chrome {
+    display: grid !important;
+    grid-template-columns: 196px minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  /* Left column: search on top, categories below it. */
+  html.mdos .mari-settings-panel-chrome > :nth-child(1) {
+    grid-column: 1;
+    grid-row: 1;
+    border-right: 1px solid var(--mdos-sep);
+  }
+  html.mdos .mari-settings-panel-chrome > :nth-child(2) {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: stretch;
+    overflow-y: auto;
+    border-bottom: 0 !important;
+    border-right: 1px solid var(--mdos-sep);
+    padding: 6px 8px !important;
+    background: color-mix(in srgb, var(--mdos-fill) 60%, transparent);
+  }
+  html.mdos .mari-settings-panel-chrome > :nth-child(3) {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+  html.mdos .mari-settings-panel-chrome > :nth-child(3) [role="tabpanel"] {
+    padding: 18px 22px !important;
+  }
+
+  /* The 3×2 tab grid becomes a vertical category list. */
+  html.mdos .mari-settings-panel-chrome [role="tablist"] {
+    display: flex !important;
+    flex-direction: column;
+    gap: 1px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  html.mdos .mari-settings-panel-chrome [role="tab"] {
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    gap: 9px !important;
+    min-height: 30px !important;
+    padding: 0 8px !important;
+    border: 0 !important;
+    border-radius: 7px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    text-align: left;
+    color: var(--mdos-fg) !important;
+  }
+  html.mdos .mari-settings-panel-chrome [role="tab"] > span.absolute {
+    display: none !important;
+  }
+  html.mdos .mari-settings-panel-chrome [role="tab"] > span:not(.absolute):last-child {
+    width: auto !important;
+    padding: 0 !important;
+  }
+  html.mdos .mari-settings-panel-chrome [role="tab"]:hover {
+    background: var(--mdos-fill) !important;
+  }
+  html.mdos .mari-settings-panel-chrome [role="tab"][aria-selected="true"] {
+    background: var(--mdos-accent) !important;
+    color: #fff !important;
+  }
+
+  /* Category icons become small coloured squares. */
+  html.mdos .mari-settings-panel-chrome [role="tab"] > span:not(.absolute):first-of-type {
+    width: 22px !important;
+    height: 22px !important;
+    border: 0 !important;
+    border-radius: 6px !important;
+    color: #fff !important;
+    background: var(--mdos-cat, #8e8e93) !important;
+    box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.12);
+  }
+  html.mdos .mari-settings-panel-chrome [role="tab"] > span:not(.absolute):first-of-type svg {
+    width: 14px !important;
+    height: 14px !important;
+    color: #fff !important;
+  }
+  html.mdos .mari-settings-panel-chrome [role="tab"]:nth-child(1) { --mdos-cat: #8e8e93; }
+  html.mdos .mari-settings-panel-chrome [role="tab"]:nth-child(2) { --mdos-cat: #0a84ff; }
+  html.mdos .mari-settings-panel-chrome [role="tab"]:nth-child(3) { --mdos-cat: #a259e6; }
+  html.mdos .mari-settings-panel-chrome [role="tab"]:nth-child(4) { --mdos-cat: #30b956; }
+  html.mdos .mari-settings-panel-chrome [role="tab"]:nth-child(5) { --mdos-cat: #ff9500; }
+  html.mdos .mari-settings-panel-chrome [role="tab"]:nth-child(6) { --mdos-cat: #636366; }
+  html.mdos .mari-settings-panel-chrome [role="tab"]:nth-child(n + 7) { --mdos-cat: #ec4b8f; }
+}
+
+/* ── Character & persona libraries: icon grid ────────────────── */
+
+html.mdos.mdos-icon-view [data-mdos-win="panel"] :is(
+    div:has(> [data-drag-kind="character"]),
+    div:has(> [data-drag-kind="persona"])
+  ) {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  gap: 6px !important;
+  align-items: start;
+}
+/* Folders keep a full-width row above the icons. */
+html.mdos.mdos-icon-view [data-mdos-win="panel"] :is([data-drag-kind="character-folder"], [data-drag-kind="persona-folder"]) {
+  grid-column: 1 / -1;
+}
+html.mdos.mdos-icon-view [data-mdos-win="panel"] :is([data-drag-kind="character"], [data-drag-kind="persona"]) {
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  gap: 6px !important;
+  min-height: 0 !important;
+  padding: 10px 4px 8px !important;
+  border-radius: 10px !important;
+  text-align: center;
+}
+html.mdos.mdos-icon-view [data-mdos-win="panel"] :is([data-drag-kind="character"], [data-drag-kind="persona"]):hover {
+  background: var(--mdos-fill) !important;
+}
+html.mdos.mdos-icon-view [data-mdos-win="panel"] :is([data-drag-kind="character"], [data-drag-kind="persona"]) .mari-avatar-placeholder {
+  width: 58px !important;
+  height: 58px !important;
+  border-radius: 15px !important;
+  box-shadow: var(--mdos-elev) !important;
+}
+html.mdos.mdos-icon-view [data-mdos-win="panel"] :is([data-drag-kind="character"], [data-drag-kind="persona"]) .mari-avatar-placeholder > div {
+  border-radius: 15px !important;
+}
+html.mdos.mdos-icon-view [data-mdos-win="panel"] :is([data-drag-kind="character"], [data-drag-kind="persona"]) > div.min-w-0 {
+  width: 100%;
+  flex: none !important;
+  padding: 0 !important;
+}
+/* Only the name under each icon; descriptions, versions and tags hide. */
+html.mdos.mdos-icon-view [data-mdos-win="panel"] :is([data-drag-kind="character"], [data-drag-kind="persona"]) > div.min-w-0 > :not(:first-child) {
+  display: none !important;
+}
+html.mdos.mdos-icon-view [data-mdos-win="panel"] :is([data-drag-kind="character"], [data-drag-kind="persona"]) > div.min-w-0 > :first-child {
+  width: 100% !important;
+  max-width: 100% !important;
+  font-size: 12px !important;
+  line-height: 1.3;
+  white-space: normal !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-all;
+}
+/* Hover actions float over the icon's top-right corner. */
+html.mdos.mdos-icon-view [data-mdos-win="panel"] :is([data-drag-kind="character"], [data-drag-kind="persona"]) > :is([data-character-row-actions], .absolute.right-2) {
+  top: 2px !important;
+  right: 2px !important;
+  transform: scale(0.82) !important;
+  transform-origin: top right;
+}
+
+/* ── Chat: centred reading column, floating composer ─────────── */
+
+html.mdos [data-mdos-win="main"] [data-component="ChatArea.Conversation"] .mari-messages-scroll > * {
+  max-width: 860px;
+  margin-inline: auto;
+}
+html.mdos [data-mdos-win="main"] .mari-chat-input.chat-input-container {
+  width: 100%;
+  max-width: 880px;
+  margin-inline: auto;
+  padding-bottom: 14px !important;
+}
+
+/* ── Home: browser tabs become a segmented toolbar ───────────── */
+
+html.mdos [data-component="HomeBrowserHub.TabList"] {
+  align-items: center !important;
+  gap: 2px !important;
+  padding: 2px;
+  border-radius: 9px;
+  background: var(--mdos-fill);
+  flex: 0 1 auto !important;
+}
+html.mdos [data-component="HomeBrowserHub.TabStrip"] {
+  align-items: center !important;
+  padding-block: 6px;
+}
+html.mdos [data-component="HomeBrowserHub.TabList"] > [role="tab"] {
+  min-height: 26px !important;
+  border: 0 !important;
+  border-radius: 7px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font-weight: 500 !important;
+}
+html.mdos [data-component="HomeBrowserHub.TabList"] > [role="tab"][aria-selected="true"] {
+  background: var(--mdos-control) !important;
+  box-shadow: var(--mdos-control-shadow) !important;
+  font-weight: 600 !important;
+}
+
+/* ── Helper lines become an ⓘ icon ───────────────────────────── */
+
+/* "Drag characters into folders…" sits on the folder button's right end as a
+   small info icon; hovering, focusing or tapping it shows the text. */
+html.mdos div:has(> .mari-folder-helper[data-mdos-tip]) {
+  position: relative;
+}
+html.mdos div:has(> .mari-folder-helper[data-mdos-tip]) > div > button {
+  padding-right: 32px !important;
+}
+html.mdos .mari-folder-helper[data-mdos-tip] {
+  position: absolute !important;
+  top: 0;
+  right: 4px;
+  z-index: 3;
+  width: 26px;
+  height: 100%;
+  max-height: 36px;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: grid !important;
+  place-items: center;
+  overflow: visible !important;
+  font-size: 0 !important;
+  color: var(--mdos-fg-2);
+  cursor: help;
+  outline: none;
+}
+html.mdos .mari-folder-helper[data-mdos-tip]::before {
+  content: "i";
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 1.4px solid currentColor;
+  display: grid;
+  place-items: center;
+  font: italic 700 10px/1 Georgia, serif;
+}
+html.mdos .mari-folder-helper[data-mdos-tip]::after {
+  content: attr(data-mdos-tip);
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  width: 230px;
+  padding: 8px 10px;
+  border-radius: 9px;
+  font: 500 12px/1.45 var(--mdos-font);
+  color: #f5f5f7;
+  background: rgba(40, 40, 48, 0.94);
+  box-shadow: 0 10px 28px -6px rgba(0, 0, 0, 0.45);
+  white-space: normal;
+  text-align: left;
+  opacity: 0;
+  transform: translateY(-3px);
+  pointer-events: none;
+  transition:
+    opacity 120ms ease,
+    transform 140ms ease;
+}
+html.mdos .mari-folder-helper[data-mdos-tip]:is(:hover, :focus-visible, [data-mdos-tip-open]) {
+  color: var(--mdos-accent, #0a84ff);
+}
+html.mdos .mari-folder-helper[data-mdos-tip]:is(:hover, :focus-visible, [data-mdos-tip-open])::after {
+  opacity: 1;
+  transform: none;
+}

@@ -1,0 +1,13 @@
+{
+  "kind": "marinara.personal-extension",
+  "version": 1,
+  "config": {
+    "name": "Marinara Desktop",
+    "version": "2.0.0",
+    "description": "Turns Marinara into a desktop OS: menu bar, magnifying Dock, draggable/resizable windows, Launchpad, Control Center and wallpapers. Toggle back to the classic layout any time with Ctrl+Alt+D.",
+    "runtime": "client",
+    "capabilities": ["full_page_access"],
+    "jsPath": "desktop.js",
+    "cssPath": ["desktop.css", "theme.css", "layout.css", "home.css", "apps.css", "touch.css"]
+  }
+}

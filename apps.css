@@ -1,0 +1,228 @@
+/* ──────────────────────────────────────────────────────────────
+   Marinara Desktop — chat screens modelled on desktop apps.
+
+   Conversation (data-mdos-convo="messages"): a messaging app —
+     your messages on the right in accent bubbles, the character's on
+     the left in grey bubbles with a small round avatar, a translucent
+     centred header and quiet date dividers.
+
+   Roleplay (data-mdos-rp="book" | "night"): an e-book reader —
+     paper (or night) page, serif text in a comfortable column, names
+     as small caps, your turns marked like a highlighted passage.
+   ────────────────────────────────────────────────────────────── */
+
+/* ── Conversation: messaging app ─────────────────────────────── */
+
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] {
+  --mdos-bubble-max: min(74%, 560px);
+  background: var(--mdos-win-bg) !important;
+}
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] .mari-message {
+  padding-block: 1px !important;
+  background: transparent !important;
+}
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-component="ConversationMessage.Content"] {
+  gap: 8px !important;
+  align-items: flex-end;
+}
+
+/* Your messages: right side, accent bubble, no avatar or name. */
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="user"] [data-component="ConversationMessage.Content"] {
+  flex-direction: row-reverse;
+}
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="user"] :is(.mari-message-avatar, .mari-message-meta) {
+  display: none !important;
+}
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="user"] .mari-message-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="user"] .mari-message-content {
+  width: fit-content;
+  max-width: var(--mdos-bubble-max);
+  padding: 7px 13px;
+  border-radius: 18px;
+  background: var(--mdos-accent, #0a84ff);
+  color: #fff !important;
+  font-size: 15px !important;
+  line-height: 1.4 !important;
+}
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="user"] .mari-message-content * {
+  color: inherit !important;
+}
+
+/* Their messages: small round avatar at the bottom, grey bubbles. */
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="assistant"] .mari-message-avatar {
+  width: 30px !important;
+  align-self: flex-end;
+}
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="assistant"] .mari-message-avatar > button {
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 50% !important;
+}
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="assistant"] .mari-message-meta {
+  margin: 0 0 3px 12px !important;
+}
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] .mari-message-name {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: var(--mdos-fg-2) !important;
+}
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] .mari-message-timestamp {
+  display: none !important;
+}
+/* Each paragraph of a reply becomes its own bubble, like separate texts. */
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="assistant"] .mari-message-content > .space-y-1\.5 > *,
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="assistant"] .mari-message-content:not(:has(> .space-y-1\.5)) {
+  width: fit-content;
+  max-width: var(--mdos-bubble-max);
+  padding: 7px 13px;
+  border-radius: 18px;
+  background: var(--mdos-bubble-other);
+  color: var(--mdos-bubble-other-fg);
+  font-size: 15px !important;
+  line-height: 1.4 !important;
+}
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="assistant"] .mari-message-content > .space-y-1\.5 {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+}
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="assistant"] .mari-message-content > .space-y-1\.5 > * {
+  margin: 0 !important;
+}
+/* Pictures sit in the thread without a bubble. */
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] .mari-message-content > .space-y-1\.5 > :has(> img:only-child),
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] .mari-message-content > .space-y-1\.5 > :has(> * > img:only-child) {
+  padding: 0;
+  background: transparent;
+}
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] .mari-message-content img {
+  border-radius: 16px;
+}
+/* Quiet message tools: they appear when you hover a message. */
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role]:not(:hover, :focus-within) .mari-message-actions {
+  opacity: 0;
+}
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="user"] .mari-message-actions {
+  justify-content: flex-end !important;
+}
+/* Date dividers: centred grey text, no rules. */
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] .relative.my-4 > .border-t {
+  visibility: hidden;
+}
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] .mari-conversation-transcript-chrome-text {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: var(--mdos-fg-3) !important;
+}
+/* Header: translucent bar with the contact in the middle. */
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] .mari-messages-scroll > .sticky.top-0 {
+  justify-content: center !important;
+  background: color-mix(in srgb, var(--mdos-win-bg) 82%, transparent);
+  backdrop-filter: blur(16px) saturate(170%);
+  -webkit-backdrop-filter: blur(16px) saturate(170%);
+  box-shadow: inset 0 -0.5px 0 var(--mdos-sep);
+}
+html.mdos.mdos-no-blur[data-mdos-convo="messages"] [data-chat-mode="conversation"] .mari-messages-scroll > .sticky.top-0 {
+  background: var(--mdos-win-bg);
+  backdrop-filter: none;
+}
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-conversation-header-identity] button {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font-weight: 600 !important;
+}
+
+/* ── Roleplay: e-book reader ─────────────────────────────────── */
+
+html.mdos[data-mdos-rp="book"] {
+  --mdos-paper: #fbf6ea;
+  --mdos-paper-2: #f3ecdb;
+  --mdos-ink: #2d261c;
+  --mdos-ink-2: #8a7b62;
+  --mdos-mark: rgba(255, 205, 80, 0.26);
+  --mdos-mark-edge: #e3ae35;
+}
+html.mdos[data-mdos-rp="night"] {
+  --mdos-paper: #1c1a17;
+  --mdos-paper-2: #26231f;
+  --mdos-ink: #e8e1d1;
+  --mdos-ink-2: #9a8f7a;
+  --mdos-mark: rgba(255, 205, 80, 0.12);
+  --mdos-mark-edge: #b88a2a;
+}
+html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) {
+  --mdos-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "AppleMyungjo", "Nanum Myeongjo", "Noto Serif KR",
+    "Noto Serif CJK KR", Batang, "바탕", serif;
+}
+html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area {
+  background: var(--mdos-paper) !important;
+  color: var(--mdos-ink);
+}
+html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] {
+  --mari-roleplay-message-column-width: min(700px, 100cqw - 48px) !important;
+}
+html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] .mari-rp-bubble {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] .mari-rp-bubble > div {
+  padding: 4px 2px !important;
+}
+html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] .mari-message-content {
+  font-family: var(--mdos-serif) !important;
+  font-size: 17px !important;
+  line-height: 1.85 !important;
+  color: var(--mdos-ink) !important;
+  text-wrap: pretty;
+  hanging-punctuation: first;
+}
+/* Names as small caps above each passage; times and model names fade back. */
+html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-row .mari-message-name {
+  font-family: var(--mdos-font) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--mdos-ink-2) !important;
+  text-shadow: none !important;
+}
+html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-body > div:first-child span:not(.mari-message-name) {
+  color: color-mix(in srgb, var(--mdos-ink-2) 70%, transparent) !important;
+}
+html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-row {
+  margin-bottom: 26px !important;
+}
+/* Your turns read like a highlighted passage in the margin. */
+html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-row.mari-message-user .mari-rp-bubble {
+  background: var(--mdos-mark) !important;
+  border-left: 3px solid var(--mdos-mark-edge) !important;
+  border-radius: 3px !important;
+}
+html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-row.mari-message-user .mari-rp-bubble > div {
+  padding: 6px 14px !important;
+}
+html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-row.mari-message-user .mari-message-content {
+  font-style: italic;
+}
+html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .mari-chat-message-action {
+  color: var(--mdos-ink-2) !important;
+}
+/* The composer sits on the page like a writing field. */
+html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .marinara-chat-input-shell {
+  background: var(--mdos-paper-2) !important;
+  border-color: color-mix(in srgb, var(--mdos-ink-2) 30%, transparent) !important;
+  box-shadow: none !important;
+}
+html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .mari-chat-input-textarea {
+  font-family: var(--mdos-serif) !important;
+  color: var(--mdos-ink) !important;
+}
