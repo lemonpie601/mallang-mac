@@ -1138,3 +1138,97 @@ html.mdos-desktop-home:not([data-mdos-board="center"]) [data-component="HomeBrow
 :is(html.mdos-desktop-home, html.mdos-touch-home) [data-component="RecentChats"] > * :is(h3, h4, [class*="font-semibold"], [class*="font-bold"]) {
   padding-right: 34px;
 }
+
+/* ── Credit card buttons: icons, never over the name ─────────── */
+/* "설정" and "간단히/자세히" become 24 px icon buttons beside the drag handle,
+   and while they show (hover / focus) the provider name ends in "…"
+   before reaching them instead of running underneath. */
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mac-card-actions {
+  display: flex !important;
+  gap: 2px;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mac-card-actions :is([data-wa="edit"], [data-mac-simple]) {
+  display: inline-grid !important;
+  place-items: center;
+  width: 24px !important;
+  height: 24px !important;
+  min-height: 24px !important;
+  padding: 0 !important;
+  font-size: 0 !important;
+  border-radius: 50% !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mac-card-actions :is([data-wa="edit"], [data-mac-simple])::before {
+  content: "";
+  width: 13px;
+  height: 13px;
+  background: currentColor;
+  -webkit-mask: var(--mdos-ico) center / contain no-repeat;
+  mask: var(--mdos-ico) center / contain no-repeat;
+}
+#mac-credit-home .mlh-crcard .mac-card-actions [data-wa="edit"] {
+  --mdos-ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M4 7h10M18 7h2M4 17h4M12 17h8'/%3E%3Ccircle cx='16' cy='7' r='2.2'/%3E%3Ccircle cx='10' cy='17' r='2.2'/%3E%3C/svg%3E");
+}
+#mac-credit-home .mlh-crcard .mac-card-actions [data-mac-simple] {
+  --mdos-ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 4H4v5M15 20h5v-5M4 4l6 6M20 20l-6-6'/%3E%3C/svg%3E");
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mac-card-actions .mac-drag-handle {
+  width: 22px !important;
+  height: 24px !important;
+  padding: 0 !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mlh-cr-brand {
+  min-width: 0;
+  max-width: 100%;
+  transition: padding-right 140ms ease;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mlh-cr-brand b {
+  display: block !important;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mlh-cr-brand b::before {
+  display: inline-block;
+  margin-right: 6px;
+  vertical-align: 1px;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard:is(:hover, :focus-within) .mlh-cr-brand {
+  padding-right: 84px;
+}
+/* Touch screens have no hover: the buttons always show, so the room is always kept. */
+html.mdos-touch-home #mac-credit-home .mlh-crcard .mlh-cr-brand {
+  padding-right: 84px;
+}
+/* The refresh button (↻) leaves the name row: hidden until you point at the
+   card, then it sits under the other buttons instead of shortening the name. */
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mlh-cr-brand > .mlh-wxre {
+  position: absolute !important;
+  top: 36px;
+  right: 8px;
+  z-index: 2;
+}
+html.mdos-desktop-home #mac-credit-home .mlh-crcard:not(:hover, :focus-within) .mlh-cr-brand > .mlh-wxre {
+  display: none !important;
+}
+/* Balances stay on one line. */
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mlh-cr-big b {
+  white-space: nowrap;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard:not(:nth-child(4n + 2)) .mlh-cr-big b {
+  font-size: 23px !important;
+}
+/* Small (1×1) cards: the buttons use the empty second line, under the name,
+   so the name stays whole; the refresh button sits at the right of that line. */
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard:not(:nth-child(4n + 2)) .mlh-card-head {
+  top: 34px !important;
+  left: 9px;
+  right: auto !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard:not(:nth-child(4n + 2)) .mlh-cr-brand > .mlh-wxre {
+  top: 37px;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard:not(:nth-child(4n + 2)):is(:hover, :focus-within) .mlh-cr-brand,
+html.mdos-touch-home #mac-credit-home .mlh-crcard:not(:nth-child(4n + 2)) .mlh-cr-brand {
+  padding-right: 0;
+}
