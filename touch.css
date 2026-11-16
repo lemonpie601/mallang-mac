@@ -217,6 +217,13 @@ html.mdos-tablet aside[data-component="ChatSidebarPanel"] {
   box-shadow: 0 30px 80px -16px rgba(0, 0, 0, 0.55) !important;
 }
 
+/* Phone: on the home screen Marinara's top bar is hidden, so sheets opened
+   from it (settings, chat list, agents, editors) start at the very top like
+   a full-screen app, instead of leaving a 3rem strip of empty home above. */
+html.mdos-touch.mdos-touch-home:not(.mdos-tablet) :is([data-component="RightPanelMobile"], aside[data-component="ChatSidebarPanel"], [data-component="MobileDetailSheet"]) {
+  top: env(safe-area-inset-top, 0px) !important;
+}
+
 /* ── Overlays on touch screens ───────────────────────────────── */
 
 html.mdos-touch #mdos-launchpad {
