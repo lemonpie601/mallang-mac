@@ -348,8 +348,10 @@ html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .mari
     padding-inline: 0 !important;
   }
   html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] .mari-message-content {
-    font-size: min(var(--mdos-rp-size, 16px), 15.5px) !important;
-    line-height: min(var(--mdos-rp-line, 1.8), 1.75) !important;
+    /* Slightly smaller defaults on narrow screens; a size or line height set
+       in Chat design always wins. */
+    font-size: var(--mdos-rp-size, 15.5px) !important;
+    line-height: var(--mdos-rp-line, 1.75) !important;
   }
   html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-row {
     margin-bottom: 22px !important;
