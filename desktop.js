@@ -5907,6 +5907,15 @@ function syncBody() {
   toggleClass("mdos-touch-home", isTouch() && onHome && (!appOpen || html.classList.contains("mdos-tablet")));
   toggleClass("mdos-touch-app", isTouch() && appOpen);
   toggleClass("mdos-touch-sheet", isTouch() && !!$(SEL.sheets));
+  // Tablet messenger: a chat open with the chat list beside it, like iPad
+  // Messages. Picking a chat from the list keeps the list open.
+  const listOpen = !!$once('aside[data-component="ChatSidebarPanel"]');
+  const split = isTouch() && html.classList.contains("mdos-tablet") && state.messengerPane !== false && innerWidth >= 1000 && !onHome;
+  if (split && !listOpen && performance.now() - keepListAt < 1500) {
+    keepListAt = 0;
+    click($(SEL.chatsBtn));
+  }
+  toggleClass("mdos-split", split && listOpen);
   if (homeVisible()) readHomeApps();
   refreshBadges();
   refreshChatTools();
@@ -6086,6 +6095,7 @@ function refreshBadges() {
 let topbarSeen = null;
 let topbarRO = null;
 let lastPane = null;
+let keepListAt = 0;
 // The main window comes back whenever Marinara shows something new in it.
 let lastView = "";
 const detailIds = new WeakMap();
@@ -7153,7 +7163,7 @@ function placeTopbarLocker(show) {
   }
 }
 function lockerTick() {
-  const active = state.lockerOn && mode !== "off" && !lkForeign();
+  const active = state.lockerOn && mode !== "off";
   mbLocker.hidden = !(state.lockerOn && mode !== "off");
   placeTopbarLocker(active && isTouch());
   if (!active) {
@@ -7770,6 +7780,21 @@ function lkStopPick() {
   lkPick?.();
   lkPick = null;
 }
+
+// Tablet split view: a chat picked from the list keeps the list open (Marinara
+// closes its sheet on a pick); sync reopens it next to the chat.
+on(
+  doc,
+  "click",
+  (event) => {
+    if (!isTouch() || !html.classList.contains("mdos-tablet") || state.messengerPane === false || innerWidth < 1000) return;
+    if (event.target instanceof Element && event.target.closest('aside[data-component="ChatSidebarPanel"] [data-drag-kind="chat"]')) {
+      keepListAt = performance.now();
+      marinara.setTimeout(syncSoon, 320);
+    }
+  },
+  true,
+);
 
 // Editor sections: Marinara highlights the section in view while scrolling, so
 // a picked section lit every one it passed on the way. While it jumps, only

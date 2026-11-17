@@ -440,3 +440,28 @@ html.mdos-touch.mdos-edit #mdos-editbar {
   width: calc(100vw - 24px);
   box-sizing: border-box;
 }
+
+/* ── Tablet split view (desktop.js: mdos-split) ──────────────── */
+/* A chat open with its list: the list is docked on the left, full height,
+   no dimming or floating card; the chat moves over to make room. The top
+   bar's chat button folds the list away (the chat then fills the screen). */
+@media (min-width: 1000px) {
+  html.mdos-tablet.mdos-split aside[data-component="ChatSidebarPanel"] {
+    inset: 0 auto 0 0 !important;
+    width: 360px !important;
+    padding-top: env(safe-area-inset-top, 0px);
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    border-right: 1px solid color-mix(in srgb, var(--mdos-fg, #000) 12%, transparent) !important;
+    transform: none !important;
+  }
+  html.mdos-split [class*="z-[45]"][class*="bg-black/50"] {
+    display: none !important;
+  }
+  html.mdos-split [data-component="CenterContent"] {
+    margin-left: 360px !important;
+  }
+  html.mdos-split #mdos-homebar {
+    margin-left: 180px;
+  }
+}
