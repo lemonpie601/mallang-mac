@@ -2497,6 +2497,95 @@ html.mdos [data-quick-connection-menu] [data-switcher-star][aria-pressed="true"]
 html.mdos:not(.mdos-touch) [data-quick-connection-menu] .mari-connection-model:not(:hover):not(:focus-within) :is([data-switcher-settings], [data-switcher-star]:not([aria-pressed="true"])) {
   opacity: 0;
 }
+
+/* ── Model picker: tighter (2.20.2) ── */
+/* Less padding everywhere, small source icons, "Edit order" on the heading
+   line instead of a row of its own, thin scrollbars. */
+html.mdos [data-quick-connection-menu] [data-switcher-section="now"] {
+  margin: 10px 12px 0 !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-section="now"] .mari-connection-model-choice {
+  min-height: 46px !important;
+}
+html.mdos [data-quick-connection-menu] [data-connection-switcher] > .mari-chrome-field {
+  margin: 8px 12px 10px !important;
+  min-height: 34px !important;
+}
+html.mdos [data-quick-connection-menu] [data-connection-switcher] > .mari-chrome-field label,
+html.mdos [data-quick-connection-menu] input[data-switcher-search] {
+  min-height: 34px !important;
+  height: 34px !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-accounts] .overflow-y-auto,
+html.mdos [data-quick-connection-menu] [data-connection-switcher-scroll] {
+  padding: 4px 6px !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-pane] {
+  min-height: 30px !important;
+  padding: 3px 8px !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-pane] > span:first-child {
+  width: 20px !important;
+  height: 20px !important;
+  min-width: 20px !important;
+  margin: 0 !important;
+  border-radius: 5px !important;
+  background: transparent !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-pane] > span:first-child svg {
+  width: 15px !important;
+  height: 15px !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-pane] > span:first-child:has(> .mari-provider-icon) {
+  width: 20px !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-section="accounts"] > p {
+  padding: 10px 8px 2px !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-pane-models] {
+  position: relative;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-pane-models] > div:nth-child(2) {
+  min-height: 0 !important;
+  padding: 9px 96px 5px 14px !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-edit-order] {
+  position: absolute !important;
+  top: 6px;
+  right: 12px;
+  z-index: 2;
+  margin: 0 !important;
+  min-height: 26px !important;
+}
+html.mdos [data-quick-connection-menu] .mari-connection-model-choice {
+  min-height: 42px !important;
+  padding: 4px 8px !important;
+}
+html.mdos [data-quick-connection-menu] .mari-connection-model {
+  margin: 0 2px !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-add] {
+  min-height: 28px !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-accounts] > div:last-child {
+  padding: 3px 4px !important;
+}
+html.mdos [data-quick-connection-menu] * {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--mp-ink) 22%, transparent) transparent;
+}
+html.mdos [data-quick-connection-menu] ::-webkit-scrollbar {
+  width: 6px !important;
+  height: 6px !important;
+}
+html.mdos [data-quick-connection-menu] ::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+html.mdos [data-quick-connection-menu] ::-webkit-scrollbar-thumb {
+  border: 0 !important;
+  border-radius: 3px !important;
+  background: color-mix(in srgb, var(--mp-ink) 22%, transparent) !important;
+}
 `,
   String.raw`/* ══════════════ touch.css ══════════════ */
 /* ──────────────────────────────────────────────────────────────

@@ -3,7 +3,7 @@
   "version": 1,
   "config": {
     "name": "Marinara Desktop",
-    "version": "2.20.1",
+    "version": "2.20.2",
     "description": "Turns Marinara into a desktop OS: menu bar, auto-hiding Dock, draggable windows, Home as a customizable widget board with desktop icons and bookmarks, small apps (Notes, Web, YouTube), Launchpad, Control Center, and phone/tablet home screens. Ctrl+Alt+D switches back to the classic layout.",
     "runtime": "client",
     "capabilities": [

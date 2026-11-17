@@ -2920,7 +2920,12 @@ function calendarGrid(now) {
   return h("div", { class: "mdos-cal-grid" }, ...cells);
 }
 
+// Bodies list optional parts as null; h() skips those, but the refreshes use
+// replaceChildren(), which would print them as the text "null".
 function widgetBody(w) {
+  return widgetParts(w).filter((part) => part != null && part !== false);
+}
+function widgetParts(w) {
   const now = new Date();
   switch (w.type) {
     case "launcher":
