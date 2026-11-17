@@ -1398,10 +1398,21 @@ function applyRect(id) {
     if (w) Object.assign(w.el.style, { left: `${r.x}px`, top: `${r.y}px`, width: `${r.w}px`, height: `${r.h}px` });
     return;
   }
+  const moved = html.style.getPropertyValue(`--mdos-${id}-x`) !== `${r.x}px` || html.style.getPropertyValue(`--mdos-${id}-y`) !== `${r.y}px`;
   setVar(`--mdos-${id}-x`, `${r.x}px`);
   setVar(`--mdos-${id}-y`, `${r.y}px`);
   setVar(`--mdos-${id}-w`, `${r.w}px`);
   setVar(`--mdos-${id}-h`, `${r.h}px`);
+  if (id === "main" && moved) remeasureBubbles();
+}
+// Marinara places its chat bubbles (chat settings, tracker) in screen
+// coordinates measured from the chat area, and measures again only when the
+// browser window resizes. Inside our chat window they are shifted back by the
+// window's position (apps.css); when the window moves, ask for a new measure.
+let bubbleTimer = 0;
+function remeasureBubbles() {
+  marinara.clearTimeout(bubbleTimer);
+  bubbleTimer = marinara.setTimeout(() => window.dispatchEvent(new Event("marinara:chat-visual-viewport-change")), 350);
 }
 const applyAllRects = () => winIds().forEach(applyRect);
 function applyZ() {

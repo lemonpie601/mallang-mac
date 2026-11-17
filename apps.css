@@ -1296,87 +1296,6 @@ html.mdos .marinara-chat-input-shell > div > button[aria-haspopup="dialog"]:has(
   text-overflow: ellipsis;
 }
 
-/* The picker itself: a big rounded card, grouped lists, large two-line rows
-   (name over description), the current one marked by a check on the right. */
-html.mdos [data-quick-connection-menu] {
-  border-radius: 28px !important;
-  border: 0 !important;
-  padding: 8px !important;
-  background: color-mix(in srgb, var(--mdos-win-bg, #fff) 94%, var(--mdos-fg, #000)) !important;
-  box-shadow:
-    0 24px 60px -14px rgba(0, 0, 0, 0.38),
-    0 0 0 1px color-mix(in srgb, var(--mdos-fg, #000) 8%, transparent) !important;
-  color: var(--mdos-fg, inherit) !important;
-}
-html.mdos [data-quick-connection-menu] > div:first-child h2 {
-  font-size: 15px !important;
-  font-weight: 700 !important;
-}
-html.mdos [data-quick-connection-menu] [data-switcher-section] {
-  margin: 6px 4px 10px !important;
-  padding: 4px 0 !important;
-  border-radius: 20px;
-  background: var(--mdos-win-bg, #fff);
-  overflow: hidden;
-}
-html.mdos [data-quick-connection-menu] .mari-connection-model {
-  border-radius: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-}
-html.mdos [data-quick-connection-menu] .mari-connection-model::before {
-  display: none !important;
-}
-html.mdos [data-quick-connection-menu] .mari-connection-model + .mari-connection-model,
-html.mdos [data-quick-connection-menu] [data-switcher-section] > * + * .mari-connection-model {
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--mdos-fg, #000) 9%, transparent) !important;
-}
-html.mdos [data-quick-connection-menu] .mari-connection-model:hover {
-  background: color-mix(in srgb, var(--mdos-fg, #000) 4%, transparent) !important;
-}
-html.mdos [data-quick-connection-menu] .mari-connection-model-choice {
-  min-height: 64px !important;
-  padding-block: 10px !important;
-  gap: 12px !important;
-}
-/* Like the app: the name and its description, and the check. Role and price
-   badges go (a warning badge, such as a missing key, stays), so the name
-   always has the room. */
-html.mdos [data-quick-connection-menu] .mari-connection-model-choice > [data-connection-model-copy] {
-  flex: 1 1 auto !important;
-  min-width: 0 !important;
-}
-html.mdos [data-quick-connection-menu] .mari-connection-model-choice > span:not(:first-child):not([data-connection-model-copy]):not([data-connection-badges]):not(:has(.mari-connection-pill--warn)):not(.mari-connection-pill--warn) {
-  display: none !important;
-}
-/* The price stays (role badges like "Agents" go, warnings stay). */
-html.mdos [data-quick-connection-menu] [data-connection-badges] > [data-connection-role]:not(.mari-connection-pill--warn) {
-  display: none !important;
-}
-html.mdos [data-quick-connection-menu] [data-model-title] {
-  font-size: 15.5px !important;
-  font-weight: 500 !important;
-  line-height: 1.35 !important;
-  letter-spacing: -0.01em;
-}
-html.mdos [data-quick-connection-menu] [data-connection-model-copy] > span:not([data-model-title]) {
-  font-size: 13px !important;
-  line-height: 1.45 !important;
-}
-/* The current model: just a large accent check, like the app. */
-html.mdos [data-quick-connection-menu] .mari-connection-model:has([aria-current="true"]) [data-model-title] {
-  font-weight: 600 !important;
-}
-html.mdos [data-quick-connection-menu] .mari-connection-model svg.lucide-check {
-  width: 22px !important;
-  height: 22px !important;
-  stroke-width: 2.4;
-  color: var(--mdos-accent, #0a84ff) !important;
-}
-html.mdos [data-quick-connection-menu] [data-switcher-section] > :is(h3, div:first-child > strong) {
-  font-size: 12px !important;
-}
-
 /* Editor section list: the current section is a soft tint (not a solid fill)
    that fades between sections; while jumping to a picked section, only that
    one is lit. */
@@ -1929,56 +1848,6 @@ html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > [clas
   display: flex !important;
 }
 
-/* ── Model picker, redesigned ────────────────────────────────── */
-/* The current model as a highlighted card at the top, a rounded search
-   field, the sources (Starred, accounts, folders) as a calm list with the
-   chosen one tinted, the models as grouped two-line rows (above). */
-html.mdos [data-quick-connection-menu] [data-switcher-section="now"] {
-  margin: 4px 8px 8px !important;
-  padding: 4px 6px !important;
-  border: 0 !important;
-  border-radius: 18px !important;
-  background: color-mix(in srgb, var(--mdos-accent, #0a84ff) 10%, var(--mdos-win-bg, #fff)) !important;
-  box-shadow: none !important;
-}
-html.mdos [data-quick-connection-menu] [data-switcher-section="now"] [data-model-title] {
-  font-size: 16px !important;
-  font-weight: 650 !important;
-}
-html.mdos [data-quick-connection-menu] :is([data-switcher-default], [data-switcher-shuffle]) {
-  border-radius: 999px !important;
-}
-html.mdos [data-quick-connection-menu] input:is([type="text"], [type="search"], :not([type])) {
-  height: 42px !important;
-  border: 0 !important;
-  border-radius: 14px !important;
-  background: color-mix(in srgb, var(--mdos-fg, #000) 7%, transparent) !important;
-  box-shadow: none !important;
-  font-size: 15px !important;
-}
-html.mdos [data-quick-connection-menu] :has(> input:is([type="text"], [type="search"], :not([type]))) {
-  border: 0 !important;
-  box-shadow: none !important;
-  background: transparent !important;
-}
-html.mdos [data-quick-connection-menu] [data-switcher-pane] {
-  min-height: 44px !important;
-  margin: 1px 4px !important;
-  border-radius: 12px !important;
-  font-size: 14.5px !important;
-}
-html.mdos [data-quick-connection-menu] [data-switcher-pane]::before {
-  display: none !important;
-}
-html.mdos [data-quick-connection-menu] [data-switcher-pane][aria-pressed="true"] {
-  background: color-mix(in srgb, var(--mdos-accent, #0a84ff) 14%, transparent) !important;
-  color: var(--mdos-accent, #0a84ff) !important;
-  font-weight: 650 !important;
-}
-html.mdos [data-quick-connection-menu] [data-switcher-search-all] {
-  border-radius: 12px !important;
-}
-
 /* ══ Chat apps: Messages · Books · Games (2.19) ═══════════════════
    Conversation, Roleplay and Game are separate apps, each after a Mac app.
    The list keeps the theme's surface and decorations (pattern, images);
@@ -2295,4 +2164,324 @@ html.mdos-touch #mdos-tctl > .mdos-tctl-btn {
   height: 36px !important;
   min-width: 36px !important;
   box-sizing: border-box !important;
+}
+
+/* ── Desktop: Marinara's chat bubbles inside the chat window ── */
+/* Chat settings / tracker bubbles (and the windows they open) are fixed at
+   screen coordinates, but the chat window is their containing block, so they
+   landed one window-offset away (often off-screen). Shift them back. */
+html.mdos-desktop [data-mdos-win="main"] :is(.mari-window-bubble, .mari-window.fixed) {
+  translate: calc(-1 * var(--mdos-main-x, 0px)) calc(-1 * var(--mdos-main-y, 0px));
+}
+
+/* ══ Model picker (2.20) ══════════════════════════════════════════
+   A Mac panel in the theme's colours: a quiet title bar, the current model
+   as a tinted strip, one Spotlight-style search field, the sources as a Mac
+   source list on the left and the models as one-line rows on the right
+   (name, provider, price), the current one tinted with a check. On a
+   computer it opens centred, clear of the menu bar. Phones keep the bottom
+   sheet (above) with the same rows. */
+html.mdos [data-quick-connection-menu] {
+  --mp-ink: var(--foreground, var(--mdos-fg));
+  --mp-muted: var(--muted-foreground, var(--mdos-fg-2));
+  --mp-accent: var(--marinara-app-accent-solid, var(--primary, var(--mdos-accent, #0a84ff)));
+  --mp-bg: var(--card, var(--mdos-win-bg, #fff));
+  --mp-fill: color-mix(in srgb, var(--mp-ink) 6%, transparent);
+  --mp-line: color-mix(in srgb, var(--mp-ink) 10%, transparent);
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 16px !important;
+  background: var(--mp-bg) !important;
+  color: var(--mp-ink) !important;
+  box-shadow:
+    0 30px 80px -20px rgba(0, 0, 0, 0.45),
+    0 0 0 0.5px color-mix(in srgb, var(--mp-ink) 22%, transparent) !important;
+}
+html.mdos:not(.mdos-touch) [data-quick-connection-menu] {
+  left: 50% !important;
+  top: calc(50% + 15px) !important;
+  translate: -50% -50%;
+  width: min(780px, calc(100vw - 48px)) !important;
+  height: min(580px, calc(100dvh - 110px)) !important;
+  max-height: none !important;
+}
+/* Title bar */
+html.mdos [data-quick-connection-menu] > div:first-child {
+  min-height: 44px;
+  padding: 0 8px 0 18px !important;
+  border-bottom: 1px solid var(--mp-line);
+}
+html.mdos [data-quick-connection-menu] > div:first-child h2 {
+  font-size: 13.5px !important;
+  font-weight: 650 !important;
+  letter-spacing: -0.005em;
+}
+html.mdos [data-quick-connection-menu] > div:first-child > button {
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 8px !important;
+  color: var(--mp-muted) !important;
+  background: transparent !important;
+}
+html.mdos [data-quick-connection-menu] > div:first-child > button:hover {
+  background: var(--mp-fill) !important;
+  color: var(--mp-ink) !important;
+}
+html.mdos [data-quick-connection-menu] > div:first-child > button svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+/* The current model: a tinted strip. */
+html.mdos [data-quick-connection-menu] [data-switcher-section="now"] {
+  margin: 12px 14px 0 !important;
+  padding: 2px 6px 2px 4px !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: color-mix(in srgb, var(--mp-accent) 11%, transparent) !important;
+  box-shadow: none !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-section="now"] .mari-connection-model-choice {
+  min-height: 52px !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-section="now"] [data-model-title] {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-default] {
+  height: 28px !important;
+  min-height: 0 !important;
+  padding: 0 11px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: color-mix(in srgb, var(--mp-bg) 70%, transparent) !important;
+  color: var(--mp-muted) !important;
+  font-size: 12px !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-default]:hover {
+  color: var(--mp-ink) !important;
+}
+
+/* Search: one Spotlight-style field. */
+html.mdos [data-quick-connection-menu] [data-connection-switcher] > .mari-chrome-field {
+  margin: 10px 14px 12px !important;
+  min-height: 38px !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: var(--mp-fill) !important;
+  box-shadow: none !important;
+}
+html.mdos [data-quick-connection-menu] [data-connection-switcher] > .mari-chrome-field:focus-within {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--mp-accent) 28%, transparent) !important;
+}
+html.mdos [data-quick-connection-menu] [data-connection-switcher] > .mari-chrome-field label {
+  min-height: 38px !important;
+  padding-inline: 12px !important;
+}
+html.mdos [data-quick-connection-menu] input[data-switcher-search] {
+  height: 38px !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font-size: 14.5px !important;
+  color: var(--mp-ink) !important;
+}
+
+/* Two panes: a source list and the models. */
+html.mdos [data-quick-connection-menu] [data-switcher-panes] {
+  border-top: 1px solid var(--mp-line) !important;
+}
+html.mdos:not(.mdos-touch) [data-quick-connection-menu] [data-switcher-accounts] {
+  flex: 0 0 218px !important;
+  width: 218px !important;
+  background: color-mix(in srgb, var(--mp-ink) 3.5%, transparent);
+  border-right: 1px solid var(--mp-line);
+}
+html.mdos [data-quick-connection-menu] [data-switcher-accounts] > div:last-child {
+  border-top: 1px solid var(--mp-line) !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-section="accounts"] > p {
+  padding: 12px 10px 4px !important;
+  font-size: 11px !important;
+  font-weight: 650 !important;
+  letter-spacing: 0.02em;
+  color: var(--mp-muted) !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-pane] {
+  min-height: 32px !important;
+  margin: 1px 0 !important;
+  padding: 4px 8px !important;
+  gap: 9px !important;
+  border-radius: 7px !important;
+  background: transparent !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: var(--mp-ink) !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-pane]::before {
+  display: none !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-pane]:hover {
+  background: var(--mp-fill) !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-pane][aria-pressed="true"] {
+  background: color-mix(in srgb, var(--mp-accent) 16%, transparent) !important;
+  color: var(--mp-accent) !important;
+  font-weight: 650 !important;
+}
+/* Source rows: the name on one line, the detail as one small grey line. */
+html.mdos [data-quick-connection-menu] [data-switcher-pane] strong {
+  display: block !important;
+  font-size: 13px !important;
+  font-weight: inherit !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: unset !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-pane] strong ~ * {
+  font-size: 11px !important;
+  color: var(--mp-muted) !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-pane] .mari-provider-icon {
+  width: 20px !important;
+  height: 20px !important;
+  border-radius: 5px !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-add] {
+  min-height: 30px !important;
+  border-radius: 7px !important;
+  font-size: 12.5px !important;
+  color: var(--mp-muted) !important;
+}
+
+/* Models pane heading. */
+html.mdos [data-quick-connection-menu] [data-switcher-pane-models] > div:nth-child(2) {
+  padding: 12px 16px 6px !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-pane-models] > div:nth-child(2) strong {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-pane-models] > div:nth-child(2) span {
+  font-size: 12px !important;
+  color: var(--mp-muted) !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-edit-order],
+html.mdos [data-quick-connection-menu] [data-switcher-search-all] {
+  min-height: 26px !important;
+  padding: 0 8px !important;
+  border-radius: 7px !important;
+  font-size: 12px !important;
+  color: var(--mp-accent) !important;
+}
+
+/* Model rows: one line for the name, one small line for the provider, the
+   price as quiet text, the settings button on hover, the star when set. */
+html.mdos [data-quick-connection-menu] [data-switcher-section]:not([data-switcher-section="now"]) {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+}
+html.mdos [data-quick-connection-menu] .mari-connection-model {
+  align-items: center !important;
+  margin: 1px 4px !important;
+  padding-right: 4px !important;
+  border-radius: 9px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+html.mdos [data-quick-connection-menu] .mari-connection-model::before {
+  display: none !important;
+}
+html.mdos [data-quick-connection-menu] .mari-connection-model:hover {
+  background: var(--mp-fill) !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-section]:not([data-switcher-section="now"]) .mari-connection-model:has(.mari-connection-model-choice[aria-current="true"]) {
+  background: color-mix(in srgb, var(--mp-accent) 13%, transparent) !important;
+}
+html.mdos [data-quick-connection-menu] .mari-connection-model-choice {
+  min-height: 46px !important;
+  padding: 5px 8px !important;
+  gap: 11px !important;
+}
+html.mdos [data-quick-connection-menu] .mari-connection-model-choice .mari-provider-icon {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 7px !important;
+}
+html.mdos [data-quick-connection-menu] [data-connection-model-copy] {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+html.mdos [data-quick-connection-menu] [data-model-title] {
+  display: block !important;
+  -webkit-line-clamp: unset !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  line-height: 1.3 !important;
+}
+html.mdos [data-quick-connection-menu] [data-connection-model-copy] > span:not([data-model-title]) {
+  margin-top: 1px !important;
+  flex-wrap: nowrap !important;
+  overflow: hidden;
+  font-size: 11.5px !important;
+  line-height: 1.3 !important;
+  color: var(--mp-muted) !important;
+}
+html.mdos [data-quick-connection-menu] [data-connection-model-copy] > span:not([data-model-title]) * {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+html.mdos [data-quick-connection-menu] .mari-connection-model-choice[aria-current="true"] [data-model-title] {
+  color: var(--mp-accent) !important;
+}
+/* Role badges (Agents…) go, warnings (no key…) stay; the price is text. */
+html.mdos [data-quick-connection-menu] [data-connection-badges] > [data-connection-role]:not(:has(.mari-connection-pill--warn)) {
+  display: none !important;
+}
+html.mdos [data-quick-connection-menu] [data-model-cost] {
+  border: 0 !important;
+  padding: 2px 7px !important;
+  border-radius: 6px !important;
+  background: var(--mp-fill) !important;
+  color: var(--mp-muted) !important;
+  font-size: 11px !important;
+  font-variant-numeric: tabular-nums;
+}
+html.mdos [data-quick-connection-menu] .mari-connection-model svg.lucide-check {
+  width: 16px !important;
+  height: 16px !important;
+  stroke-width: 2.6;
+  color: var(--mp-accent) !important;
+}
+html.mdos [data-quick-connection-menu] :is([data-switcher-settings], [data-switcher-star]) {
+  width: 30px !important;
+  height: 30px !important;
+  min-width: 30px !important;
+  border-radius: 8px !important;
+  color: var(--mp-muted) !important;
+  background: transparent !important;
+}
+html.mdos [data-quick-connection-menu] :is([data-switcher-settings], [data-switcher-star]):hover {
+  background: var(--mp-fill) !important;
+  color: var(--mp-ink) !important;
+}
+html.mdos [data-quick-connection-menu] :is([data-switcher-settings], [data-switcher-star]) svg {
+  width: 15px !important;
+  height: 15px !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-star][aria-pressed="true"] {
+  color: #f5b301 !important;
+}
+html.mdos:not(.mdos-touch) [data-quick-connection-menu] .mari-connection-model:not(:hover):not(:focus-within) :is([data-switcher-settings], [data-switcher-star]:not([aria-pressed="true"])) {
+  opacity: 0;
 }
