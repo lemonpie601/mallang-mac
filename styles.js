@@ -2215,6 +2215,14 @@ html.mdos-touch #mdos-tctl > .mdos-tctl-btn svg {
   height: 19px !important;
 }
 
+/* Roleplay agent bar (Relationship Tracker and other agent buttons): on
+   phones it is a row across the top of the chat, fixed in the layout (not a
+   draggable bubble), and the capsule covered its first button. The row now
+   starts to the right of the capsule. */
+html.mdos-touch:not(.mdos-tablet):not(.mdos-touch-home):not(.mdos-touch-app):not(.mdos-touch-panel) [data-roleplay-agent-window] {
+  padding-left: 96px !important;
+}
+
 /* ── Desktop: Marinara's chat bubbles inside the chat window ── */
 /* Chat settings / tracker bubbles (and the windows they open) are fixed at
    screen coordinates, but the chat window is their containing block, so they
