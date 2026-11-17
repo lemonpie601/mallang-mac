@@ -6978,7 +6978,7 @@ function lkCandidates() {
   const out = [];
   let budget = 0;
   const walk = (el, depth, floatingAbove) => {
-    if (++budget > 600 || el.matches(LK_SKIP)) return;
+    if (++budget > 1500 || el.matches(LK_SKIP)) return;
     const cs = getComputedStyle(el);
     if (cs.display === "none") return;
     const pos = cs.position;
@@ -6988,7 +6988,10 @@ function lkCandidates() {
       if (v === "launcher") return out.push(el);
       if (v === "panel") return;
     }
-    if (depth < 3) for (const c of el.children) walk(c, depth + 1, floatingAbove || floating);
+    if (depth < 7) {
+      if (el.shadowRoot) for (const c of el.shadowRoot.children) walk(c, depth + 1, floatingAbove || floating);
+      for (const c of el.children) walk(c, depth + 1, floatingAbove || floating);
+    }
   };
   for (const root of [...doc.body.children, ...[...html.children].filter((e) => e !== doc.body && e !== doc.head)]) {
     if (root.id === "root" || root === ui) continue;
@@ -7806,7 +7809,7 @@ function lkStopPick() {
 // buttons at the top left take its place inside apps — the chat list
 // (fold / unfold) and a menu sheet with the panels (characters, personas…,
 // settings), the extension locker and Customize. Home is the home indicator.
-const TOUCH_MENU = ["home", "characters", "personas", "lorebooks", "presets", "connections", "agents", "settings", "locker", "customize"];
+const TOUCH_MENU = ["mode:conversation", "mode:roleplay", "mode:game", "home", "characters", "personas", "lorebooks", "presets", "connections", "agents", "settings", "locker", "customize"];
 const tctlList = h("button", {
   type: "button",
   class: "mdos-tctl-btn",
