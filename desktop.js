@@ -7984,6 +7984,10 @@ function refreshChatList() {
   if (!sidebar) return;
   const mode = activeChatMode() || "";
   if (sidebar.getAttribute("data-mdos-list") !== mode) sidebar.setAttribute("data-mdos-list", mode);
+  // The list's big title names the app (Conversation / Roleplay / Game).
+  const title = sidebar.querySelector(".mari-sidebar-header h2");
+  const name = L.modes[MODE_KEYS.indexOf(mode)] || "";
+  if (title && title.getAttribute("data-mdos-title") !== name) title.setAttribute("data-mdos-title", name);
   if (mode !== "conversation") return;
   // Only when the rows changed (count / first row) — not a walk every sync.
   const rows = sidebar.querySelectorAll(SEL.chatRows);

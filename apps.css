@@ -1678,3 +1678,230 @@ html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell:has(> textarea[data
   gap: 4px !important;
 }
 
+
+/* ══ Chat list panel, redesigned (phones and tablets) ═════════ */
+/* A clean messenger list: the app's name as a big title with small round
+   actions beside it, an iOS segmented control for the mode, one rounded
+   search field, compact sort and "new folder", flat rows. */
+html.mdos-touch aside[data-component="ChatSidebarPanel"],
+html.mdos-touch .mari-chat-sidebar {
+  background: var(--mdos-win-bg, var(--background)) !important;
+  background-image: none !important;
+}
+html.mdos-touch .mari-chat-sidebar {
+  position: relative;
+}
+/* Title row */
+html.mdos-touch .mari-chat-sidebar .mari-sidebar-header {
+  height: auto !important;
+  min-height: 58px;
+  padding: 12px 16px 4px !important;
+  align-items: center !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+html.mdos-touch .mari-chat-sidebar .mari-sidebar-header h2[data-mdos-title]:not([data-mdos-title=""]) {
+  font-size: 0 !important;
+}
+html.mdos-touch .mari-chat-sidebar .mari-sidebar-header h2[data-mdos-title]:not([data-mdos-title=""])::before {
+  content: attr(data-mdos-title);
+  font: 800 30px/1.1 var(--mdos-font);
+  letter-spacing: -0.025em;
+  color: var(--foreground, var(--mdos-fg));
+}
+html.mdos-touch .mari-chat-sidebar .mari-sidebar-header button:not(:has(.lucide-x)) {
+  display: none !important;
+}
+html.mdos-touch .mari-chat-sidebar .mari-sidebar-header button:has(.lucide-x) {
+  width: 34px !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: color-mix(in srgb, var(--foreground, #000) 7%, transparent) !important;
+  box-shadow: none !important;
+}
+/* New / import / select: small round buttons in the title row. */
+html.mdos-touch .mari-chat-sidebar > div:has(> .mari-chat-mode-action) {
+  position: absolute !important;
+  z-index: 5;
+  top: 24px;
+  right: 60px;
+  display: flex !important;
+  gap: 6px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+html.mdos-touch .mari-chat-sidebar > div:has(> .mari-chat-mode-action) > button {
+  flex: none !important;
+  width: 34px !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: color-mix(in srgb, var(--foreground, #000) 7%, transparent) !important;
+  box-shadow: none !important;
+  color: var(--foreground, var(--mdos-fg)) !important;
+}
+html.mdos-touch .mari-chat-sidebar > div:has(> .mari-chat-mode-action) > .mari-chat-mode-action {
+  background: var(--mdos-accent, #0a84ff) !important;
+  color: #fff !important;
+  order: 9;
+}
+html.mdos-touch .mari-chat-sidebar > div:has(> .mari-chat-mode-action) > button svg {
+  width: 17px !important;
+  height: 17px !important;
+  color: currentColor !important;
+}
+/* Mode switcher: an iOS segmented control. */
+html.mdos-touch .mari-chat-sidebar .mari-chrome-segmented:has(> [data-chat-mode-tab]) {
+  margin: 6px 16px 8px !important;
+  padding: 2px !important;
+  height: 34px;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: color-mix(in srgb, var(--foreground, #000) 8%, transparent) !important;
+  box-shadow: none !important;
+}
+html.mdos-touch .mari-chat-sidebar [data-chat-mode-tab] {
+  height: 30px !important;
+  min-height: 30px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+html.mdos-touch .mari-chat-sidebar [data-chat-mode-tab][aria-pressed="true"] {
+  background: var(--mdos-win-bg, #fff) !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.14), 0 0 0 0.5px rgba(0, 0, 0, 0.06) !important;
+}
+html.mdos-touch .mari-chat-sidebar [data-chat-mode-tab] svg {
+  width: 17px !important;
+  height: 17px !important;
+}
+/* Search: one rounded grey field; sort a small pill; the global search a round button. */
+html.mdos-touch .mari-chat-sidebar input.mari-chrome-field {
+  height: 38px !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: color-mix(in srgb, var(--foreground, #000) 7%, transparent) !important;
+  box-shadow: none !important;
+  font-size: 15px !important;
+}
+html.mdos-touch .mari-chat-sidebar select.mari-chrome-sort-field {
+  height: 38px !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background-color: color-mix(in srgb, var(--foreground, #000) 7%, transparent) !important;
+  box-shadow: none !important;
+  font-size: 13px !important;
+}
+html.mdos-touch .mari-chat-sidebar :is(input.mari-chrome-field, select.mari-chrome-sort-field) ~ button.mari-chrome-control--small,
+html.mdos-touch .mari-chat-sidebar div:has(> input.mari-chrome-field) ~ button.mari-chrome-control--small {
+  width: 38px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: color-mix(in srgb, var(--foreground, #000) 7%, transparent) !important;
+  box-shadow: none !important;
+}
+/* "New folder": a small text button instead of a full-width bar. */
+html.mdos-touch .mari-chat-sidebar button.mari-chrome-control--small:has(svg.lucide-folder-plus) {
+  width: auto !important;
+  height: 28px !important;
+  min-height: 28px !important;
+  margin: 2px 0 2px auto !important;
+  padding: 0 10px !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--mdos-accent, #0a84ff) !important;
+  font-size: 13px !important;
+}
+/* Rows: flat, the open chat a soft tint (not a solid block). */
+html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"] {
+  margin-inline: 8px !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+}
+html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress) {
+  background: color-mix(in srgb, var(--mdos-accent, #0a84ff) 14%, transparent) !important;
+}
+html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress) :is(span, svg, button) {
+  color: inherit !important;
+}
+html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress) > .min-w-0.flex-1 > span:first-child {
+  color: var(--mdos-accent, #0a84ff) !important;
+}
+html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress) .mdos-preview {
+  color: var(--muted-foreground, inherit) !important;
+}
+
+/* ── Chat pictures: Marinara draws them in a 28px box (one more wrapper
+   inside the slot); the whole box is scaled up so single pictures, groups
+   and mode icons all grow evenly, then shaped per app. ── */
+html.mdos .mari-chat-sidebar [data-drag-kind="chat"] {
+  --avs: 1.5;
+}
+html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"] {
+  --avs: 1.7;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="conversation"] [data-drag-kind="chat"] {
+  --avs: 1.8;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="game"] [data-drag-kind="chat"] {
+  --avs: 1.9;
+}
+html.mdos .mari-chat-sidebar [data-drag-kind="chat"] > .relative.flex-shrink-0 {
+  width: calc(28px * var(--avs)) !important;
+  height: calc(28px * var(--avs)) !important;
+  display: grid !important;
+  place-items: center;
+}
+html.mdos .mari-chat-sidebar [data-drag-kind="chat"] > .relative.flex-shrink-0 > :first-child {
+  width: 28px !important;
+  height: 28px !important;
+  transform: scale(var(--avs));
+  transform-origin: center;
+}
+html.mdos .mari-chat-sidebar [data-drag-kind="chat"] > .relative.flex-shrink-0 > :first-child > span.rounded-lg {
+  width: 100% !important;
+  height: 100% !important;
+}
+html.mdos .mari-chat-sidebar [data-drag-kind="chat"] > .relative.flex-shrink-0 img {
+  transform: none;
+}
+/* Conversation: round. */
+html.mdos .mari-chat-sidebar[data-mdos-list="conversation"] [data-drag-kind="chat"] > .relative.flex-shrink-0 :is(span.rounded-lg, .mari-chat-mode-avatar, div.rounded-lg),
+html.mdos .mari-chat-sidebar[data-mdos-list="conversation"] [data-drag-kind="chat"] > .relative.flex-shrink-0 img {
+  border-radius: 50% !important;
+}
+/* Game: app icons. */
+html.mdos .mari-chat-sidebar[data-mdos-list="game"] [data-drag-kind="chat"] > .relative.flex-shrink-0 :is(span.rounded-lg, .mari-chat-mode-avatar, div.rounded-lg) {
+  border-radius: 7px !important;
+}
+/* Roleplay: book covers — taller than wide, a spine shadow. */
+html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"] {
+  --avs: 1.65;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"] > .relative.flex-shrink-0 {
+  height: calc(39px * var(--avs)) !important;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"] > .relative.flex-shrink-0 > :first-child {
+  height: 39px !important;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"] > .relative.flex-shrink-0 :is(span.rounded-lg, .mari-chat-mode-avatar, div.rounded-lg) {
+  height: 100% !important;
+  border-radius: 1.5px 4px 4px 1.5px !important;
+  box-shadow:
+    inset 2px 0 0 rgba(0, 0, 0, 0.2),
+    0 2px 5px -2px rgba(0, 0, 0, 0.4) !important;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list] [data-drag-kind="chat"] > .relative.flex-shrink-0 > .mari-chat-mode-avatar {
+  width: 28px !important;
+  height: 28px !important;
+}
