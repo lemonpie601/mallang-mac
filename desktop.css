@@ -2031,3 +2031,62 @@ html.mdos-touch .mdos-lp-app { --mdos-badge-icon: var(--mdos-sb-icon); }
 .mdos-wg--launcher.mdos-wg--l .mdos-launch[data-mdos-badge]::after {
   left: calc(var(--mdos-badge-icon) - 14px);
 }
+
+/* ── Focus mode (Ctrl Alt F) ─────────────────────────────────── */
+html.mdos-focus :is(#mdos-menubar, #mdos-dock, #mdos-widgets, [data-mdos-win="chats"], [data-mdos-win="panel"], .mdos-appwin) {
+  display: none !important;
+}
+html.mdos-desktop.mdos-focus {
+  --mdos-main-x: 0px !important;
+  --mdos-main-y: 0px !important;
+  --mdos-main-w: 100vw !important;
+  --mdos-main-h: 100vh !important;
+  --mdos-main-tx: 0px !important;
+  --mdos-main-ty: 0px !important;
+}
+html.mdos-focus [data-mdos-win="main"] {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+#mdos-focus-exit {
+  display: none;
+}
+html.mdos-focus #mdos-focus-exit {
+  all: unset;
+  display: block;
+  position: fixed;
+  top: 6px;
+  left: 50%;
+  z-index: 8800;
+  translate: -50% 0;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font: 600 12px/1.4 var(--mdos-font);
+  opacity: 0.25;
+  cursor: var(--mdos-cur-ptr, pointer);
+  transition: opacity 150ms ease;
+}
+html.mdos-focus #mdos-focus-exit:hover,
+html.mdos-focus #mdos-focus-exit:focus-visible {
+  opacity: 1;
+}
+
+/* ── Character count in editors ──────────────────────────────── */
+#mdos-count {
+  display: none;
+}
+html.mdos #mdos-count.is-on {
+  display: block;
+  position: fixed;
+  z-index: 8700;
+  translate: -100% -100%;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--mdos-fg, #000) 72%, transparent);
+  color: var(--mdos-win-bg, #fff);
+  font: 600 11px/1.4 var(--mdos-font);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}

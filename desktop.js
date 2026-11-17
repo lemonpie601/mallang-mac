@@ -258,7 +258,15 @@ const L = KO
       allSettings: "모든 꾸미기 설정",
       greeting: (hour) =>
         hour < 5 ? "늦은 밤이에요" : hour < 12 ? "좋은 아침이에요" : hour < 18 ? "좋은 오후예요" : "좋은 저녁이에요",
+      focusMode: "집중 모드",
+      focusExit: "집중 모드 끄기",
+      chars: "자",
       shortcutList: [
+        ["Ctrl + Alt + 1 · 2 · 3", "대화 · 롤플 · 게임 앱"],
+        ["Ctrl + Alt + N", "지금 모드에서 새 채팅"],
+        ["Ctrl + Alt + F", "집중 모드 (채팅 창만 꽉 차게)"],
+        ["Ctrl + Alt + ,", "설정"],
+        ["Ctrl(⌘) + S", "편집 화면 저장"],
         ["Ctrl + Alt + D", "데스크톱 ↔ 클래식 레이아웃"],
         ["Ctrl + Alt + L", "런치패드"],
         ["Ctrl + Alt + H", "데스크톱 보기"],
@@ -506,7 +514,15 @@ const L = KO
       allSettings: "All customize settings",
       greeting: (hour) =>
         hour < 5 ? "Burning the midnight oil" : hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening",
+      focusMode: "Focus mode",
+      focusExit: "Leave focus mode",
+      chars: " chars",
       shortcutList: [
+        ["Ctrl + Alt + 1 · 2 · 3", "Chat · Roleplay · Game apps"],
+        ["Ctrl + Alt + N", "New chat in the current mode"],
+        ["Ctrl + Alt + F", "Focus mode (the chat window fills the screen)"],
+        ["Ctrl + Alt + ,", "Settings"],
+        ["Ctrl(⌘) + S", "Save the open editor"],
         ["Ctrl + Alt + D", "Desktop ↔ classic layout"],
         ["Ctrl + Alt + L", "Launchpad"],
         ["Ctrl + Alt + H", "Show desktop"],
@@ -1755,6 +1771,7 @@ const MENUS = {
     { label: L.showDesktop, key: "Ctrl Alt H", action: showDesktop },
     { label: L.editWidgets, action: () => setEditMode(true) },
     { label: L.launchpad, key: "Ctrl Alt L", action: toggleLaunchpad },
+    { label: L.focusMode, key: "Ctrl Alt F", checked: focusMode, action: () => setFocusMode(!focusMode) },
     "-",
     ...shownApps().map((a) => ({ label: appLabel(a), checked: isAppRunning(a.id), action: () => launch(a.id) })),
     ...(homeApps().length ? ["-", ...homeApps().map((a) => ({ label: appLabel(a), action: () => launch(a.id) }))] : []),
@@ -5543,6 +5560,7 @@ function refreshMode() {
   mode = next;
   toggleClass("mdos", next !== "off");
   applyCursor();
+  if (next !== "desktop" && focusMode) setFocusMode(false);
   toggleClass("mdos-desktop", next === "desktop");
   toggleClass("mdos-touch", next === "touch");
   if (prev === "desktop") {
@@ -5904,6 +5922,27 @@ on(
       } else if (event.code === "KeyM" && focused && isDesktop()) {
         event.preventDefault();
         minimizeWin(focused);
+      } else if (/^Digit[123]$/.test(event.code)) {
+        event.preventDefault();
+        launch(`mode:${MODE_KEYS[Number(event.code.slice(5)) - 1]}`);
+      } else if (event.code === "KeyN") {
+        event.preventDefault();
+        newChatHere();
+      } else if (event.code === "KeyF" && isDesktop()) {
+        event.preventDefault();
+        setFocusMode(!focusMode);
+      } else if (event.code === "Comma") {
+        event.preventDefault();
+        launch("settings");
+      }
+      return;
+    }
+    // Ctrl/⌘ + S saves the open character, persona, preset or lorebook editor.
+    if ((event.ctrlKey || event.metaKey) && !event.altKey && !event.shiftKey && event.code === "KeyS" && mode !== "off") {
+      const save = $(".mari-editor-shell .mari-editor-action--primary");
+      if (save && !save.disabled) {
+        event.preventDefault();
+        save.click();
       }
       return;
     }
@@ -5923,6 +5962,78 @@ on(
   },
   true,
 );
+
+// ── Convenience ───────────────────────────────────────────────
+
+// New chat in whichever mode the chat list shows (Conversation if none yet).
+function newChatHere() {
+  const btn = () => $(".mari-chat-sidebar .mari-chat-mode-action");
+  if (btn()) return btn().click();
+  launch(`mode:${activeChatMode() || "conversation"}`);
+  let tries = 0;
+  const poll = () => {
+    const b = btn();
+    if (b) b.click();
+    else if (++tries < 15) marinara.setTimeout(poll, 100);
+  };
+  marinara.setTimeout(poll, 150);
+}
+
+// Focus mode (desktop): only the chat window, filling the screen — no menu
+// bar, Dock, widgets or other windows. A small pill at the top leaves it.
+let focusMode = false;
+const focusPill = h("button", {
+  type: "button",
+  id: "mdos-focus-exit",
+  text: `✕ ${L.focusExit}`,
+  onclick: () => setFocusMode(false),
+});
+ui.append(focusPill);
+function setFocusMode(next) {
+  focusMode = !!next && isDesktop();
+  toggleClass("mdos-focus", focusMode);
+  if (focusMode) {
+    closeOverlays();
+    if (state.mainMinimized) setMainMinimized(false);
+    focusWin("main");
+  }
+  updateMenubar();
+}
+
+// Character count for the field being written in an editor, at its corner.
+const countEl = h("div", { id: "mdos-count", "aria-hidden": "true" });
+ui.append(countEl);
+let countField = null;
+let countFrame = 0;
+function placeCount() {
+  countFrame = 0;
+  if (!countField?.isConnected) return hideCount();
+  const r = countField.getBoundingClientRect();
+  if (r.bottom < 0 || r.top > innerHeight) return countEl.classList.remove("is-on");
+  countEl.textContent = `${countField.value.length.toLocaleString()}${L.chars}`;
+  countEl.style.left = `${Math.round(r.right - 8)}px`;
+  countEl.style.top = `${Math.round(r.bottom - 8)}px`;
+  countEl.classList.add("is-on");
+}
+const queueCount = () => countField && !countFrame && (countFrame = raf(placeCount));
+function hideCount() {
+  countField = null;
+  countEl.classList.remove("is-on");
+}
+on(doc, "focusin", (event) => {
+  const t = event.target;
+  if (mode !== "off" && t instanceof HTMLElement && t.matches("textarea, input[type=text], input:not([type])") && t.closest(".mari-editor-shell")) {
+    countField = t;
+    queueCount();
+  }
+});
+on(doc, "focusout", (event) => {
+  if (event.target === countField) hideCount();
+});
+on(doc, "input", (event) => {
+  if (event.target === countField) queueCount();
+});
+on(doc, "scroll", queueCount, { capture: true, passive: true });
 
 // ── Boot ──────────────────────────────────────────────────────
 
