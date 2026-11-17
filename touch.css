@@ -139,7 +139,8 @@ html.mdos-touch:is(:not(.mdos-touch-home), .mdos-touch-sheet) #mdos-homebar {
   position: fixed;
   left: 50%;
   bottom: max(2px, calc(env(safe-area-inset-bottom, 0px) - 14px));
-  z-index: 8300;
+  /* Above app agents' own full-screen layers too, or it can't be tapped. */
+  z-index: 2147483000;
   width: 150px;
   height: 22px;
   transform: translateX(-50%);
@@ -215,6 +216,41 @@ html.mdos-tablet aside[data-component="ChatSidebarPanel"] {
   border-radius: 20px !important;
   overflow: hidden !important;
   box-shadow: 0 30px 80px -16px rgba(0, 0, 0, 0.55) !important;
+}
+
+/* Tablet in landscape: like an iPad home screen, widgets get their own column
+   on the left and the app grid fills the rest, inside a centred page, instead
+   of four huge square widgets and six far-apart icons across the whole width. */
+@media (orientation: landscape) and (min-width: 1000px) {
+  html.mdos-tablet {
+    --mdos-sb-icon: 68px;
+    --mdos-sb-cols: 6;
+    --mdos-sb-wcols: 2;
+  }
+  html.mdos-tablet.mdos-touch-home [data-component="HomeBrowserHub.HomePage"] > div.relative {
+    padding-inline: max(32px, calc((100vw - 1180px) / 2)) !important;
+  }
+  html.mdos-tablet #mdos-sb {
+    grid-template-columns: minmax(300px, 340px) minmax(0, 1fr);
+    align-items: start;
+    gap: 40px;
+    margin-bottom: 32px;
+  }
+  html.mdos-tablet .mdos-sb-widgets:empty + .mdos-sb-apps {
+    grid-column: 1 / -1;
+  }
+  html.mdos-tablet .mdos-sb-apps {
+    align-content: start;
+    gap: 28px 12px;
+  }
+  /* Panels get the width a two-column settings page needs. */
+  html.mdos-tablet [data-component="RightPanelMobile"] {
+    inset: 28px max(36px, calc((100vw - 900px) / 2)) 28px !important;
+    --mari-right-panel-width: min(900px, calc(100vw - 72px)) !important;
+  }
+  html.mdos-tablet aside[data-component="ChatSidebarPanel"] {
+    inset: 20px auto 20px 20px !important;
+  }
 }
 
 /* Phone: on the home screen Marinara's top bar is hidden, so sheets opened

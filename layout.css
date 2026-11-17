@@ -380,7 +380,7 @@ html.mdos .mari-chat-sidebar [data-chat-mode-tab] svg {
 /* ── App agents (Otome Hearth, Story Writer…) ────────────────── */
 /* They open as Home tabs; inside a window the hub's own brand and tab strip
    are noise — the window title already names the app. */
-html.mdos.mdos-hub-app .mari-home-browser-chrome {
+html.mdos-desktop.mdos-hub-app .mari-home-browser-chrome {
   display: none !important;
 }
 /* The title strip takes the app's own backdrop (desktop.js tintHubApp). */

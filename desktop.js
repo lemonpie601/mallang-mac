@@ -1238,7 +1238,11 @@ function goHome() {
   // On touch screens Home stays mounted under open sheets; Marinara's Home
   // button also closes those sheets there. Open small apps go to the background.
   if (isTouch()) for (const rec of state.apps) if (!rec.min) setAppMinimized(`app:${rec.id}`, true);
-  if (!homePageVisible() || (isTouch() && $(SEL.sheets))) leaveHubApp() || click($(SEL.homeBtn));
+  // An app agent is a Home tab, so Home looks "visible" to nothing here:
+  // always try to leave it first, then close any sheet with the Home button.
+  const sheet = isTouch() && !!$(SEL.sheets);
+  const leftApp = leaveHubApp();
+  if ((!leftApp && !homePageVisible()) || sheet) click($(SEL.homeBtn));
 }
 function closeWin(id) {
   if (isAppWin(id)) return closeApp(id);
@@ -5386,6 +5390,17 @@ on(window, "pointerup", onPointerUp);
 on(window, "pointercancel", onPointerUp);
 on(doc, "dblclick", onDoubleClick, true);
 on(doc, "contextmenu", onContextMenu);
+// Marinara's own Home button clears the chat but keeps an app agent's tab
+// selected, so inside Otome Hearth or Story Writer it seemed to do nothing.
+on(
+  doc,
+  "click",
+  (event) => {
+    if (mode === "off" || !(event.target instanceof Element) || !event.target.closest(SEL.homeBtn)) return;
+    if (hubAppTab()) marinara.setTimeout(() => leaveHubApp() && syncSoon(), 0);
+  },
+  true,
+);
 // Tap an info icon to show its tip on touch screens (mouse users just hover).
 on(doc, "click", (event) => {
   const tip = event.target instanceof Element ? event.target.closest("[data-mdos-tip]") : null;
