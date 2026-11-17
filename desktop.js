@@ -1747,7 +1747,14 @@ function menuEl(items) {
           role: "menuitem",
           class: "mdos-menu-item",
           disabled: !!item.disabled,
-          onclick: () => {
+          onclick: (event) => {
+            // A toggle that keeps the menu open (pick several in one go).
+            if (item.keepOpen) {
+              item.action?.();
+              const mark = event.currentTarget.querySelector(".mdos-menu-check");
+              if (mark && item.isChecked) mark.textContent = item.isChecked() ? "✓" : "";
+              return;
+            }
             closeMenu();
             item.action?.();
           },
@@ -6258,32 +6265,78 @@ function requireComposer() {
   }
   return t;
 }
-function setComposer(t, value, cursor) {
+function setComposer(t, value, selStart, selEnd = selStart) {
   const setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")?.set;
   if (setter) setter.call(t, value);
   else t.value = value;
   t.focus();
   try {
-    t.setSelectionRange(cursor, cursor);
+    t.setSelectionRange(selStart, selEnd);
   } catch {
     /* ignore */
   }
   t.dispatchEvent(new Event("input", { bubbles: true }));
 }
-// Wraps a selection in the marker; otherwise adds a pair, or just one when the
-// paragraph already has an odd number (closing the open one).
+// Smart dialogue-quote / narration-asterisk insertion for the composer.
+// Returns the new text and selection for pressing `m` ('"' or '*') with the
+// text `v` and selection [start, end). `focused` is whether the composer had
+// the caret (an unfocused composer is written to at its end).
+function markerEdit(v, start, end, m, focused = true) {
+  const other = m === '"' ? "*" : '"';
+  const count = (str, c) => str.split(c).length - 1;
+  // Selection: wrap the words (not the spaces around them) or, if already
+  // wrapped, unwrap — a toggle.
+  if (start !== end) {
+    if (v[start - 1] === m && v[end] === m) return { v: v.slice(0, start - 1) + v.slice(start, end) + v.slice(end + 1), s: start - 1, e: end - 1 };
+    const sel = v.slice(start, end);
+    if (sel.length >= 2 && sel[0] === m && sel[sel.length - 1] === m) return { v: v.slice(0, start) + sel.slice(1, -1) + v.slice(end), s: start, e: end - 2 };
+    const a = start + (sel.length - sel.trimStart().length);
+    const b = end - (sel.length - sel.trimEnd().length);
+    if (a >= b) return { v, s: start, e: end };
+    return { v: v.slice(0, a) + m + v.slice(a, b) + m + v.slice(b), s: b + 2, e: b + 2 };
+  }
+  // No caret in the composer: write at the end of the text.
+  let pos = focused ? start : v.replace(/\s+$/, "").length;
+  const ps = v.lastIndexOf("\n", pos - 1) + 1;
+  let pe = v.indexOf("\n", pos);
+  if (pe === -1) pe = v.length;
+  const para = () => v.slice(ps, pos);
+  // Right before the closing marker of an open span: step over it.
+  if (v[pos] === m && count(para(), m) % 2 === 1) return { v, s: pos + 1, e: pos + 1 };
+  // An open span of this marker: close it here (without trailing spaces).
+  if (count(para(), m) % 2 === 1) {
+    const before = para();
+    const cut = pos - (before.length - before.trimEnd().length);
+    return { v: v.slice(0, cut) + m + v.slice(pos), s: cut + 1, e: cut + 1 };
+  }
+  // Inside the other marker's span: leave it first — past its closing
+  // marker, or close it when it has none.
+  if (count(para(), other) % 2 === 1) {
+    const close = v.indexOf(other, pos);
+    if (close !== -1 && close < pe) pos = close + 1;
+    else {
+      const before = para();
+      const cut = pos - (before.length - before.trimEnd().length);
+      v = v.slice(0, cut) + other + v.slice(pos);
+      pos = cut + 1;
+      pe = v.indexOf("\n", pos);
+      if (pe === -1) pe = v.length;
+    }
+  }
+  // A new pair, spaced from the words around it, caret inside.
+  const prev = v[pos - 1];
+  const next = v[pos];
+  const lead = pos > ps && prev && !/\s/.test(prev) ? " " : "";
+  const trail = next && !/\s/.test(next) ? " " : "";
+  const ins = lead + m + m + trail;
+  const caret = pos + lead.length + 1;
+  return { v: v.slice(0, pos) + ins + v.slice(pos), s: caret, e: caret };
+}
 function insertMarker(marker) {
   const t = requireComposer();
   if (!t) return;
-  const v = t.value;
-  const start = t.selectionStart ?? v.length;
-  const end = t.selectionEnd ?? start;
-  if (start !== end) return setComposer(t, v.slice(0, start) + marker + v.slice(start, end) + marker + v.slice(end), end + marker.length * 2);
-  const ps = v.lastIndexOf("\n", start - 1) + 1;
-  let pe = v.indexOf("\n", start);
-  if (pe === -1) pe = v.length;
-  const odd = (v.slice(ps, pe).split(marker).length - 1) % 2 === 1;
-  setComposer(t, v.slice(0, start) + (odd ? marker : marker + marker) + v.slice(end), start + marker.length);
+  const r = markerEdit(t.value, t.selectionStart ?? t.value.length, t.selectionEnd ?? t.value.length, marker, doc.activeElement === t);
+  setComposer(t, r.v, r.s, r.e);
 }
 function insertText(text) {
   const t = requireComposer();
@@ -6356,7 +6409,7 @@ function openQpMenu(anchor) {
       ...items.map((it) => ({ label: L.qp[it.id], action: () => it.run(anchor) })),
       "-",
       { label: L.qp.pinTitle, disabled: true },
-      ...items.map((it) => ({ label: L.qp[it.id], checked: qp.chips.includes(it.id), action: () => togglePin(it.id) })),
+      ...items.map((it) => ({ label: L.qp[it.id], checked: qp.chips.includes(it.id), keepOpen: true, isChecked: () => qpState().chips.includes(it.id), action: () => togglePin(it.id) })),
     ],
     r.left,
     r.top,
@@ -6369,19 +6422,20 @@ function openQpMenu(anchor) {
   openMenu.anchor = anchor;
   anchor.classList.add("is-open");
 }
-// The pinned buttons sit in a row just above the composer, in the page flow
-// (no positioning loop).
+// The pinned buttons hang just above the composer: inside its shell (which is
+// position: relative and doesn't clip), placed with CSS — no positioning loop,
+// and no layout of the page around the composer to depend on.
 function renderQpChips(on) {
   const shell = on ? qpShell() : null;
   const qp = on ? qpState() : null;
   const items = qp ? QP_ITEMS.filter((it) => qp.chips.includes(it.id) && (!it.when || it.when())) : [];
-  for (const row of doc.querySelectorAll(".mdos-qp-chips")) if (!shell || row.nextElementSibling !== shell || !items.length) row.remove();
+  for (const row of doc.querySelectorAll(".mdos-qp-chips")) if (!shell || row.parentElement !== shell || !items.length) row.remove();
   if (!shell || !items.length) return;
   const sig = items.map((it) => it.id).join(",");
-  let row = shell.previousElementSibling;
-  if (!row?.classList.contains("mdos-qp-chips")) {
+  let row = shell.querySelector(":scope > .mdos-qp-chips");
+  if (!row) {
     row = h("div", { class: "mdos-qp-chips", role: "toolbar", "data-exd": "" });
-    shell.before(row);
+    shell.append(row);
   }
   if (row.dataset.sig === sig) return;
   row.dataset.sig = sig;
@@ -6395,6 +6449,7 @@ function renderQpChips(on) {
           "aria-label": L.qp[it.id],
           onclick: (e) => {
             e.preventDefault();
+            e.stopPropagation();
             it.run(e.currentTarget);
           },
         }, qpIcon(it)),
