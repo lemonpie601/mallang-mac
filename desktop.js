@@ -2541,7 +2541,7 @@ function widgetBody(w) {
               "div",
               { class: "mdos-cr-row" },
               h("span", { class: "mdos-cr-brand", text: r.brand }),
-              h("span", { class: "mdos-cr-amt", text: r.amount }),
+              h("span", { class: "mdos-cr-amt", text: r.amount || "—" }),
               r.pct != null ? h("i", { class: "mdos-cr-bar", style: `--p:${r.pct}%` }) : null,
             ),
           ),
@@ -2689,7 +2689,17 @@ function refreshLocker() {
 // Reads the credit extension's cards (#mac-credit-home) while Home is
 // mounted — also when its board is switched off, since the cards stay in the
 // page. The result is cached, so the widgets keep showing it anywhere.
-const textOf = (el) => (el?.textContent || "").replace(/\s+/g, " ").trim();
+// A provider that hasn't answered yet leaves "NULL", "undefined" or "NaN" in
+// the card ("$NULL", "/ null"); those show as nothing (the widget prints —).
+const textOf = (el) => {
+  const t = (el?.textContent || "")
+    .replace(/\b(?:null|undefined|NaN)\b/gi, "")
+    .replace(/[$₩¥€£](?!\s*[\d.])/g, "")
+    .replace(/\s+/g, " ")
+    .replace(/^[\s/·:|,-]+|[\s/·:|,-]+$/g, "")
+    .trim();
+  return /[\p{L}\p{N}]/u.test(t) ? t : "";
+};
 function scrapeLedger(card) {
   if (!card) return null;
   const facts = [];
@@ -2697,7 +2707,8 @@ function scrapeLedger(card) {
     let label = "";
     for (const n of row.childNodes) {
       if (n.nodeType === 1 && n.tagName === "B") {
-        facts.push([label.replace(/[·\s]+$/g, "").replace(/^[·\s]+/g, "").slice(0, 24), textOf(n).slice(0, 24)]);
+        const value = textOf(n).slice(0, 24);
+        if (value) facts.push([label.replace(/[·\s]+$/g, "").replace(/^[·\s]+/g, "").slice(0, 24), value]);
         label = "";
       } else label += n.textContent;
     }
@@ -2742,7 +2753,7 @@ function scrapeCredits() {
       sub: textOf(card.querySelector(".mlh-cr-brand em")).slice(0, 40),
       amount: amount.slice(0, 40),
       of: textOf(card.querySelector(".mlh-cr-big span")).slice(0, 24),
-      lines: [...card.querySelectorAll(".mlh-cr > .mlh-rc-line")].slice(0, 2).map((l) => textOf(l).slice(0, 40)),
+      lines: [...card.querySelectorAll(".mlh-cr > .mlh-rc-line")].map((l) => textOf(l).slice(0, 40)).filter(Boolean).slice(0, 2),
       pct: Number.isFinite(pct) ? Math.round(pct) : null,
     });
   }
