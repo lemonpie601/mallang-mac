@@ -1228,3 +1228,96 @@ html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night
   pointer-events: auto;
   animation: mdos-fade 160ms ease;
 }
+
+/* ── Model picker: the Claude app's ──────────────────────────── */
+/* The composer's model button shows the model's name as a grey pill
+   (Marinara keeps the name in the button's title) instead of a link icon. */
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button[aria-haspopup="dialog"]:has(svg.lucide-link) {
+  width: auto !important;
+  max-width: 220px;
+  min-width: 0 !important;
+  padding: 0 16px 0 12px !important;
+  gap: 2px;
+  font: 500 14px/1 var(--mdos-font);
+  white-space: nowrap;
+  color: color-mix(in srgb, var(--mdos-fg, #000) 82%, transparent) !important;
+}
+html.mdos .marinara-chat-input-shell > button[aria-haspopup="dialog"] svg.lucide-link {
+  display: none;
+}
+html.mdos .marinara-chat-input-shell > button[aria-haspopup="dialog"]:has(svg.lucide-link) > span:first-child {
+  width: 0 !important;
+}
+html.mdos .marinara-chat-input-shell > button[aria-haspopup="dialog"]:has(svg.lucide-link)::after {
+  content: attr(title);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* The picker itself: a big rounded card, grouped lists, large two-line rows
+   (name over description), the current one marked by a check on the right. */
+html.mdos [data-quick-connection-menu] {
+  border-radius: 28px !important;
+  border: 0 !important;
+  padding: 8px !important;
+  background: color-mix(in srgb, var(--mdos-win-bg, #fff) 94%, var(--mdos-fg, #000)) !important;
+  box-shadow:
+    0 24px 60px -14px rgba(0, 0, 0, 0.38),
+    0 0 0 1px color-mix(in srgb, var(--mdos-fg, #000) 8%, transparent) !important;
+  color: var(--mdos-fg, inherit) !important;
+}
+html.mdos [data-quick-connection-menu] > div:first-child h2 {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-section] {
+  margin: 6px 4px 10px !important;
+  padding: 4px 0 !important;
+  border-radius: 20px;
+  background: var(--mdos-win-bg, #fff);
+  overflow: hidden;
+}
+html.mdos [data-quick-connection-menu] .mari-connection-model {
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+html.mdos [data-quick-connection-menu] .mari-connection-model::before {
+  display: none !important;
+}
+html.mdos [data-quick-connection-menu] .mari-connection-model + .mari-connection-model,
+html.mdos [data-quick-connection-menu] [data-switcher-section] > * + * .mari-connection-model {
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--mdos-fg, #000) 9%, transparent) !important;
+}
+html.mdos [data-quick-connection-menu] .mari-connection-model:hover {
+  background: color-mix(in srgb, var(--mdos-fg, #000) 4%, transparent) !important;
+}
+html.mdos [data-quick-connection-menu] .mari-connection-model-choice {
+  min-height: 68px !important;
+  padding-block: 12px !important;
+  gap: 14px !important;
+}
+html.mdos [data-quick-connection-menu] [data-model-title] {
+  font-size: 16.5px !important;
+  font-weight: 500 !important;
+  line-height: 1.35 !important;
+  letter-spacing: -0.01em;
+}
+html.mdos [data-quick-connection-menu] [data-connection-model-copy] > span:not([data-model-title]) {
+  font-size: 13px !important;
+  line-height: 1.45 !important;
+}
+/* The current model: just a large accent check, like the app. */
+html.mdos [data-quick-connection-menu] .mari-connection-model:has([aria-current="true"]) [data-model-title] {
+  font-weight: 600 !important;
+}
+html.mdos [data-quick-connection-menu] .mari-connection-model svg.lucide-check {
+  width: 22px !important;
+  height: 22px !important;
+  stroke-width: 2.4;
+  color: var(--mdos-accent, #0a84ff) !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-section] > :is(h3, div:first-child > strong) {
+  font-size: 12px !important;
+}
