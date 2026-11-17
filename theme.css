@@ -222,9 +222,11 @@ html.mdos [data-mdos-win="panel"] {
 html.mdos [data-mdos-win="main"] {
   background: var(--mdos-win-bg) !important;
 }
-html.mdos [data-mdos-win] :is(.mari-sidebar, .mari-right-panel, .mari-chat-sidebar, .mari-right-panel-content) {
+html.mdos [data-mdos-win] :is(.mari-sidebar, .mari-right-panel, .mari-right-panel-content) {
   background: transparent !important;
 }
+/* The chat list keeps the theme's own surface and decorations (patterns,
+   images); apps.css only tints its colour per app. */
 
 /* Marinara's own headers become unified title bars (traffic lights sit on their left). */
 html.mdos [data-mdos-win] :is(.mari-sidebar-header, .mari-right-panel-header) {

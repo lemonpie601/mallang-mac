@@ -1350,7 +1350,8 @@ const validRect = (r) => r && ["x", "y", "w", "h"].every((k) => Number.isFinite(
 // move and resize as one, and the seam sets the list's width.
 const LIST_MIN = 240;
 const LIST_MAX = 480;
-const paneOn = () => isDesktop() && state.messengerPane !== false && chatsOpen() && !state.mainMinimized && !desktopHome && !html.classList.contains("mdos-focus");
+const paneReady = () => isDesktop() && state.messengerPane !== false && !state.mainMinimized && !desktopHome && !html.classList.contains("mdos-focus");
+const paneOn = () => paneReady() && chatsOpen();
 function listWidth(frame) {
   return Math.round(Math.min(Math.max(state.listW || 320, LIST_MIN), LIST_MAX, frame.w - MIN_W));
 }
@@ -1375,6 +1376,12 @@ function rectOf(id) {
     const f = paneFrame();
     const lw = listWidth(f);
     return id === "chats" ? { x: f.x, y: f.y, w: lw, h: f.h } : { x: f.x + lw, y: f.y, w: f.w - lw, h: f.h };
+  }
+  if (id === "chats" && paneReady()) {
+    // Closed, the list waits tucked behind the chat's left edge, so opening
+    // slides it out from there (not across the screen from its old place).
+    const m = baseRect("main");
+    return { x: m.x, y: m.y, w: Math.min(Math.round(Math.min(Math.max(state.listW || 320, LIST_MIN), LIST_MAX)), m.w), h: m.h };
   }
   return baseRect(id);
 }
@@ -1840,6 +1847,16 @@ function onPointerUp() {
   if (g.mode === "move") {
     const own = (r) => (g.frame ? chatPart(r) : r);
     if (g.moved && g.snap) {
+      // Settle where it was dropped first (the drag offset is a translate),
+      // so the snap animates from there instead of jumping back to the start.
+      writeRect(g.id, clampRect(own({ ...g.start, x: g.start.x + g.dx, y: g.start.y + g.dy })));
+      applyRect(g.id);
+      setTranslate(g.id, 0, 0);
+      if (g.frame) {
+        applyRect("chats");
+        setTranslate("chats", 0, 0);
+      }
+      void html.offsetWidth;
       writeRect(g.id, { ...own(g.start), snap: g.snap });
       animateGeometry();
     } else if (g.moved) {
@@ -2521,6 +2538,7 @@ function refreshChatApp() {
     if (chatTitleEl.textContent !== name) chatTitleEl.textContent = name;
   } else chatTitleEl?.remove();
   // A chat of another app behind the list: cover it until one is picked.
+  setAttr(html, "data-mdos-chatapp", inChat && info?.mode ? info.mode : null);
   const listMode = paneOn() ? activeChatMode() : null;
   const other = inChat && !!listMode && !!info?.mode && info.mode !== listMode;
   toggleClass("mdos-chat-other", other);
@@ -6049,7 +6067,12 @@ function syncBody() {
   }
   toggleClass("mdos-split", split && listOpen);
   toggleClass("mdos-touch-panel", isTouch() && !!$once('[data-component="RightPanelMobile"], [data-component="MobileDetailSheet"]'));
-  if (isTouch()) placeTouchControls();
+  if (isTouch()) {
+    placeTouchControls();
+    // The open composer's height, so the folded one keeps its shape (apps.css).
+    const open = $once("div.marinara-chat-input-shell");
+    if (open) setVar("--mdos-composer-h", `${Math.round(Math.min(open.getBoundingClientRect().height, 160))}px`);
+  }
   if (homeVisible()) readHomeApps();
   refreshBadges();
   refreshChatTools();
@@ -6083,7 +6106,7 @@ function syncBody() {
     lastPane = pane;
     applyRect("chats");
     applyRect("main");
-  }
+  } else if (!pane && paneReady()) applyRect("chats"); // follow the chat while tucked
   // Bring a window forward when Marinara opens it.
   for (const id of ["chats", "panel"]) {
     const open = windowVisible(id);
@@ -8138,6 +8161,40 @@ function paintPreview(row) {
   }
   if (el.textContent !== text) el.textContent = text;
 }
+// Roleplay / Game rows: "read / played 2 weeks ago" under the title.
+const relFmt = typeof Intl.RelativeTimeFormat === "function" ? new Intl.RelativeTimeFormat(KO ? "ko" : "en", { numeric: "auto" }) : null;
+function relTime(ms) {
+  if (!ms || !relFmt) return "";
+  const sec = (ms - Date.now()) / 1000;
+  const a = Math.abs(sec);
+  const [v, u] =
+    a < 60 ? [sec, "second"] : a < 3600 ? [sec / 60, "minute"] : a < 86400 ? [sec / 3600, "hour"] : a < 604800 ? [sec / 86400, "day"] : a < 2629800 ? [sec / 604800, "week"] : a < 31557600 ? [sec / 2629800, "month"] : [sec / 31557600, "year"];
+  return relFmt.format(Math.round(v), u);
+}
+let subSig = "";
+function paintSubs(sidebar, mode) {
+  loadChatInfo();
+  const rows = sidebar.querySelectorAll(SEL.chatRows);
+  const sig = `${mode}|${rows.length}|${rows[0]?.getAttribute("data-chat-id") || ""}|${chatInfo.size}|${chatInfoAt}|${Math.floor(Date.now() / 60000)}`;
+  if (sig === subSig) return;
+  subSig = sig;
+  for (const row of rows) {
+    const block = row.querySelector(":scope > .min-w-0.flex-1");
+    if (!block) continue;
+    const rel = relTime(chatInfo.get(row.getAttribute("data-chat-id"))?.at);
+    let el = block.querySelector(":scope > .mdos-sub");
+    if (!rel) {
+      el?.remove();
+      continue;
+    }
+    const text = mode === "game" ? (KO ? `${rel} 플레이` : `Played ${rel}`) : KO ? `${rel} 읽음` : `Read ${rel}`;
+    if (!el) {
+      el = h("span", { class: "mdos-sub", "data-exd": "" });
+      block.append(el);
+    }
+    if (el.textContent !== text) el.textContent = text;
+  }
+}
 let listSig = "";
 function refreshChatList() {
   const sidebar = $once(".mari-chat-sidebar");
@@ -8148,6 +8205,8 @@ function refreshChatList() {
   const title = sidebar.querySelector(".mari-sidebar-header h2");
   const name = L.modes[MODE_KEYS.indexOf(mode)] || "";
   if (title && title.getAttribute("data-mdos-title") !== name) title.setAttribute("data-mdos-title", name);
+  setAttr(sidebar, "data-mdos-big", name);
+  if (mode === "roleplay" || mode === "game") return paintSubs(sidebar, mode);
   if (mode !== "conversation") return;
   // Only when the rows changed (count / first row) — not a walk every sync.
   const rows = sidebar.querySelectorAll(SEL.chatRows);
@@ -8286,7 +8345,8 @@ return () => {
   for (const mo of nullObservers) mo.disconnect();
   removeSceneBar();
   pvIO?.disconnect();
-  for (const el of $$(".mdos-preview")) el.remove();
+  for (const el of $$(".mdos-preview, .mdos-sub")) el.remove();
+  html.removeAttribute("data-mdos-chatapp");
   chatTitleEl?.remove();
   chatOtherEl?.remove();
   lkStopPick();

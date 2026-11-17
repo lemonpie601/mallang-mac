@@ -1685,8 +1685,7 @@ html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell:has(> textarea[data
    search field, compact sort and "new folder", flat rows. */
 html.mdos-touch aside[data-component="ChatSidebarPanel"],
 html.mdos-touch .mari-chat-sidebar {
-  background: var(--mdos-win-bg, var(--background)) !important;
-  background-image: none !important;
+  background-color: var(--mdos-win-bg, var(--background)) !important;
 }
 html.mdos-touch .mari-chat-sidebar {
   position: relative;
@@ -1978,4 +1977,322 @@ html.mdos [data-quick-connection-menu] [data-switcher-pane][aria-pressed="true"]
 }
 html.mdos [data-quick-connection-menu] [data-switcher-search-all] {
   border-radius: 12px !important;
+}
+
+/* ══ Chat apps: Messages · Books · Games (2.19) ═══════════════════
+   Conversation, Roleplay and Game are separate apps, each after a Mac app.
+   The list keeps the theme's surface and decorations (pattern, images);
+   each app only tints its colour, shapes its rows and names itself. */
+
+/* Theme decorations live on the list itself, not twice on phones. */
+html.mdos-touch aside[data-component="ChatSidebarPanel"] {
+  background-image: none !important;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list] {
+  --app-ink: var(--foreground, var(--mdos-fg));
+  --app-muted: var(--muted-foreground, var(--mdos-fg-2));
+  --app-accent: var(--marinara-app-accent-solid, var(--primary, var(--mdos-accent)));
+  --app-line: color-mix(in srgb, var(--app-ink) 10%, transparent);
+  --app-serif: "Iowan Old Style", "Palatino Linotype", "AppleMyungjo", "Nanum Myeongjo", "Noto Serif KR", Georgia, serif;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] {
+  background-color: color-mix(in srgb, var(--card, #fffdf7) 55%, var(--background, #f4f0e7)) !important;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="game"] {
+  background-color: color-mix(in srgb, var(--marinara-app-accent-solid, var(--primary, #7aa7c7)) 9%, var(--card, var(--background, #fff))) !important;
+}
+
+/* ── Desktop: window chrome per app ── */
+/* The header's small "Chats" goes; Books and Games get a big title of their
+   own under the lights (Messages has none, like the Mac app). */
+html.mdos-desktop [data-mdos-win="chats"] .mari-chat-sidebar[data-mdos-list] .mari-sidebar-header h2 {
+  visibility: hidden;
+}
+html.mdos-desktop [data-mdos-win="chats"] .mari-chat-sidebar[data-mdos-list] .mari-sidebar-header button.cursor-help {
+  display: none !important;
+}
+html.mdos-desktop [data-mdos-win="chats"] .mari-chat-sidebar:is([data-mdos-list="roleplay"], [data-mdos-list="game"]) > :not(.mari-sidebar-header) {
+  order: 2;
+}
+html.mdos-desktop [data-mdos-win="chats"] .mari-chat-sidebar:is([data-mdos-list="roleplay"], [data-mdos-list="game"])::before {
+  order: 1;
+  content: attr(data-mdos-big);
+  display: block;
+  padding: 0 18px 2px;
+  color: var(--app-ink);
+}
+html.mdos-desktop [data-mdos-win="chats"] .mari-chat-sidebar[data-mdos-list="roleplay"]::before {
+  font: 700 23px/1.25 var(--app-serif);
+  letter-spacing: -0.01em;
+}
+html.mdos-desktop [data-mdos-win="chats"] .mari-chat-sidebar[data-mdos-list="game"]::before {
+  font: 800 23px/1.25 var(--mdos-font);
+  letter-spacing: -0.025em;
+}
+/* Messages: "new" is a compose glyph like the Mac app (drawn with a mask on
+   the button: themes may switch its pseudo-elements off); Books and Games
+   keep the small filled accent "+". */
+html.mdos-desktop [data-mdos-win="chats"] .mari-chat-sidebar[data-mdos-list="conversation"] > div:has(> .mari-chat-mode-action) > .mari-chat-mode-action {
+  background: var(--app-muted) !important;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27black%27 stroke-width=%271.9%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M12 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6%27/%3E%3Cpath d=%27M17.6 3.4a2 2 0 0 1 2.9 2.9L12 14.8l-3.6.8.8-3.6z%27/%3E%3C/svg%3E") center / 17px no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27black%27 stroke-width=%271.9%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M12 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6%27/%3E%3Cpath d=%27M17.6 3.4a2 2 0 0 1 2.9 2.9L12 14.8l-3.6.8.8-3.6z%27/%3E%3C/svg%3E") center / 17px no-repeat;
+}
+html.mdos-desktop [data-mdos-win="chats"] .mari-chat-sidebar[data-mdos-list="conversation"] > div:has(> .mari-chat-mode-action) > .mari-chat-mode-action:hover {
+  background: var(--app-ink) !important;
+}
+html.mdos-desktop [data-mdos-win="chats"] .mari-chat-sidebar[data-mdos-list="conversation"] > div:has(> .mari-chat-mode-action) > .mari-chat-mode-action > * {
+  opacity: 0;
+}
+/* Search: one rounded field, sort as quiet text. */
+html.mdos-desktop [data-mdos-win="chats"] .mari-chat-sidebar[data-mdos-list] input.mari-chrome-field {
+  border-radius: 8px !important;
+  border: 0 !important;
+  background-color: color-mix(in srgb, var(--app-ink) 7%, transparent) !important;
+  box-shadow: none !important;
+}
+html.mdos-desktop [data-mdos-win="chats"] .mari-chat-sidebar[data-mdos-list] select.mari-chrome-field {
+  border: 0 !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  color: var(--app-muted) !important;
+}
+/* The presence bar ("Active / what are you doing?") belongs to Messages. */
+html.mdos .mari-chat-sidebar:is([data-mdos-list="roleplay"], [data-mdos-list="game"]) > div.border-t:last-child {
+  display: none !important;
+}
+/* Chat window title: Messages already shows Marinara's header (people and
+   call button), so no second name over it. Books set the name in serif. */
+html[data-mdos-chatapp="conversation"] .mdos-chat-title {
+  display: none !important;
+}
+html[data-mdos-chatapp="roleplay"] .mdos-chat-title {
+  font: 600 14px/1 "Iowan Old Style", "Palatino Linotype", "AppleMyungjo", "Nanum Myeongjo", "Noto Serif KR", Georgia, serif;
+  letter-spacing: 0;
+}
+html[data-mdos-chatapp="game"] .mdos-chat-title {
+  font-weight: 750;
+}
+
+/* ── Rows (every screen) ── */
+.mdos-sub {
+  display: block;
+  margin-top: 3px;
+  font-size: 11.5px;
+  line-height: 1.3;
+  color: var(--app-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Messages: round pictures, name + time, two grey preview lines; the open
+   chat is the filled accent row. */
+html.mdos .mari-chat-sidebar[data-mdos-list="conversation"] [data-drag-kind="chat"] {
+  --avs: 1.6;
+  min-height: 66px;
+  padding: 8px 10px !important;
+  gap: 11px !important;
+  margin: 0 4px !important;
+  border-radius: 10px !important;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="conversation"] [data-drag-kind="chat"] > .min-w-0.flex-1 > span:first-child {
+  font-size: 14px !important;
+  font-weight: 650 !important;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="conversation"] [data-drag-kind="chat"]::after {
+  left: 66px;
+  background: var(--app-line);
+}
+/* (Phones keep their light accent tint for the open chat.) */
+html.mdos-desktop .mari-chat-sidebar[data-mdos-list="conversation"] [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress) {
+  background: var(--app-accent) !important;
+}
+
+/* Groups: Marinara overlaps small square pictures; in Messages and Games
+   they are round (no circle cut out of a rounded square), the status dot too. */
+html.mdos .mari-chat-sidebar[data-mdos-list] [data-drag-kind="chat"] > .relative.flex-shrink-0 > :first-child:has(> :nth-child(2) img) {
+  border-radius: 0 !important;
+  overflow: visible !important;
+}
+html.mdos .mari-chat-sidebar:is([data-mdos-list="conversation"], [data-mdos-list="game"]) [data-drag-kind="chat"] > .relative.flex-shrink-0 > :first-child:has(> :nth-child(2) img) > *,
+html.mdos .mari-chat-sidebar:is([data-mdos-list="conversation"], [data-mdos-list="game"]) [data-drag-kind="chat"] > .relative.flex-shrink-0 > :first-child:has(> :nth-child(2) img) > * > img {
+  border-radius: 50% !important;
+}
+
+/* Books: covers (2:3, a spine shadow), serif titles, "read 2 weeks ago";
+   the open book is marked with a ribbon, not a filled row. */
+html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"] {
+  --avs: 1.45;
+  min-height: 76px;
+  padding: 8px 12px !important;
+  gap: 13px !important;
+  margin: 0 6px !important;
+  border-radius: 8px !important;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"] > .relative.flex-shrink-0 {
+  width: 41px !important;
+  height: 58px !important;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"] > .relative.flex-shrink-0 > :first-child {
+  width: 28px !important;
+  height: 40px !important;
+}
+/* Marinara's crop is worked out for a square box; on a cover it stretches
+   the picture, so covers fill and crop themselves. */
+html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"] > .relative.flex-shrink-0 img {
+  position: absolute !important;
+  inset: 0 !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: 50% 22% !important;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"] > .relative.flex-shrink-0 :is(span.rounded-lg, .mari-chat-mode-avatar, div.rounded-lg) {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 1.5px 3.5px 3.5px 1.5px !important;
+  box-shadow:
+    inset 2px 0 0 rgba(0, 0, 0, 0.22),
+    inset 3px 0 0 rgba(255, 255, 255, 0.18),
+    0 3px 6px -2px rgba(0, 0, 0, 0.35) !important;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"] > .min-w-0.flex-1 > span:first-child {
+  font-family: var(--app-serif) !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"]::after {
+  left: 66px;
+  right: 14px;
+  background: var(--app-line);
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress) {
+  background: color-mix(in srgb, var(--app-accent) 15%, transparent) !important;
+}
+html.mdos .mari-chat-sidebar:is([data-mdos-list="roleplay"], [data-mdos-list="game"]) [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress) :is(span, svg, button) {
+  color: var(--app-ink) !important;
+}
+html.mdos .mari-chat-sidebar:is([data-mdos-list="roleplay"], [data-mdos-list="game"]) [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress) .mdos-sub {
+  color: var(--app-muted) !important;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress)::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 16px;
+  width: 9px;
+  height: 18px;
+  background: var(--app-accent);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 72%, 0 100%);
+  pointer-events: none;
+}
+
+/* The open chat's background art behind the row would grey out the ribbon
+   and the ring; Books and Games mark the open chat their own way. */
+html.mdos .mari-chat-sidebar:is([data-mdos-list="roleplay"], [data-mdos-list="game"]) [data-drag-kind="chat"] > span.pointer-events-none.absolute:has(> img) {
+  display: none !important;
+}
+
+/* Games: each game a card with an app-icon picture; the open game gets an
+   accent ring. */
+html.mdos .mari-chat-sidebar[data-mdos-list="game"] [data-drag-kind="chat"] {
+  --avs: 1.72;
+  min-height: 70px;
+  margin: 5px 8px !important;
+  padding: 10px 12px !important;
+  gap: 12px !important;
+  border-radius: 14px !important;
+  background: color-mix(in srgb, var(--card, #fff) 82%, transparent) !important;
+  border: 1px solid var(--app-line) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 6px 14px -10px rgba(0, 0, 0, 0.3) !important;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="game"] [data-drag-kind="chat"]::after {
+  display: none;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="game"] [data-drag-kind="chat"] > .relative.flex-shrink-0 :is(span.rounded-lg, .mari-chat-mode-avatar, div.rounded-lg) {
+  border-radius: 7.5px !important;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="game"] [data-drag-kind="chat"] > .min-w-0.flex-1 > span:first-child {
+  font-size: 14.5px !important;
+  font-weight: 750 !important;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="game"] [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress) {
+  background: color-mix(in srgb, var(--card, #fff) 92%, var(--app-accent)) !important;
+  border-color: var(--app-accent) !important;
+  box-shadow: 0 0 0 1.5px var(--app-accent), 0 8px 18px -12px var(--app-accent) !important;
+}
+
+/* ── Desktop: one window, the list slides out from behind the chat ── */
+/* The list sits under the chat (tucked behind its left edge while closed),
+   so opening slides it out from there; the chat's shadow is clipped at the
+   seam so the two read as one window. */
+html.mdos-pane-ready [data-mdos-win="chats"] {
+  z-index: calc(var(--mdos-main-z, 11) - 1) !important;
+}
+html.mdos-pane-ready [data-mdos-win="chats"][aria-hidden="true"] {
+  transform: none !important;
+}
+html.mdos-pane [data-mdos-win="main"] {
+  clip-path: inset(-120px -120px -120px 0);
+}
+
+/* ── Composer: no square box around the text ── */
+/* Some themes give every textarea a border colour; the composer's field sits
+   inside the rounded bar, so it gets no border, ring or outline. */
+html.mdos .marinara-chat-input-shell > textarea,
+html.mdos .mari-chat-input-box > textarea {
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* ── Phones: the folded composer keeps the composer's shape ── */
+/* Scrolling back, Marinara folds the composer into a "show the message box"
+   button. It used to turn into a tall white box: it now keeps the open
+   composer's place, colour, top corners and height (desktop.js measures the
+   open one into --mdos-composer-h), with the placeholder where the text goes. */
+html.mdos-touch:not(.mdos-tablet) :is(.mari-chat-input, .chat-input-container):has(> button.marinara-chat-input-shell) {
+  padding: 0 !important;
+}
+html.mdos-touch:not(.mdos-tablet) button.marinara-chat-input-shell {
+  margin: 0 !important;
+  width: 100% !important;
+  min-height: var(--mdos-composer-h, calc(env(safe-area-inset-bottom, 0px) + 112px)) !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  padding: 16px 18px calc(env(safe-area-inset-bottom, 0px) + 20px) !important;
+  border-radius: 24px 24px 0 0 !important;
+  border: 0 !important;
+  border-top: 1px solid color-mix(in srgb, var(--mdos-fg, #000) 12%, transparent) !important;
+  background: var(--mdos-win-bg, #fff) !important;
+  box-shadow: 0 -6px 20px -14px rgba(0, 0, 0, 0.35) !important;
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+  text-align: left !important;
+  color: var(--muted-foreground, var(--mdos-fg-2)) !important;
+}
+html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area button.marinara-chat-input-shell {
+  border-top-color: color-mix(in srgb, var(--mdos-ink) 14%, transparent) !important;
+}
+/* The pinned buttons belong to the open composer. */
+button.marinara-chat-input-shell > .mdos-qp-chips {
+  display: none !important;
+}
+
+/* ── Phones: list / menu buttons ── */
+/* Two separate round glass buttons with a fixed gap (they never squeeze
+   into each other), a little smaller so less of the chat is covered. */
+html.mdos-touch #mdos-tctl {
+  gap: 10px !important;
+}
+html.mdos-touch #mdos-tctl > .mdos-tctl-btn {
+  flex: none !important;
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  box-sizing: border-box !important;
 }
