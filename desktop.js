@@ -258,6 +258,29 @@ const L = KO
       allSettings: "모든 꾸미기 설정",
       greeting: (hour) =>
         hour < 5 ? "늦은 밤이에요" : hour < 12 ? "좋은 아침이에요" : hour < 18 ? "좋은 오후예요" : "좋은 저녁이에요",
+      lk: {
+        title: "확장 보관함",
+        edit: "편집",
+        done: "완료",
+        empty: "담긴 버튼이 없어요. 다른 확장이 화면에 띄운 버튼은 저절로 담겨요.",
+        onScreen: "화면에 둠",
+        keep: "화면에 두기",
+        remove: "빼기",
+        forget: "지우기",
+        putBack: "다시 넣기",
+        removed: "뺀 버튼",
+        rename: "이름",
+        auto: "새로 뜨는 버튼은 저절로 담기",
+        on: "확장 보관함 쓰기",
+        pick: "직접 담기",
+        pickBanner: "담을 버튼을 눌러 주세요",
+        pickNo: "마리나라 기본 화면의 버튼은 담을 수 없어요",
+        picked: "보관함에 담았어요",
+        up: "위로",
+        down: "아래로",
+        unnamed: "이름 없는 버튼",
+        foreign: "\"확장 보관함\" 확장이 켜져 있어서 그쪽이 버튼을 모으고 있어요. 이 기능을 쓰려면 그 확장을 꺼 주세요.",
+      },
       chatTools: "채팅 도구",
       sceneBarTop: "롤플 장면 바를 위쪽 아이콘으로 (실행 전에 확인)",
       quickPaletteOn: "입력창 + 메뉴 (따옴표·별표·이미지·문구 보관함)",
@@ -558,6 +581,29 @@ const L = KO
       allSettings: "All customize settings",
       greeting: (hour) =>
         hour < 5 ? "Burning the midnight oil" : hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening",
+      lk: {
+        title: "Extension locker",
+        edit: "Edit",
+        done: "Done",
+        empty: "Nothing here yet. Buttons other extensions float on the screen are collected here.",
+        onScreen: "On screen",
+        keep: "Keep on screen",
+        remove: "Remove",
+        forget: "Forget",
+        putBack: "Put back",
+        removed: "Removed",
+        rename: "Name",
+        auto: "Collect new buttons automatically",
+        on: "Use the extension locker",
+        pick: "Add by tapping",
+        pickBanner: "Tap the button to add",
+        pickNo: "Marinara's own buttons can't be added",
+        picked: "Added to the locker",
+        up: "Move up",
+        down: "Move down",
+        unnamed: "Unnamed button",
+        foreign: "The \"Extension locker\" extension is on and collects the buttons. Turn it off to use this one.",
+      },
       chatTools: "Chat tools",
       sceneBarTop: "Roleplay scene bar as icons at the top (asks first)",
       quickPaletteOn: "Composer + menu (quotes, asterisks, image, snippets)",
@@ -711,6 +757,7 @@ const NOTE_COLORS = ["#ffe57a", "#ffc2d6", "#b8e4ff", "#c4f0b4", "#e2ccff", "#ff
 
 // Icons: simple 24×24 strokes drawn for this extension.
 const ICONS = {
+  locker: '<path d="M3.5 8 5 4.5h14L20.5 8"/><rect x="3.5" y="8" width="17" height="11.5" rx="2"/><path d="M9.5 12h5"/>',
   home: '<path d="M3.5 10.5 12 3.5l8.5 7V19a1.5 1.5 0 0 1-1.5 1.5h-4.5V15h-5v5.5H5A1.5 1.5 0 0 1 3.5 19z"/>',
   chat: '<path d="M20.5 11.5a8 8 0 0 1-11.7 7.1L3.5 20l1.4-4.7a8 8 0 1 1 15.6-3.8z"/><path d="M8.5 11.5h.01M12.5 11.5h.01M16.5 11.5h.01"/>',
   characters:
@@ -785,6 +832,7 @@ const TAIL_APPS = [
 ];
 const EXTRA_APPS = [
   { id: "controlcenter", icon: "sliders", g: ["#8e9cff", "#4b5ae0"], label: () => L.controlCenter },
+  { id: "locker", icon: "locker", g: ["#c7b8ff", "#6f5bd9"], label: () => L.lk.title },
   { id: "widgets", icon: "widgets", g: ["#ffd36b", "#ff8a3d"], label: () => L.editWidgets },
   { id: "customize", icon: "brush", g: ["#ff9ad1", "#b25cff"], label: () => L.customize },
   { id: "wallpaper", icon: "wallpaper", g: ["#7ad7ff", "#ff7aa8"], label: () => L.wallpaper },
@@ -855,6 +903,8 @@ const DEFAULTS = {
   dockRecents: true,
   bootSplash: true,
   sceneBarTop: true,
+  lockerOn: true,
+  locker: null,
   quickPalette: true,
   qp: null,
   iconView: true,
@@ -915,6 +965,8 @@ if (state.wallpaperImage) {
   delete state.wallpaperImage;
 }
 let widgetSeq = Date.now();
+// Extension locker records (key -> { key, el, hidden, saved, base, revealed }); see lockerTick.
+const lkRecs = new Map();
 const newId = () => `w${(widgetSeq++).toString(36)}`;
 if (!Array.isArray(state.widgets)) {
   state.widgets = [
@@ -1818,7 +1870,16 @@ const mbMenus = [
 );
 mbLeft.append(mbLogo, mbApp, ...mbMenus);
 const mbClock = h("button", { type: "button", class: "mdos-mb-item mdos-mb-clock", "data-mdos-cc-toggle": "", onclick: () => toggleCC() });
+const mbLocker = h("button", {
+  type: "button",
+  class: "mdos-mb-item mdos-mb-icon mdos-mb-locker",
+  "aria-label": L.lk.title,
+  title: L.lk.title,
+  svg: svg("locker"),
+  onclick: (e) => openLocker(e.currentTarget),
+});
 mbRight.append(
+  mbLocker,
   h("button", {
     type: "button",
     class: "mdos-mb-item mdos-mb-icon",
@@ -2222,6 +2283,7 @@ function launch(id, { toggle = false } = {}) {
   } else if (id === "launchpad") toggleLaunchpad();
   else if (id === "search") openSpotlight();
   else if (id === "controlcenter") toggleCC(true);
+  else if (id === "locker") openLocker();
   else if (id === "widgets") setEditMode(true);
   else if (id === "customize") toggleCC(true, "customize");
   else if (id === "wallpaper") toggleCC(true, "wallpaper");
@@ -2712,7 +2774,7 @@ function widgetBody(w) {
                     "aria-label": it.label,
                     onclick: (event) => {
                       event.stopPropagation();
-                      if (!editMode) it.el.click();
+                      if (!editMode) lkActivate(it.el);
                     },
                   },
                   h("span", { class: "mdos-locker-ico" }, it.icon),
@@ -2917,10 +2979,13 @@ function dragScroll(el) {
 function lockerItems() {
   return $$("[data-bgh-stored]")
     .map((el) => {
-      const label = (el.getAttribute("aria-label") || el.title || el.textContent || "")
-        .trim()
-        .replace(/\s*(열기|Open)$/i, "")
-        .slice(0, 30);
+      const own = [...lkRecs.values()].find((r) => r.el === el);
+      const label = own
+        ? lkName(own.key)
+        : (el.getAttribute("aria-label") || el.title || el.textContent || "")
+            .trim()
+            .replace(/\s*(열기|Open)$/i, "")
+            .slice(0, 30);
       // Clone the button's own artwork (already on the page); else a letter.
       const art = el.querySelector("svg, img");
       return { el, label, icon: art ? art.cloneNode(true) : label.charAt(0) };
@@ -4336,7 +4401,7 @@ function springboardApps() {
     ...homeApps(),
     ...bookmarkApps(),
     ...TAIL_APPS.filter((a) => a.id !== "search"),
-    ...EXTRA_APPS.filter((a) => ["controlcenter", "widgets", "customize"].includes(a.id)),
+    ...EXTRA_APPS.filter((a) => ["controlcenter", "widgets", "customize", "locker"].includes(a.id)),
   ];
   const rank = (a) => {
     const i = state.sbOrder.indexOf(a.id);
@@ -5748,6 +5813,7 @@ function sync() {
   if (homeVisible()) readHomeApps();
   refreshBadges();
   refreshChatTools();
+  lockerTick();
   const hubApp = !!hubAppTab();
   toggleClass("mdos-hub-app", hubApp);
   refreshLocker();
@@ -6613,6 +6679,553 @@ function snipEditor() {
   );
 }
 
+// ── Extension locker (built in) ───────────────────────────────
+// Other extensions float launcher buttons over the page. The locker gathers
+// them: each is hidden where it is (transparent, untouchable — never moved or
+// removed), listed under the menu-bar box icon (on phones and tablets: the
+// Locker app), and pressed for real (pointer + mouse + click at its centre)
+// when picked. A button that unfolds in place shows while it is open.
+// Reimplements the "확장 보관함" extension, lighter: it reads only the
+// page's top-level floating elements every 2 s and the stored ones each sync.
+const LK_INTERACTIVE = 'button, a[href], [role="button"], [onclick], input[type="button"], input[type="submit"], input[type="image"], summary, [data-drawer-launcher]';
+const LK_SKIP = 'script, style, link, meta, template, noscript, iframe, object, embed, [data-sonner-toaster], [data-radix-popper-content-wrapper], [data-radix-portal], [data-exd], [data-mdos], .mdos-alert-overlay';
+const LK_TW = /^(flex|grid|block|inline|hidden|fixed|absolute|relative|sticky|inset|top|left|right|bottom|z|w|h|min|max|p[xytrbl]?|m[xytrbl]?|gap|space|text|font|leading|tracking|bg|from|to|via|border|rounded|shadow|ring|opacity|transition|duration|ease|delay|animate|transform|translate|scale|rotate|cursor|select|pointer|items|justify|content|self|place|overflow|backdrop|blur|filter|outline|order|col|row|sr|aspect|object|shrink|grow|basis|drop|fill|stroke|dark|hover|focus|group|peer|sm|md|lg|xl)(-|:|$)/;
+const lkPending = new Map();
+let lkLastScan = -1e9;
+let lkTicks = 0;
+const lkForeign = () => !!doc.querySelector(".bgh-topbar-btn, .bgh-panel");
+function lkState() {
+  if (!state.locker || typeof state.locker !== "object") {
+    // First run: the old extension's choices (names, kept on screen, removed)
+    // come along by button label.
+    const legacy = {};
+    try {
+      const old = JSON.parse(localStorage.getItem("marinara.bogwanham.v1") || "null");
+      for (const it of Object.values(old?.items || {})) {
+        const label = lkClean(it?.label || "");
+        if (label) legacy[label] = { name: String(it.name || "").slice(0, 40), float: !!it.float, excluded: !!it.excluded };
+      }
+      state.locker = { auto: old?.autoCollect !== false, items: {}, order: [], legacy };
+    } catch {
+      state.locker = { auto: true, items: {}, order: [], legacy };
+    }
+    save();
+  }
+  return state.locker;
+}
+function lkClean(text) {
+  let t = String(text || "").replace(/\s+/g, " ").replace(/\([^)]*\)/g, "").replace(/\s·\s.*$/, "").trim();
+  for (let i = 0; i < 2; i++) t = t.replace(/\s*(열기|닫기|열림|토글|켜기|끄기|보기|띄우기|펼치기|접기|open|close|toggle|launcher)$/i, "").trim();
+  return t.slice(0, 40);
+}
+function lkLabel(el) {
+  let t = el.getAttribute("aria-label") || el.title || el.querySelector("img[alt]")?.alt || "";
+  if (!t && !el.matches(LK_INTERACTIVE)) {
+    const inner = el.querySelector("[aria-label], [title]");
+    t = inner?.getAttribute("aria-label") || inner?.title || "";
+  }
+  if (!t) {
+    const text = (el.textContent || "").trim();
+    if (text.length <= 24) t = text;
+  }
+  return lkClean(t);
+}
+function lkKeyOf(el, label) {
+  if (el.id && /^[A-Za-z][\w-]{1,63}$/.test(el.id) && !/\d{5}/.test(el.id) && el.id !== "root") return `#${el.id}`;
+  const cls = [...el.classList].find((c) => /[-_]/.test(c) && c.length < 48 && !/\d{4}/.test(c) && !/^(is|has|was|state)-|--|__|:/.test(c) && !/^(bgh|exd|mdos)-/.test(c) && !LK_TW.test(c));
+  return `${el.tagName.toLowerCase()}${cls ? `.${cls}` : ""}@${label}`;
+}
+const lkPaints = (cs) => (cs.backgroundColor && !/rgba?\(.*,\s*0\)$|transparent/.test(cs.backgroundColor)) || cs.backgroundImage !== "none" || cs.boxShadow !== "none" || parseFloat(cs.borderTopWidth) > 0;
+function lkVerdict(el, cs) {
+  const r = el.getBoundingClientRect();
+  if (r.width < 1 || r.height < 1) return "none";
+  const stored = el.hasAttribute("data-bgh-stored");
+  const role = el.getAttribute("role") || "";
+  if (r.width > 180 || r.height > 180) {
+    if (stored) return "launcher";
+    if (cs.pointerEvents !== "none" && cs.visibility !== "hidden" && (/^(dialog|alertdialog|menu|listbox)$/.test(role) || el.getAttribute("aria-modal") === "true" || lkPaints(cs))) return "panel";
+    return "none";
+  }
+  if (cs.visibility === "hidden" || (!stored && Number(cs.opacity) < 0.05)) return "none";
+  if (r.width < 14 || r.height < 14) return "none";
+  if (r.right < 0 || r.bottom < 0 || r.left > innerWidth || r.top > innerHeight) return "none";
+  if (/^(dialog|alertdialog|tooltip|status|alert|menu|listbox|progressbar|log|marquee|timer)$/.test(role)) return "none";
+  const inner = el.querySelectorAll(LK_INTERACTIVE).length;
+  const marked = el.hasAttribute("data-drawer-launcher");
+  const interactive = marked || el.matches(LK_INTERACTIVE) || inner > 0 || el.hasAttribute("tabindex") || typeof el.onclick === "function" || /pointer|grab/.test(cs.cursor) || (lkPaints(cs) && parseFloat(cs.borderTopLeftRadius) >= 6 && !!el.querySelector("svg, img"));
+  if (!interactive) return "none";
+  if (!stored && !marked && cs.pointerEvents === "none" && !inner) return "none";
+  if (!marked && inner >= 3) return "none";
+  if (!marked && /^(닫기|close|×|✕|✖|x)$/i.test(lkLabel(el))) return "none";
+  return "launcher";
+}
+function lkCandidates() {
+  const out = [];
+  let budget = 0;
+  const walk = (el, depth, floatingAbove) => {
+    if (++budget > 600 || el.matches(LK_SKIP)) return;
+    const cs = getComputedStyle(el);
+    if (cs.display === "none") return;
+    const pos = cs.position;
+    const floating = pos === "fixed" || (pos === "absolute" && (depth === 0 || floatingAbove)) || (pos === "sticky" && depth === 0);
+    if (floating) {
+      const v = lkVerdict(el, cs);
+      if (v === "launcher") return out.push(el);
+      if (v === "panel") return;
+    }
+    if (depth < 3) for (const c of el.children) walk(c, depth + 1, floatingAbove || floating);
+  };
+  for (const root of [...doc.body.children, ...[...html.children].filter((e) => e !== doc.body && e !== doc.head)]) {
+    if (root.id === "root" || root === ui) continue;
+    walk(root, 0, false);
+  }
+  for (const el of doc.querySelectorAll("[data-drawer-launcher]")) if (!el.closest("#root, [data-mdos]") && !out.includes(el)) out.push(el);
+  return out;
+}
+function lkHide(rec) {
+  const el = rec.el;
+  if (!rec.saved) {
+    rec.saved = {
+      op: [el.style.getPropertyValue("opacity"), el.style.getPropertyPriority("opacity")],
+      pe: [el.style.getPropertyValue("pointer-events"), el.style.getPropertyPriority("pointer-events")],
+      inert: el.inert,
+      exd: el.hasAttribute("data-exd-hidden"),
+    };
+  }
+  el.style.setProperty("opacity", "0", "important");
+  el.style.setProperty("pointer-events", "none", "important");
+  el.inert = true;
+  el.setAttribute("data-bgh-stored", "");
+  el.setAttribute("data-exd-hidden", "");
+  el.removeAttribute("data-bgh-revealed");
+  rec.hidden = true;
+  rec.revealed = false;
+}
+function lkShowStyles(rec) {
+  const { el, saved } = rec;
+  if (!saved) return;
+  for (const [prop, [v, prio]] of [["opacity", saved.op], ["pointer-events", saved.pe]]) {
+    if (v) el.style.setProperty(prop, v, prio);
+    else el.style.removeProperty(prop);
+  }
+  el.inert = saved.inert;
+}
+function lkUnhide(rec) {
+  if (!rec.saved) return;
+  lkShowStyles(rec);
+  rec.el.removeAttribute("data-bgh-stored");
+  rec.el.removeAttribute("data-bgh-revealed");
+  if (!rec.saved.exd) rec.el.removeAttribute("data-exd-hidden");
+  rec.saved = null;
+  rec.hidden = false;
+  rec.revealed = false;
+}
+// Size of the button with what it unfolded (a few descendants).
+function lkUnion(el) {
+  const r = el.getBoundingClientRect();
+  let [l, t, rr, b] = [r.left, r.top, r.right, r.bottom];
+  let n = 0;
+  for (const d of el.querySelectorAll("*")) {
+    if (++n > 40) break;
+    const q = d.getBoundingClientRect();
+    if (q.width < 1 || q.height < 1) continue;
+    l = Math.min(l, q.left);
+    t = Math.min(t, q.top);
+    rr = Math.max(rr, q.right);
+    b = Math.max(b, q.bottom);
+  }
+  return { w: rr - l, h: b - t };
+}
+// Each sync: hidden buttons stay hidden (their extension may rewrite their
+// style); one that unfolded shows until it folds again.
+function lkEnforce(rec) {
+  const item = lkState().items[rec.key];
+  if (!rec.el.isConnected || !item) return;
+  if (item.float || item.excluded) return lkUnhide(rec);
+  if (!rec.hidden) lkHide(rec);
+  const u = lkUnion(rec.el);
+  if (!rec.base && u.w <= 180 && u.h <= 180) rec.base = u;
+  const b = rec.base;
+  const open = b ? u.w > Math.max(200, b.w * 1.6) || u.h > Math.max(200, b.h * 1.6) : u.w > 180 || u.h > 180;
+  if (open && !rec.revealed) {
+    lkShowStyles(rec);
+    rec.el.setAttribute("data-bgh-revealed", "");
+    rec.revealed = true;
+  } else if (!open && (rec.revealed || rec.el.style.getPropertyValue("opacity") !== "0") && !rec.living) {
+    lkHide(rec);
+  }
+}
+function lkStore(el, { manual = false } = {}) {
+  const st = lkState();
+  const label = lkLabel(el);
+  let key = lkKeyOf(el, label);
+  for (let n = 2; [...lkRecs.values()].some((r) => r.key === key && r.el !== el); n++) key = `${lkKeyOf(el, label)}:${n}`;
+  let item = st.items[key];
+  if (!item) {
+    const legacy = st.legacy?.[label];
+    item = st.items[key] = { label, name: legacy?.name || "", float: !!legacy?.float, excluded: !!legacy?.excluded, manual };
+    st.order.push(key);
+    save();
+  } else if (manual) {
+    Object.assign(item, { excluded: false, float: false, manual: true });
+    save();
+  }
+  if (item.label !== label && label) {
+    item.label = label;
+    save();
+  }
+  let rec = lkRecs.get(key);
+  if (rec && rec.el !== el) {
+    lkUnhide(rec);
+    rec = null;
+  }
+  if (!rec) {
+    rec = { key, el, hidden: false, saved: null, base: null, revealed: false };
+    lkRecs.set(key, rec);
+  }
+  return rec;
+}
+// Finds a manually added button again (it may not look like a launcher).
+function lkResolve(key, item) {
+  if (key.startsWith("#")) return doc.getElementById(key.slice(1).split(":")[0]);
+  const [sel, label] = key.split("@");
+  try {
+    return [...doc.querySelectorAll(sel)].find((el) => !el.closest("#root") && lkLabel(el) === (label || "").split(":")[0]) || null;
+  } catch {
+    return null;
+  }
+  void item;
+}
+function lkReleaseAll() {
+  for (const rec of lkRecs.values()) lkUnhide(rec);
+  lkRecs.clear();
+  lkPending.clear();
+}
+function lockerTick() {
+  const active = state.lockerOn && mode !== "off" && !lkForeign();
+  mbLocker.hidden = !(state.lockerOn && mode !== "off");
+  if (!active) {
+    if (lkRecs.size) lkReleaseAll();
+    return;
+  }
+  if (doc.hidden) return;
+  const now = performance.now();
+  if (now - lkLastScan > 2000) {
+    lkLastScan = now;
+    lkScan();
+  }
+  // The unfold check reads a few rects: every other sync is enough.
+  if (++lkTicks % 2 === 0) for (const rec of lkRecs.values()) lkEnforce(rec);
+}
+function lkScan() {
+  const st = lkState();
+  const seen = new Set();
+  for (const el of lkCandidates()) {
+    const known = [...lkRecs.values()].find((r) => r.el === el);
+    let key = known?.key;
+    if (!key) {
+      const label = lkLabel(el);
+      key = lkKeyOf(el, label);
+      if (!st.items[key]) {
+        if (!st.auto && !el.hasAttribute("data-drawer-launcher")) continue;
+        // New buttons must stay on screen a moment (not a passing popup).
+        if (!lkPending.has(key)) {
+          lkPending.set(key, performance.now());
+          seen.add(`pending:${key}`);
+          continue;
+        }
+        if (performance.now() - lkPending.get(key) < 1200) {
+          seen.add(`pending:${key}`);
+          continue;
+        }
+      }
+    }
+    lkPending.delete(key);
+    const rec = lkStore(el);
+    seen.add(rec.key);
+    lkEnforce(rec);
+  }
+  for (const k of lkPending.keys()) if (!seen.has(`pending:${k}`)) lkPending.delete(k);
+  // Manually added buttons that don't look like launchers are found by key.
+  for (const [key, item] of Object.entries(st.items)) {
+    if (!item.manual || seen.has(key) || item.excluded) continue;
+    const el = lkResolve(key, item);
+    if (el) {
+      const rec = lkStore(el);
+      seen.add(rec.key);
+      lkEnforce(rec);
+    }
+  }
+  for (const [key, rec] of lkRecs) {
+    if (!rec.el.isConnected) lkRecs.delete(key);
+  }
+}
+const lkName = (key) => {
+  const item = lkState().items[key];
+  return item?.name || item?.label || L.lk.unnamed;
+};
+// Press the real button: pointer, mouse and click events at its centre,
+// with it briefly touchable.
+function lkActivate(el) {
+  if (!el?.isConnected) return;
+  const rec = [...lkRecs.values()].find((r) => r.el === el);
+  const savedPE = [el.style.getPropertyValue("pointer-events"), el.style.getPropertyPriority("pointer-events")];
+  const wasInert = el.inert;
+  if (rec) rec.living = true;
+  el.style.setProperty("pointer-events", "auto", "important");
+  el.inert = false;
+  el.setAttribute("data-bgh-revealed", "");
+  const r = el.getBoundingClientRect();
+  const x = Math.min(innerWidth - 2, Math.max(1, r.left + r.width / 2));
+  const y = Math.min(innerHeight - 2, Math.max(1, r.top + r.height / 2));
+  let target = doc.elementFromPoint(x, y);
+  if (!target || !el.contains(target)) target = el.matches(LK_INTERACTIVE) ? el : el.querySelector(LK_INTERACTIVE) || el;
+  const coarse = matchMedia("(pointer: coarse)").matches;
+  const base = { bubbles: true, cancelable: true, composed: true, view: window, clientX: x, clientY: y, screenX: x, screenY: y, button: 0, detail: 1 };
+  const pointer = { ...base, pointerId: coarse ? 7 : 1, pointerType: coarse ? "touch" : "mouse", isPrimary: true, width: 1, height: 1 };
+  const down = target.dispatchEvent(new PointerEvent("pointerdown", { ...pointer, buttons: 1, pressure: 0.5 }));
+  if (down) target.dispatchEvent(new MouseEvent("mousedown", { ...base, buttons: 1 }));
+  if (!target.isConnected) target = doc.elementFromPoint(x, y) || el;
+  target.dispatchEvent(new PointerEvent("pointerup", { ...pointer, buttons: 0, pressure: 0 }));
+  if (down) target.dispatchEvent(new MouseEvent("mouseup", { ...base, buttons: 0 }));
+  if (target.isConnected && target !== doc.body) target.dispatchEvent(new MouseEvent("click", { ...base, buttons: 0 }));
+  marinara.setTimeout(() => {
+    if (rec) {
+      rec.living = false;
+      lkEnforce(rec);
+    } else if (el.isConnected) {
+      // Another locker's button: put its own hiding back.
+      if (savedPE[0]) el.style.setProperty("pointer-events", savedPE[0], savedPE[1]);
+      else el.style.removeProperty("pointer-events");
+      el.inert = wasInert;
+      el.removeAttribute("data-bgh-revealed");
+    }
+  }, 450);
+}
+// The list (and its editor) in a popover under the menu-bar icon, or centred.
+let lkEditing = false;
+function openLocker(anchor = mbLocker.isConnected && isDesktop() ? mbLocker : null) {
+  lkEditing = false;
+  renderLocker(anchor);
+}
+function lkIcon(el) {
+  const art = el.querySelector("svg, img");
+  if (art) return art.cloneNode(true);
+  const text = (el.textContent || "").trim();
+  return /^\p{Extended_Pictographic}/u.test(text) ? text.slice(0, 2) : lkLabel(el).charAt(0) || "•";
+}
+function renderLocker(anchor) {
+  const st = lkState();
+  const live = st.order.filter((k) => lkRecs.get(k)?.el.isConnected && !st.items[k]?.excluded);
+  const body = h("div", { class: "mdos-pop-body mdos-lk" });
+  if (lkForeign()) body.append(h("p", { class: "mdos-lk-note", text: L.lk.foreign }));
+  if (!lkEditing) {
+    body.append(
+      live.length
+        ? h(
+            "div",
+            { class: "mdos-lk-list", role: "menu" },
+            ...live.map((k) => {
+              const rec = lkRecs.get(k);
+              return h(
+                "button",
+                {
+                  type: "button",
+                  role: "menuitem",
+                  class: "mdos-lk-row",
+                  onclick: () => {
+                    closePop();
+                    marinara.setTimeout(() => lkActivate(rec.el), 0);
+                  },
+                },
+                h("span", { class: "mdos-lk-ico" }, lkIcon(rec.el)),
+                h("span", { class: "mdos-lk-name", text: lkName(k) }),
+                st.items[k].float ? h("small", { text: L.lk.onScreen }) : null,
+              );
+            }),
+          )
+        : h("p", { class: "mdos-lk-empty", text: L.lk.empty }),
+      h("div", { class: "mdos-row mdos-lk-foot" }, h("button", { type: "button", class: "mdos-btn", text: L.lk.edit, onclick: () => ((lkEditing = true), renderLocker(anchor)) })),
+    );
+  } else {
+    const rerender = () => {
+      save();
+      lockerTick();
+      renderLocker(anchor);
+    };
+    const move = (k, d) => {
+      const i = st.order.indexOf(k);
+      const j = i + d;
+      if (i < 0 || j < 0 || j >= st.order.length) return;
+      [st.order[i], st.order[j]] = [st.order[j], st.order[i]];
+      rerender();
+    };
+    const keys = st.order.filter((k) => st.items[k] && !st.items[k].excluded);
+    const removed = st.order.filter((k) => st.items[k]?.excluded);
+    body.append(
+      h(
+        "div",
+        { class: "mdos-lk-edit" },
+        ...keys.map((k) => {
+          const item = st.items[k];
+          const present = !!lkRecs.get(k)?.el.isConnected;
+          return h(
+            "div",
+            { class: `mdos-lk-erow${present ? "" : " is-gone"}` },
+            h("input", {
+              type: "text",
+              class: "mdos-input",
+              maxlength: "40",
+              value: item.name || "",
+              placeholder: item.label || L.lk.unnamed,
+              "aria-label": L.lk.rename,
+              onchange: (e) => {
+                item.name = e.target.value.trim().slice(0, 40);
+                save();
+              },
+            }),
+            h("button", { type: "button", class: "mdos-snip-act", title: L.lk.up, "aria-label": L.lk.up, text: "↑", onclick: () => move(k, -1) }),
+            h("button", { type: "button", class: "mdos-snip-act", title: L.lk.down, "aria-label": L.lk.down, text: "↓", onclick: () => move(k, 1) }),
+            h(
+              "label",
+              { class: "mdos-lk-keep", title: L.lk.keep },
+              h("input", {
+                type: "checkbox",
+                checked: !!item.float,
+                onchange: (e) => {
+                  item.float = e.target.checked;
+                  rerender();
+                },
+              }),
+              h("span", { text: L.lk.keep }),
+            ),
+            h("button", {
+              type: "button",
+              class: "mdos-snip-act is-danger",
+              text: present ? L.lk.remove : L.lk.forget,
+              onclick: () => {
+                if (present) item.excluded = true;
+                else {
+                  delete st.items[k];
+                  st.order = st.order.filter((x) => x !== k);
+                }
+                rerender();
+              },
+            }),
+          );
+        }),
+      ),
+      removed.length
+        ? h(
+            "div",
+            { class: "mdos-lk-removed" },
+            h("h4", { text: L.lk.removed }),
+            ...removed.map((k) =>
+              h(
+                "div",
+                { class: "mdos-lk-erow" },
+                h("span", { class: "mdos-lk-name", text: lkName(k) }),
+                h("button", {
+                  type: "button",
+                  class: "mdos-btn",
+                  text: L.lk.putBack,
+                  onclick: () => {
+                    Object.assign(st.items[k], { excluded: false, float: false });
+                    rerender();
+                  },
+                }),
+              ),
+            ),
+          )
+        : null,
+      h(
+        "label",
+        { class: "mdos-cc-toggle" },
+        h("span", { text: L.lk.auto }),
+        h("input", { type: "checkbox", role: "switch", checked: st.auto !== false, onchange: (e) => ((st.auto = e.target.checked), save()) }),
+      ),
+      h(
+        "label",
+        { class: "mdos-cc-toggle" },
+        h("span", { text: L.lk.on }),
+        h("input", { type: "checkbox", role: "switch", checked: !!state.lockerOn, onchange: (e) => (updateSetting("lockerOn", e.target.checked), lockerTick()) }),
+      ),
+      h(
+        "div",
+        { class: "mdos-row mdos-lk-foot" },
+        h("button", { type: "button", class: "mdos-btn", text: L.lk.pick, onclick: () => (closePop(), lkStartPick()) }),
+        h("button", { type: "button", class: "mdos-btn mdos-btn--primary", text: L.lk.done, onclick: () => ((lkEditing = false), renderLocker(anchor)) }),
+      ),
+    );
+  }
+  openPop(body, anchor, { title: L.lk.title, wide: lkEditing });
+}
+// "Add by tapping": the next tap picks a floating element (not Marinara's own).
+let lkPick = null;
+function lkStartPick() {
+  lkStopPick();
+  const banner = h(
+    "div",
+    { class: "mdos-lk-banner", "data-exd": "" },
+    h("span", { text: L.lk.pickBanner }),
+    h("button", { type: "button", class: "mdos-btn", text: L.qp.cancel, onclick: () => lkStopPick() }),
+  );
+  ui.append(banner);
+  let swallowUntil = 0;
+  const swallow = (e) => {
+    if (performance.now() < swallowUntil) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+    }
+  };
+  const onDown = (e) => {
+    if (banner.contains(e.target)) return;
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    swallowUntil = performance.now() + 900;
+    const path = e.composedPath().filter((n) => n instanceof Element);
+    let el = path.find((n) => [...lkRecs.values()].some((r) => r.el === n));
+    if (!el) {
+      const floating = path.filter((n) => {
+        if (n === doc.body || n === html) return false;
+        const cs = getComputedStyle(n);
+        const r = n.getBoundingClientRect();
+        return /fixed|absolute/.test(cs.position) && r.width <= 300 && r.height <= 300;
+      });
+      el = floating[floating.length - 1] || path.find((n) => n.matches?.(LK_INTERACTIVE));
+    }
+    if (!el || el === doc.body || el.closest("[data-mdos], [data-exd]")) return;
+    if (el.closest("#root")) {
+      toast(L.lk.pickNo);
+      return;
+    }
+    const rec = lkStore(el, { manual: true });
+    lkEnforce(rec);
+    toast(L.lk.picked);
+    lkStopPick();
+  };
+  const onKey = (e) => e.key === "Escape" && lkStopPick();
+  doc.addEventListener("pointerdown", onDown, true);
+  for (const t of ["pointerup", "mouseup", "touchend", "click"]) doc.addEventListener(t, swallow, true);
+  doc.addEventListener("keydown", onKey, true);
+  const timer = marinara.setTimeout(() => lkStopPick(), 30_000);
+  lkPick = () => {
+    banner.remove();
+    doc.removeEventListener("pointerdown", onDown, true);
+    marinara.setTimeout(() => {
+      for (const t of ["pointerup", "mouseup", "touchend", "click"]) doc.removeEventListener(t, swallow, true);
+    }, 950);
+    doc.removeEventListener("keydown", onKey, true);
+    marinara.clearTimeout(timer);
+  };
+}
+function lkStopPick() {
+  lkPick?.();
+  lkPick = null;
+}
+
 // ── Convenience ───────────────────────────────────────────────
 
 // New chat in whichever mode the chat list shows (Conversation if none yet).
@@ -6725,6 +7338,8 @@ return () => {
   themeObserver.disconnect();
   for (const mo of nullObservers) mo.disconnect();
   removeSceneBar();
+  lkStopPick();
+  lkReleaseAll();
   for (const el of $$(".mdos-qp-plus, .mdos-qp-chips, .mdos-alert-overlay")) el.remove();
   for (const el of $$("[data-mdos-qp]")) el.toggleAttribute("data-mdos-qp", false);
   for (const el of $$("[data-mdos-null]")) el.toggleAttribute("data-mdos-null", false);

@@ -846,3 +846,123 @@ html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night
     opacity: 0;
   }
 }
+
+/* ── Extension locker (desktop.js lockerTick) ────────────────── */
+.mdos-mb-locker[hidden] {
+  display: none !important;
+}
+.mdos-lk {
+  display: grid;
+  gap: 10px;
+}
+.mdos-lk-list {
+  display: grid;
+  gap: 2px;
+  max-height: min(420px, 60vh);
+  overflow-y: auto;
+}
+.mdos-lk-row {
+  all: unset;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 36px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  cursor: var(--mdos-cur-ptr, pointer);
+}
+.mdos-lk-row:hover,
+.mdos-lk-row:focus-visible {
+  background: var(--mdos-accent, #0a84ff);
+  color: #fff;
+}
+.mdos-lk-ico {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+  font-size: 14px;
+}
+.mdos-lk-ico :is(svg, img) {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+.mdos-lk-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.mdos-lk-row small {
+  font-size: 11px;
+  opacity: 0.65;
+}
+.mdos-lk-empty,
+.mdos-lk-note {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  opacity: 0.75;
+}
+.mdos-lk-note {
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(255, 159, 10, 0.16);
+  opacity: 1;
+}
+.mdos-lk-foot {
+  justify-content: flex-end;
+}
+.mdos-lk-edit,
+.mdos-lk-removed {
+  display: grid;
+  gap: 6px;
+  max-height: min(360px, 50vh);
+  overflow-y: auto;
+}
+.mdos-lk-removed h4 {
+  margin: 4px 0 0;
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.6;
+}
+.mdos-lk-erow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto auto auto;
+  align-items: center;
+  gap: 4px;
+}
+.mdos-lk-removed .mdos-lk-erow {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.mdos-lk-erow.is-gone {
+  opacity: 0.55;
+}
+.mdos-lk-keep {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.mdos-lk-banner {
+  position: fixed;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
+  z-index: 9050;
+  translate: -50% 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 8px 8px 16px;
+  border-radius: 999px;
+  background: rgba(40, 40, 48, 0.9);
+  color: #fff;
+  font: 600 13px var(--mdos-font);
+  box-shadow: 0 12px 34px -8px rgba(0, 0, 0, 0.55);
+}
