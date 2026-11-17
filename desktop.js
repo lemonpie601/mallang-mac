@@ -661,7 +661,12 @@ const hostLabel = (el, fallback) => el?.getAttribute("title") || el?.getAttribut
 
 const APPS = [
   { id: "home", icon: "home", g: ["#61b0ff", "#2f62f5"], label: () => hostLabel(doc.querySelector(SEL.homeBtn), L.home) },
-  { id: "chats", icon: "chat", g: ["#6ef08d", "#17a84d"], label: () => hostLabel(doc.querySelector(SEL.chatsBtn), L.chats) },
+  { id: "chats", icon: "chat", g: ["#6ef08d", "#17a84d"], label: () => hostLabel(doc.querySelector(SEL.chatsBtn), L.chats), hidden: true },
+  // Conversation, Roleplay and Game are apps of their own (like Messages,
+  // Books and Arcade): each opens the chat list on its mode.
+  { id: "mode:conversation", icon: "chat", g: ["#6ef08d", "#17a84d"], label: () => L.modes[0], mode: "conversation" },
+  { id: "mode:roleplay", icon: "roleplay", g: ["#ffb35c", "#f06a1d"], label: () => L.modes[1], mode: "roleplay" },
+  { id: "mode:game", icon: "game", g: ["#ff7ab0", "#7b5cff"], label: () => L.modes[2], mode: "game" },
   { id: "characters", icon: "characters", g: ["#ffb35c", "#f06a1d"], panel: true },
   { id: "personas", icon: "personas", g: ["#d48bff", "#8a3ff0"], panel: true },
   { id: "lorebooks", icon: "lorebooks", g: ["#f3c46b", "#b9772a"], panel: true },
@@ -730,6 +735,7 @@ const bookmarkApps = () =>
       label: () => b.title || host,
     };
   });
+const shownApps = () => APPS.filter((a) => !a.hidden);
 const allApps = () => [...APPS, ...UTIL_APPS, ...homeApps(), ...bookmarkApps(), ...TAIL_APPS, ...EXTRA_APPS];
 const appById = (id) => allApps().find((a) => a.id === id);
 
@@ -1310,7 +1316,10 @@ function windowTitle(id) {
     const rec = appRec(id);
     return rec ? appLabel(appById(rec.type)) : "";
   }
-  if (id === "chats") return appLabel(appById("chats"));
+  if (id === "chats") {
+    const mode = activeChatMode();
+    return appLabel(appById(mode ? `mode:${mode}` : "chats"));
+  }
   if (id === "panel") {
     const active = activePanelId();
     return active ? appLabel(appById(active)) : L.panel;
@@ -1747,7 +1756,7 @@ const MENUS = {
     { label: L.editWidgets, action: () => setEditMode(true) },
     { label: L.launchpad, key: "Ctrl Alt L", action: toggleLaunchpad },
     "-",
-    ...APPS.map((a) => ({ label: appLabel(a), checked: isAppRunning(a.id), action: () => launch(a.id) })),
+    ...shownApps().map((a) => ({ label: appLabel(a), checked: isAppRunning(a.id), action: () => launch(a.id) })),
     ...(homeApps().length ? ["-", ...homeApps().map((a) => ({ label: appLabel(a), action: () => launch(a.id) }))] : []),
   ],
   window: () => [
@@ -1884,7 +1893,7 @@ function recentChats() {
     }))
     .filter((c) => c.chatId);
 }
-const TOUCH_DOCK = ["chats", "characters", "personas", "settings"];
+const TOUCH_DOCK = ["mode:conversation", "mode:roleplay", "mode:game", "settings"];
 
 function dockItem(app) {
   const label = h("span", { class: "mdos-dock-label", text: appLabel(app) });
@@ -1917,7 +1926,7 @@ function renderDock() {
   if (signature === dockSignature) return;
   dockSignature = signature;
   dockItems.clear();
-  const kids = APPS.map(dockItem);
+  const kids = shownApps().map(dockItem);
   kids.push(h("div", { class: "mdos-dock-sep", "aria-hidden": "true" }), ...UTIL_APPS.map(dockItem));
   if (recents.length) {
     kids.push(h("div", { class: "mdos-dock-sep", "aria-hidden": "true" }));
@@ -2010,6 +2019,7 @@ function isAppRunning(id) {
   if (APP_TYPES[id]) return state.apps.some((a) => a.type === id);
   if (id === "home") return homePageVisible();
   if (id === "chats") return chatsOpen() || (isTouch() && !!$('aside[data-component="ChatSidebarPanel"]'));
+  if (id.startsWith("mode:")) return isAppRunning("chats") && activeChatMode() === id.slice(5);
   if (PANEL_IDS.includes(id)) return (panelOpen() || (isTouch() && !!$(SEL.sheets))) && activePanelId() === id;
   if (id.startsWith("chat:")) return !!$(`${SEL.chatRows}[data-chat-id="${CSS.escape(id.slice(5))}"][class~="bg-[var(--marinara-chat-chrome-highlight-bg)]"]`);
   return false;
@@ -2061,6 +2071,8 @@ function launch(id, { toggle = false } = {}) {
     if (state.mainMinimized) setMainMinimized(false);
     click(row);
     focusWin("main");
+  } else if (id.startsWith("mode:")) {
+    openChatMode(id.slice(5), toggle);
   } else if (id.startsWith("tab:")) {
     openHomeTab(id.slice(4));
   } else if (APP_TYPES[id]) {
@@ -2104,6 +2116,35 @@ function launch(id, { toggle = false } = {}) {
   syncSoon();
 }
 
+// The chat list's mode tab that is selected (conversation / roleplay / game).
+const activeChatMode = () => $('[data-chat-mode-tab][aria-pressed="true"]')?.getAttribute("data-chat-mode-tab") || null;
+// A chat app opens the chat list and selects its mode; launched again while
+// in front on that mode, it closes the list (like the other Dock apps).
+function openChatMode(mode, toggle) {
+  const id = `mode:${mode}`;
+  if (isTouch()) {
+    if (!$('aside[data-component="ChatSidebarPanel"]')) click($(SEL.chatsBtn));
+  } else if (chatsOpen()) {
+    if (activeChatMode() === mode && (focused === "chats" || toggle)) return closeWin("chats");
+    focusWin("chats");
+  } else {
+    click($(SEL.chatsBtn));
+    focusWin("chats");
+    bounce(id);
+  }
+  const pick = () => {
+    const tab = $(`[data-chat-mode-tab="${mode}"]`);
+    if (tab && tab.getAttribute("aria-pressed") !== "true") tab.click();
+    if (tab) syncSoon();
+    return !!tab;
+  };
+  if (pick()) return;
+  let tries = 0;
+  const poll = () => {
+    if (!pick() && ++tries < 15) marinara.setTimeout(poll, 100);
+  };
+  marinara.setTimeout(poll, 100);
+}
 // Home tabs live inside Marinara's Home view; show Home first if needed.
 function openHomeTab(key) {
   const find = () => $(`#marinara-home-tab-${CSS.escape(key)}`);
@@ -2176,7 +2217,7 @@ function toggleLaunchpad() {
   else openLaunchpad();
 }
 function launchpadApps() {
-  return allApps().filter((a) => a.id !== "launchpad" && !(isTouch() && ["classic", "search"].includes(a.id)));
+  return allApps().filter((a) => !a.hidden && a.id !== "launchpad" && !(isTouch() && ["classic", "search"].includes(a.id)));
 }
 function appTile(a, i, onPick) {
   return h(
@@ -4175,7 +4216,7 @@ function removeDeskIcon(id) {
 // Touch home screen: app order and apps taken off the grid.
 function springboardApps() {
   const base = [
-    ...APPS.filter((a) => a.id !== "home"),
+    ...shownApps().filter((a) => a.id !== "home"),
     ...UTIL_APPS,
     ...homeApps(),
     ...bookmarkApps(),
@@ -5717,6 +5758,7 @@ function badgeFor(el) {
   if (el.hasAttribute("data-mode")) return unread.modes[Number(el.getAttribute("data-mode"))] || 0;
   const id = el.getAttribute("data-app");
   if (id === "chats") return unread.modes[0] + unread.modes[1] + unread.modes[2];
+  if (id?.startsWith("mode:")) return unread.modes[MODE_KEYS.indexOf(id.slice(5))] || 0;
   return unread.tabs[id] || 0;
 }
 function applyBadges(force = false) {
