@@ -2473,15 +2473,17 @@ function closeLaunchpad() {
 // ── Popovers (icon editor, widget editor, widget gallery) ─────
 
 let popEl = null;
-function openPop(content, anchor, { title, wide = false } = {}) {
+function openPop(content, anchor, { title, wide = false, cls = "" } = {}) {
   closePop();
   popEl = h(
     "div",
-    { class: `mdos-pop${wide ? " mdos-pop--wide" : ""}`, role: "dialog", "aria-label": title || "" },
+    { class: `mdos-pop${wide ? " mdos-pop--wide" : ""}${cls ? ` ${cls}` : ""}`, role: "dialog", "aria-label": title || "" },
     title ? h("div", { class: "mdos-pop-head" }, h("h3", { text: title }), h("button", { type: "button", class: "mdos-pop-close", "aria-label": L.close, text: "×", onclick: () => closePop() })) : null,
     content,
   );
   ui.append(popEl);
+  // A bottom sheet dims the screen behind it; tapping the dim closes it.
+  if (cls.includes("mdos-pop--sheet")) popEl.before(h("div", { class: "mdos-sheet-scrim", onclick: () => closePop() }));
   const r = anchor?.getBoundingClientRect?.();
   const pw = popEl.offsetWidth;
   const ph = popEl.offsetHeight;
@@ -2498,6 +2500,7 @@ function openPop(content, anchor, { title, wide = false } = {}) {
   }
 }
 function closePop() {
+  for (const el of $$(".mdos-sheet-scrim")) el.remove();
   popEl?.remove();
   popEl = null;
 }
@@ -6501,7 +6504,8 @@ function renderQpChips(on) {
   let row = shell.querySelector(":scope > .mdos-qp-chips");
   if (!row) {
     row = h("div", { class: "mdos-qp-chips", role: "toolbar", "data-exd": "" });
-    shell.append(row);
+    // First child: it is absolutely placed, and the send button stays last.
+    shell.prepend(row);
   }
   if (row.dataset.sig === sig) return;
   row.dataset.sig = sig;
@@ -6901,9 +6905,39 @@ function lkReleaseAll() {
   lkRecs.clear();
   lkPending.clear();
 }
+// On phones and tablets inside apps and chats (Marinara's top bar showing),
+// the locker sits just before the ☰ button, styled like its neighbours.
+let lkTopBtn = null;
+function placeTopbarLocker(show) {
+  const more = show ? $('header[data-component="TopBar"] [data-topbar-more]') : null;
+  if (!more) {
+    lkTopBtn?.remove();
+    return;
+  }
+  if (!lkTopBtn) {
+    lkTopBtn = h("button", {
+      type: "button",
+      class: "mdos-topbar-locker",
+      "data-exd": "",
+      "aria-label": L.lk.title,
+      title: L.lk.title,
+      svg: svg("locker"),
+      onclick: (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openLocker();
+      },
+    });
+  }
+  if (lkTopBtn.nextElementSibling !== more || lkTopBtn.parentElement !== more.parentElement) {
+    lkTopBtn.className = `${more.className} mdos-topbar-locker`;
+    more.before(lkTopBtn);
+  }
+}
 function lockerTick() {
   const active = state.lockerOn && mode !== "off" && !lkForeign();
   mbLocker.hidden = !(state.lockerOn && mode !== "off");
+  placeTopbarLocker(active && isTouch());
   if (!active) {
     if (lkRecs.size) lkReleaseAll();
     return;
@@ -7024,7 +7058,7 @@ function renderLocker(anchor) {
       live.length
         ? h(
             "div",
-            { class: "mdos-lk-list", role: "menu" },
+            { class: `mdos-lk-list${isTouch() ? " is-grid" : ""}`, role: "menu" },
             ...live.map((k) => {
               const rec = lkRecs.get(k);
               return h(
@@ -7158,7 +7192,8 @@ function renderLocker(anchor) {
       ),
     );
   }
-  openPop(body, anchor, { title: L.lk.title, wide: lkEditing });
+  // Phones and tablets: a sheet from the bottom edge, like iOS.
+  openPop(body, isTouch() ? null : anchor, { title: L.lk.title, wide: lkEditing, cls: isTouch() ? "mdos-pop--sheet" : "" });
 }
 // "Add by tapping": the next tap picks a floating element (not Marinara's own).
 let lkPick = null;
@@ -7340,6 +7375,7 @@ return () => {
   removeSceneBar();
   lkStopPick();
   lkReleaseAll();
+  lkTopBtn?.remove();
   for (const el of $$(".mdos-qp-plus, .mdos-qp-chips, .mdos-alert-overlay")) el.remove();
   for (const el of $$("[data-mdos-qp]")) el.toggleAttribute("data-mdos-qp", false);
   for (const el of $$("[data-mdos-null]")) el.toggleAttribute("data-mdos-null", false);
