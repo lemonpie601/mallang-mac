@@ -167,8 +167,10 @@ html.mdos-touch:is(:not(.mdos-touch-home), .mdos-touch-sheet, .mdos-touch-app) #
   background: color-mix(in srgb, var(--foreground) 55%, transparent);
 }
 /* Leave room so the indicator never sits on the message box. */
+/* The composer stays clear of the home indicator below it, so a tap on the
+   composer's bottom row never lands on the indicator. */
 html.mdos-touch:is(:not(.mdos-touch-home), .mdos-touch-sheet) .chat-input-container {
-  padding-bottom: 22px !important;
+  padding-bottom: max(26px, calc(env(safe-area-inset-bottom, 0px) + 10px)) !important;
 }
 
 /* ── Apps as phone apps ──────────────────────────────────────── */
@@ -291,7 +293,9 @@ html.mdos-tablet :is([data-component="RightPanelMobile"], aside[data-component="
 /* iPad draws its own home indicator at the very bottom; ours sits above it
    instead of on top of it. */
 html.mdos-tablet:is(:not(.mdos-touch-home), .mdos-touch-sheet, .mdos-touch-app) #mdos-homebar {
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 2px);
+  bottom: 2px;
+  height: 16px;
+  width: 120px;
 }
 
 /* Phone: on the home screen Marinara's top bar is hidden, so sheets opened

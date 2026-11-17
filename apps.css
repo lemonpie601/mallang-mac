@@ -1090,8 +1090,12 @@ html.mdos .marinara-chat-input-shell > textarea[data-chat-composer] {
   font-size: 16px !important;
   line-height: 1.5 !important;
 }
-/* Round grey buttons (+, translate, emoji…). */
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > :is(button, div > button, .mdos-qp-plus):not(:last-child) {
+/* Round grey buttons (+, translate, emoji…) — also inside the conversation
+   composer's left/right button groups. */
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > :is(button, div > button, .mdos-qp-plus):not(:last-child),
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:last-child > button:not(:last-child),
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:last-child > div > button,
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:not(:last-child) > button {
   width: 38px !important;
   height: 38px !important;
   min-width: 38px;
@@ -1105,7 +1109,8 @@ html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > :last
 }
 /* Send / stop: a solid dark round button (the text colour), with an up
    arrow in place of Marinara's paper plane — like the Claude app. */
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child {
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child,
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:last-child > button:last-child {
   width: 38px !important;
   height: 38px !important;
   border-radius: 999px !important;
@@ -1115,27 +1120,33 @@ html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > butto
   opacity: 1 !important;
   transition: transform 120ms ease, background 150ms ease;
 }
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child:active {
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child:active,
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:last-child > button:last-child:active {
   transform: scale(0.92);
 }
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child:disabled {
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child:disabled,
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:last-child > button:last-child:disabled {
   background: color-mix(in srgb, var(--mdos-fg, #000) 12%, transparent) !important;
   color: color-mix(in srgb, var(--mdos-fg, #000) 40%, transparent) !important;
   box-shadow: none !important;
 }
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child svg {
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child svg,
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:last-child > button:last-child svg {
   width: 18px !important;
   height: 18px !important;
   color: inherit !important;
 }
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child svg:is(.lucide-send, .lucide-send-horizontal, .lucide-send-horizontal-icon) {
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child svg:is(.lucide-send, .lucide-send-horizontal, .lucide-send-horizontal-icon),
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:last-child > button:last-child svg:is(.lucide-send, .lucide-send-horizontal, .lucide-send-horizontal-icon) {
   display: none !important;
 }
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child:has(svg:is(.lucide-send, .lucide-send-horizontal)) {
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child:has(svg:is(.lucide-send, .lucide-send-horizontal)),
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:last-child > button:last-child:has(svg:is(.lucide-send, .lucide-send-horizontal)) {
   display: grid !important;
   place-items: center !important;
 }
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child:has(svg:is(.lucide-send, .lucide-send-horizontal))::after {
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child:has(svg:is(.lucide-send, .lucide-send-horizontal))::after,
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:last-child > button:last-child:has(svg:is(.lucide-send, .lucide-send-horizontal))::after {
   content: "";
   display: block;
   width: 18px;
@@ -1254,7 +1265,11 @@ html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night
 /* ── Model picker: the Claude app's ──────────────────────────── */
 /* The composer's model button shows the model's name as a grey pill
    (Marinara keeps the name in the button's title) instead of a link icon. */
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button[aria-haspopup="dialog"]:has(svg.lucide-link) {
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button[aria-haspopup="dialog"]:has(svg.lucide-link),
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div > button[aria-haspopup="dialog"]:has(svg.lucide-link) {
+  height: 38px !important;
+  border-radius: 999px !important;
+  background: color-mix(in srgb, var(--mdos-fg, #000) 7%, transparent) !important;
   width: auto !important;
   max-width: 220px;
   min-width: 0 !important;
@@ -1264,13 +1279,16 @@ html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > butto
   white-space: nowrap;
   color: color-mix(in srgb, var(--mdos-fg, #000) 82%, transparent) !important;
 }
-html.mdos .marinara-chat-input-shell > button[aria-haspopup="dialog"] svg.lucide-link {
+html.mdos .marinara-chat-input-shell > button[aria-haspopup="dialog"] svg.lucide-link,
+html.mdos .marinara-chat-input-shell > div > button[aria-haspopup="dialog"] svg.lucide-link {
   display: none;
 }
-html.mdos .marinara-chat-input-shell > button[aria-haspopup="dialog"]:has(svg.lucide-link) > span:first-child {
+html.mdos .marinara-chat-input-shell > button[aria-haspopup="dialog"]:has(svg.lucide-link) > span:first-child,
+html.mdos .marinara-chat-input-shell > div > button[aria-haspopup="dialog"]:has(svg.lucide-link) > span:first-child {
   width: 0 !important;
 }
-html.mdos .marinara-chat-input-shell > button[aria-haspopup="dialog"]:has(svg.lucide-link)::after {
+html.mdos .marinara-chat-input-shell > button[aria-haspopup="dialog"]:has(svg.lucide-link)::after,
+html.mdos .marinara-chat-input-shell > div > button[aria-haspopup="dialog"]:has(svg.lucide-link)::after {
   content: attr(title);
   min-width: 0;
   overflow: hidden;
@@ -1414,4 +1432,15 @@ html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"] > .relative.flex-shri
 }
 html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"]::after {
   left: 72px;
+}
+
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:last-child {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:not(:last-child) {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
 }

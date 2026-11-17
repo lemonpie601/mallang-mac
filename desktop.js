@@ -1039,6 +1039,15 @@ const imagesSize = () =>
 
 const $ = (s, r = doc) => r.querySelector(s);
 const $$ = (s, r = doc) => Array.from(r.querySelectorAll(s));
+// Within one sync() the same few shell parts are looked up many times
+// (is Home showing, is the chat list open…); each miss scans the whole page.
+// During a sync they are looked up once (sync only reads the page).
+let lookups = null;
+const $once = (s) => {
+  if (!lookups) return doc.querySelector(s);
+  if (!lookups.has(s)) lookups.set(s, doc.querySelector(s));
+  return lookups.get(s);
+};
 const disposers = [];
 function on(target, type, fn, opts) {
   target.addEventListener(type, fn, opts);
@@ -1149,14 +1158,14 @@ function storeImage(apply) {
 // ── Host state readers ────────────────────────────────────────
 
 const isOpen = (sel) => {
-  const el = $(sel);
+  const el = $once(sel);
   return !!el && el.getAttribute("aria-hidden") !== "true";
 };
 const chatsOpen = () => isOpen(SEL.chats);
 const panelOpen = () => isOpen(SEL.panel);
 const activePanelId = () => PANEL_IDS.find((id) => panelBtn(id)?.getAttribute("aria-pressed") === "true") || null;
-const homeVisible = () => !!$(SEL.hub);
-const homePageVisible = () => !!$(SEL.homePage) && !$(SEL.detail);
+const homeVisible = () => !!$once(SEL.hub);
+const homePageVisible = () => !!$once(SEL.homePage) && !$once(SEL.detail);
 const click = (el) => {
   if (el) el.click();
   return !!el;
@@ -2058,8 +2067,10 @@ let dockSignature = "";
 // Recent chats: the first rows of Marinara's chat list (already sorted by recency).
 function recentChats() {
   if (!state.dockRecents || !isDesktop()) return [];
-  return $$(SEL.chatRows)
-    .slice(0, 3)
+  // Only the first three rows (indexing the live list, not copying it all).
+  const list = doc.querySelectorAll(SEL.chatRows);
+  return [list[0], list[1], list[2]]
+    .filter(Boolean)
     .map((row) => ({
       id: `chat:${row.getAttribute("data-chat-id")}`,
       chatId: row.getAttribute("data-chat-id"),
@@ -5793,6 +5804,14 @@ function syncSoon() {
 function sync() {
   if (disposed) return;
   lastSync = performance.now();
+  lookups = new Map();
+  try {
+    syncBody();
+  } finally {
+    lookups = null;
+  }
+}
+function syncBody() {
   refreshMode();
   if (mode === "off") return;
 
@@ -5920,9 +5939,10 @@ function readUnread() {
     for (const tab of modeTabs) {
       const i = MODE_KEYS.indexOf(tab.getAttribute("data-chat-mode-tab"));
       if (i < 0) continue;
+      // One query for the red pills of the listed chats, not one per row.
       modes[i] =
         tab.getAttribute("aria-pressed") === "true"
-          ? $$(SEL.chatRows).reduce((sum, row) => sum + pillCount(row.querySelector(UNREAD_PILL)), 0)
+          ? [...doc.querySelectorAll(`${SEL.chatRows} ${UNREAD_PILL}`)].reduce((sum, pill) => sum + pillCount(pill), 0)
           : pillCount(tab.querySelector(UNREAD_PILL));
     }
     unread.modes = modes;
@@ -6021,7 +6041,7 @@ const pollTimer = marinara.setInterval(() => {
 }, 700);
 const viewTimer = marinara.setInterval(() => {
   if (!doc.hidden) watchMainView();
-}, 800);
+}, 1500);
 on(doc, "visibilitychange", () => {
   if (!doc.hidden) tick();
 });
@@ -6761,7 +6781,16 @@ const LK_TW = /^(flex|grid|block|inline|hidden|fixed|absolute|relative|sticky|in
 const lkPending = new Map();
 let lkLastScan = -1e9;
 let lkTicks = 0;
-const lkForeign = () => !!doc.querySelector(".bgh-topbar-btn, .bgh-panel");
+// The old locker extension running? Checked at most every 5 s (a page-wide miss otherwise).
+let lkForeignAt = -1e9;
+let lkForeignHit = false;
+const lkForeign = () => {
+  if (performance.now() - lkForeignAt > 5000) {
+    lkForeignAt = performance.now();
+    lkForeignHit = !!doc.querySelector(".bgh-topbar-btn, .bgh-panel");
+  }
+  return lkForeignHit;
+};
 function lkState() {
   if (!state.locker || typeof state.locker !== "object") {
     // First run: the old extension's choices (names, kept on screen, removed)
@@ -7003,8 +7032,11 @@ function lkReleaseAll() {
 // the locker sits just before the ☰ button, styled like its neighbours.
 let lkTopBtn = null;
 function placeTopbarLocker(show) {
-  const more = show ? $('header[data-component="TopBar"] [data-topbar-more]') : null;
-  if (!more) {
+  const bar = show ? $('header[data-component="TopBar"]') : null;
+  const more = bar?.querySelector("[data-topbar-more]");
+  const nav = bar?.querySelector('nav[data-tour="panel-buttons"], .mari-topbar-panel-nav');
+  const ref = more || nav?.lastElementChild;
+  if (!ref) {
     lkTopBtn?.remove();
     return;
   }
@@ -7023,9 +7055,14 @@ function placeTopbarLocker(show) {
       },
     });
   }
-  if (lkTopBtn.nextElementSibling !== more || lkTopBtn.parentElement !== more.parentElement) {
-    lkTopBtn.className = `${more.className} mdos-topbar-locker`;
-    more.before(lkTopBtn);
+  if (more) {
+    if (lkTopBtn.nextElementSibling !== more) {
+      lkTopBtn.className = `${more.className} mdos-topbar-locker`;
+      more.before(lkTopBtn);
+    }
+  } else if (lkTopBtn.parentElement !== nav || nav.lastElementChild !== lkTopBtn) {
+    lkTopBtn.className = `${ref.className} mdos-topbar-locker`;
+    nav.append(lkTopBtn);
   }
 }
 function lockerTick() {
@@ -7357,8 +7394,31 @@ function lkActivate(el) {
   const x = Math.min(innerWidth - 2, Math.max(1, r.left + r.width / 2));
   const y = Math.min(innerHeight - 2, Math.max(1, r.top + r.height / 2));
   let target = doc.elementFromPoint(x, y);
-  if (!target || !el.contains(target)) target = el.matches(LK_INTERACTIVE) ? el : el.querySelector(LK_INTERACTIVE) || el;
+  for (let i = 0; target?.shadowRoot && i < 4; i++) {
+    const inner = target.shadowRoot.elementFromPoint(x, y);
+    if (!inner || inner === target) break;
+    target = inner;
+  }
+  const inside = (t) => !!t && (el.contains(t) || el.shadowRoot?.contains(t) || t.getRootNode?.().host === el);
+  if (!inside(target)) target = el.matches(LK_INTERACTIVE) ? el : el.querySelector(LK_INTERACTIVE) || el;
   const coarse = matchMedia("(pointer: coarse)").matches;
+  const proto = Element.prototype;
+  const capture = proto.setPointerCapture;
+  const release = proto.releasePointerCapture;
+  proto.setPointerCapture = function (id) {
+    try {
+      return capture.call(this, id);
+    } catch {
+      /* our pointer isn't a real one */
+    }
+  };
+  proto.releasePointerCapture = function (id) {
+    try {
+      return release.call(this, id);
+    } catch {
+      /* our pointer isn't a real one */
+    }
+  };
   const base = { bubbles: true, cancelable: true, composed: true, view: window, clientX: x, clientY: y, screenX: x, screenY: y, button: 0, detail: 1 };
   const pointer = { ...base, pointerId: coarse ? 7 : 1, pointerType: coarse ? "touch" : "mouse", isPrimary: true, width: 1, height: 1 };
   const down = target.dispatchEvent(new PointerEvent("pointerdown", { ...pointer, buttons: 1, pressure: 0.5 }));
@@ -7366,7 +7426,12 @@ function lkActivate(el) {
   if (!target.isConnected) target = doc.elementFromPoint(x, y) || el;
   target.dispatchEvent(new PointerEvent("pointerup", { ...pointer, buttons: 0, pressure: 0 }));
   if (down) target.dispatchEvent(new MouseEvent("mouseup", { ...base, buttons: 0 }));
-  if (target.isConnected && target !== doc.body) target.dispatchEvent(new MouseEvent("click", { ...base, buttons: 0 }));
+  try {
+    if (target.isConnected && target !== doc.body) target.dispatchEvent(new MouseEvent("click", { ...base, buttons: 0 }));
+  } finally {
+    proto.setPointerCapture = capture;
+    proto.releasePointerCapture = release;
+  }
   if (rec) {
     for (let i = 1; i <= 30; i++) marinara.setTimeout(() => !rec.living && lkEnforce(rec), 100 * i + 460);
   }
