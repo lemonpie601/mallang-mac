@@ -325,6 +325,8 @@ const L = KO
         deleted: "삭제했어요",
         needText: "제목이나 내용을 적어 주세요",
       },
+      messengerPane: "메신저 한 창 (목록을 대화 창에 붙이기)",
+      toggleList: "채팅 목록 접기/펼치기",
       focusMode: "집중 모드",
       focusExit: "집중 모드 끄기",
       chars: "자",
@@ -648,6 +650,8 @@ const L = KO
         deleted: "Deleted",
         needText: "Add a title or some text",
       },
+      messengerPane: "One messenger window (list attached to the chat)",
+      toggleList: "Show/hide the chat list",
       focusMode: "Focus mode",
       focusExit: "Leave focus mode",
       chars: " chars",
@@ -903,6 +907,8 @@ const DEFAULTS = {
   dockRecents: true,
   bootSplash: true,
   sceneBarTop: true,
+  messengerPane: true,
+  listW: 320,
   lockerOn: true,
   locker: null,
   quickPalette: true,
@@ -1324,7 +1330,24 @@ function clampRect(r) {
   return { x: Math.round(x), y: Math.round(y), w: Math.round(w), h: Math.round(hh) };
 }
 const validRect = (r) => r && ["x", "y", "w", "h"].every((k) => Number.isFinite(r[k]));
+// One messenger window (desktop): while the chat list is open it is the left
+// part of the chat window's frame (the main window's saved rect); the two
+// move and resize as one, and the seam sets the list's width.
+const LIST_MIN = 240;
+const LIST_MAX = 480;
+const paneOn = () => isDesktop() && state.messengerPane !== false && chatsOpen() && !state.mainMinimized && !desktopHome && !html.classList.contains("mdos-focus");
+function listWidth(frame) {
+  return Math.round(Math.min(Math.max(state.listW || 320, LIST_MIN), LIST_MAX, frame.w - MIN_W));
+}
 function rectOf(id) {
+  if ((id === "chats" || id === "main") && paneOn()) {
+    const f = baseRect("main");
+    const lw = listWidth(f);
+    return id === "chats" ? { x: f.x, y: f.y, w: lw, h: f.h } : { x: f.x + lw, y: f.y, w: f.w - lw, h: f.h };
+  }
+  return baseRect(id);
+}
+function baseRect(id) {
   const saved = savedRect(id);
   if (saved?.snap === "max") return maxRect();
   if (saved?.snap === "left" || saved?.snap === "right") return halfRect(saved.snap);
@@ -1364,6 +1387,7 @@ function windowVisible(id) {
 }
 function focusWin(id) {
   if (!id) return;
+  if (id === "chats" && paneOn()) id = "main";
   zOrder = zOrder.filter((x) => x !== id).concat(id);
   focused = id;
   applyZ();
@@ -1514,16 +1538,37 @@ function makeTitlebar(id) {
         svg: LIGHT_GLYPHS[act],
         onclick: (event) => {
           event.stopPropagation();
-          if (act === "close") closeWin(id);
-          else if (act === "minimize") minimizeWin(id);
-          else zoomWin(id);
+          // Joined: the list's lights are the whole messenger window's.
+          const target = id === "chats" && paneOn() ? "main" : id;
+          if (act === "close") {
+            if (target !== id) click($(SEL.chatsBtn));
+            closeWin(target);
+          } else if (act === "minimize") minimizeWin(target);
+          else zoomWin(target);
         },
       }),
     ),
   );
+  // The chat window's strip: the sidebar button folds the list away / back.
+  const toggle =
+    id === "main"
+      ? h("button", {
+          type: "button",
+          class: "mdos-pane-toggle",
+          "aria-label": L.toggleList,
+          title: L.toggleList,
+          svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="3"/><path d="M9.5 4.5v15"/></svg>',
+          onclick: (event) => {
+            event.stopPropagation();
+            animateGeometry();
+            click($(SEL.chatsBtn));
+            syncSoon();
+          },
+        })
+      : null;
   // Marinara's own header (top bar / sidebar header / panel header) is the
   // title bar; we only add the lights on its left edge.
-  return h("div", { class: `mdos-titlebar mdos-titlebar--${id === "main" ? "main" : "side"}` }, lights);
+  return h("div", { class: `mdos-titlebar mdos-titlebar--${id === "main" ? "main" : "side"}` }, lights, toggle);
 }
 
 function ensureChrome() {
@@ -1605,8 +1650,21 @@ function startGesture(event, id, gmode) {
   // ask Mari" drag starts from the same press. We listen on the document in
   // the capture phase, so stopping here keeps that press from React entirely.
   event.stopPropagation();
+  let frame = false;
+  if (paneOn() && (id === "chats" || id === "main")) {
+    // The seam between list and chat sets the list's width.
+    if ((id === "chats" && gmode === "e") || (id === "main" && gmode === "w")) {
+      gesture = { kind: "seam", sx: event.clientX, sy: event.clientY, startW: rectOf("chats").w, moved: false };
+      html.classList.add("mdos-gesture");
+      html.dataset.mdosGesture = "e-resize";
+      return;
+    }
+    // Everything else moves / resizes the whole window (its frame).
+    id = "main";
+    frame = true;
+  }
   const saved = savedRect(id);
-  let start = rectOf(id);
+  let start = frame ? baseRect("main") : rectOf(id);
   if (gmode === "move" && saved?.snap) {
     // Pull a snapped window off the edge at its remembered size, under the pointer.
     const restore = clampRect(validRect(saved) ? saved : defaultRect(id));
@@ -1615,7 +1673,7 @@ function startGesture(event, id, gmode) {
     writeRect(id, { ...start, snap: null });
     applyRect(id);
   }
-  gesture = { kind: "window", id, mode: gmode, sx: event.clientX, sy: event.clientY, start, rect: start, moved: false, snap: null };
+  gesture = { kind: "window", id, frame, mode: gmode, sx: event.clientX, sy: event.clientY, start, rect: start, moved: false, snap: null };
   html.classList.add("mdos-gesture");
   html.dataset.mdosGesture = gmode === "move" ? "move" : `${gmode}-resize`;
 }
@@ -1664,9 +1722,16 @@ function applyGestureFrame() {
     g.el.style.translate = `${g.dx}px ${g.dy}px`;
     return;
   }
+  if (g.kind === "seam") {
+    state.listW = Math.round(Math.min(Math.max(g.startW + g.dx, LIST_MIN), LIST_MAX));
+    applyRect("chats");
+    applyRect("main");
+    return;
+  }
   const s = g.start;
   if (g.mode === "move") {
     setTranslate(g.id, g.dx, Math.max(g.dy, MENUBAR_H + 2 - s.y));
+    if (g.frame) setTranslate("chats", g.dx, Math.max(g.dy, MENUBAR_H + 2 - s.y));
     g.snap =
       g.cy <= MENUBAR_H + SNAP_EDGE ? "max" : g.cx <= SNAP_EDGE ? "left" : g.cx >= innerWidth - SNAP_EDGE ? "right" : null;
     showSnapPreview(g.snap);
@@ -1688,9 +1753,10 @@ function applyGestureFrame() {
       y = MENUBAR_H + 2;
     }
   }
-  g.rect = clampRect({ x, y, w, h: hh });
+  g.rect = clampRect({ x, y, w: g.frame ? Math.max(w, LIST_MIN + MIN_W) : w, h: hh });
   writeRect(g.id, { ...g.rect, snap: null });
   applyRect(g.id);
+  if (g.frame) applyRect("chats");
 }
 
 function onPointerUp() {
@@ -1734,6 +1800,10 @@ function onPointerUp() {
     }
     return;
   }
+  if (g.kind === "seam") {
+    if (g.moved) save();
+    return;
+  }
   if (g.mode === "move") {
     if (g.moved && g.snap) {
       writeRect(g.id, { ...g.start, snap: g.snap });
@@ -1743,6 +1813,10 @@ function onPointerUp() {
     }
     applyRect(g.id);
     setTranslate(g.id, 0, 0);
+    if (g.frame) {
+      applyRect("chats");
+      setTranslate("chats", 0, 0);
+    }
     showSnapPreview(null);
   }
   if (g.moved) save();
@@ -1940,6 +2014,7 @@ const MENUS = {
     { label: L.editWidgets, action: () => setEditMode(true) },
     { label: L.launchpad, key: "Ctrl Alt L", action: toggleLaunchpad },
     { label: L.focusMode, key: "Ctrl Alt F", checked: focusMode, action: () => setFocusMode(!focusMode) },
+    { label: L.messengerPane, checked: state.messengerPane !== false, action: () => (updateSetting("messengerPane", state.messengerPane === false), syncSoon()) },
     "-",
     ...shownApps().map((a) => ({ label: appLabel(a), checked: isAppRunning(a.id), action: () => launch(a.id) })),
     ...(homeApps().length ? ["-", ...homeApps().map((a) => ({ label: appLabel(a), action: () => launch(a.id) }))] : []),
@@ -5855,6 +5930,16 @@ function syncBody() {
   ensureChrome();
   setDesktopHome(onHome);
 
+  // The list joins / leaves the chat window as it opens and closes.
+  const pane = paneOn();
+  toggleClass("mdos-pane", pane);
+  toggleClass("mdos-pane-ready", isDesktop() && state.messengerPane !== false && !desktopHome);
+  if (pane !== lastPane) {
+    if (lastPane !== null) animateGeometry();
+    lastPane = pane;
+    applyRect("chats");
+    applyRect("main");
+  }
   // Bring a window forward when Marinara opens it.
   for (const id of ["chats", "panel"]) {
     const open = windowVisible(id);
@@ -6000,6 +6085,7 @@ function refreshBadges() {
 
 let topbarSeen = null;
 let topbarRO = null;
+let lastPane = null;
 // The main window comes back whenever Marinara shows something new in it.
 let lastView = "";
 const detailIds = new WeakMap();
@@ -7714,7 +7800,27 @@ on(
 // name, which Marinara's list doesn't carry, so it is fetched (one message,
 // only for chats on screen, two at a time, again only when the chat's time
 // changes). Roleplay is a bookshelf, Game a game library (CSS).
-const previews = new Map(); // chatId -> { key, text }
+// chatId -> { key, text }; kept in this browser across reloads (newest 300).
+const previews = new Map();
+try {
+  for (const [id, p] of JSON.parse(localStorage.getItem("mdos.previews") || "[]")) if (p && typeof p.text === "string") previews.set(id, p);
+} catch {
+  /* private mode */
+}
+let pvSaveTimer = 0;
+function pvSave() {
+  marinara.clearTimeout(pvSaveTimer);
+  pvSaveTimer = marinara.setTimeout(() => {
+    try {
+      localStorage.setItem("mdos.previews", JSON.stringify([...previews].slice(-300)));
+    } catch {
+      /* full or private */
+    }
+  }, 1500);
+}
+// Relative times ("2시간 전") change by themselves; only "just now" means a
+// new message arrived, so only that sends for the preview again.
+const FRESH_TIME = /방금|just now|^now$|^\d+\s*(초|분|sec|min|s|m)\b/i;
 const pvQueue = [];
 let pvBusy = 0;
 const pvSeen = new WeakSet();
@@ -7728,7 +7834,11 @@ function pvWant(row) {
   const id = row.getAttribute("data-chat-id");
   if (!id || activeChatMode() !== "conversation") return;
   const p = previews.get(id);
-  if ((p && p.key === rowTime(row)) || pvQueue.includes(id)) return;
+  const t = rowTime(row);
+  if ((p && (p.key === t || !FRESH_TIME.test(t))) || pvQueue.includes(id)) {
+    if (p) paintPreview(row);
+    return;
+  }
   pvQueue.push(id);
   pvPump();
 }
@@ -7757,7 +7867,9 @@ function pvPump() {
       .then((data) => {
         const list = Array.isArray(data) ? data : data?.messages || data?.items || [];
         const last = list.reduce((a, m) => (!a || String(m?.createdAt || "") >= String(a?.createdAt || "") ? m : a), null);
+        previews.delete(id);
         previews.set(id, { key, text: last ? pvText(last) : "" });
+        pvSave();
         paintPreview(doc.querySelector(`${SEL.chatRows}[data-chat-id="${CSS.escape(id)}"]`));
       })
       .catch(() => previews.set(id, { key, text: "" }))
@@ -7798,7 +7910,7 @@ function refreshChatList() {
     }
     if (changed || !row.querySelector(":scope > .min-w-0.flex-1 > .mdos-preview")) {
       const p = previews.get(row.getAttribute("data-chat-id"));
-      if (p && p.key !== rowTime(row)) pvWant(row);
+      if (p && p.key !== rowTime(row) && FRESH_TIME.test(rowTime(row))) pvWant(row);
       else if (p) paintPreview(row);
     }
   }

@@ -2090,3 +2090,48 @@ html.mdos #mdos-count.is-on {
   font-variant-numeric: tabular-nums;
   pointer-events: none;
 }
+
+/* ── One messenger window (desktop.js paneOn) ────────────────── */
+/* The list and the chat read as one window: no inner corners or doubled
+   shadow at the seam, the list always just above the chat, one set of
+   lights (the list's). The chat strip's sidebar button folds the list. */
+html.mdos-pane [data-mdos-win="chats"] {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  z-index: calc(var(--mdos-main-z, 11) + 1) !important;
+  box-shadow: -18px 24px 60px -24px rgba(0, 0, 0, 0.45) !important;
+  border-right: 1px solid var(--mdos-sep, rgba(127, 127, 127, 0.25)) !important;
+}
+html.mdos-pane [data-mdos-win="main"] {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+html.mdos-pane [data-mdos-win="main"] .mdos-titlebar--main .mdos-lights {
+  display: none;
+}
+.mdos-pane-toggle {
+  display: none;
+}
+html.mdos-pane-ready .mdos-pane-toggle {
+  all: unset;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 24px;
+  margin-left: 6px;
+  border-radius: 6px;
+  color: var(--mdos-fg-2, currentColor);
+  pointer-events: auto;
+  cursor: var(--mdos-cur-ptr, pointer);
+}
+html.mdos-pane-ready .mdos-pane-toggle:hover {
+  background: var(--mdos-fill-2, rgba(127, 127, 127, 0.15));
+  color: var(--mdos-fg, currentColor);
+}
+html.mdos-pane-ready .mdos-pane-toggle svg {
+  width: 17px;
+  height: 17px;
+}
+html.mdos-pane [data-mdos-win="main"] .mdos-titlebar--main {
+  padding-left: 4px;
+}
