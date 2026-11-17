@@ -6463,33 +6463,96 @@ function mountQuickPalette() {
   }
   renderQpChips(on);
 }
+// The + menu, like the Claude app's: a rounded card above the + with grouped
+// rows (icon + label), then the "show as buttons" switches, which keep it open.
+let qpPop = null;
+function closeQpMenu() {
+  if (!qpPop) return;
+  qpPop.el.remove();
+  qpPop.anchor.classList.remove("is-open");
+  doc.removeEventListener("pointerdown", qpPop.outside, true);
+  doc.removeEventListener("keydown", qpPop.key, true);
+  qpPop = null;
+}
 function openQpMenu(anchor) {
-  if (openMenu?.anchor === anchor) return closeMenu();
+  if (qpPop) {
+    const same = qpPop.anchor === anchor;
+    closeQpMenu();
+    if (same) return;
+  }
   const qp = qpState();
   const items = QP_ITEMS.filter((it) => !it.when || it.when());
-  const togglePin = (id) => {
-    qp.chips = qp.chips.includes(id) ? qp.chips.filter((x) => x !== id) : [...qp.chips, id];
-    save();
-    renderQpChips(true);
-  };
-  const r = anchor.getBoundingClientRect();
-  showMenuAt(
-    [
-      ...items.map((it) => ({ label: L.qp[it.id], action: () => it.run(anchor) })),
-      "-",
-      { label: L.qp.pinTitle, disabled: true },
-      ...items.map((it) => ({ label: L.qp[it.id], checked: qp.chips.includes(it.id), keepOpen: true, isChecked: () => qpState().chips.includes(it.id), action: () => togglePin(it.id) })),
-    ],
-    r.left,
-    r.top,
+  const actions = h(
+    "div",
+    { class: "mdos-qp-group" },
+    ...items.map((it) =>
+      keepFocus(
+        h(
+          "button",
+          {
+            type: "button",
+            class: "mdos-qp-row",
+            onclick: () => {
+              closeQpMenu();
+              it.run(anchor);
+            },
+          },
+          qpIcon(it),
+          h("span", { text: L.qp[it.id] }),
+        ),
+      ),
+    ),
   );
-  // Opens upward from the + button, like the composer's other menus.
-  const menu = openMenu.el;
-  menu.classList.add("mdos-qp-menu");
-  menu.style.top = `${Math.max(MENUBAR_H + 3, r.top - menu.offsetHeight - 6)}px`;
-  for (const b of menu.querySelectorAll("button")) keepFocus(b);
-  openMenu.anchor = anchor;
+  const pins = h(
+    "div",
+    { class: "mdos-qp-group" },
+    h("div", { class: "mdos-qp-group-title", text: L.qp.pinTitle }),
+    ...items.map((it) => {
+      const sw = h("span", { class: `mdos-qp-switch${qp.chips.includes(it.id) ? " is-on" : ""}`, "aria-hidden": "true" });
+      return keepFocus(
+        h(
+          "button",
+          {
+            type: "button",
+            class: "mdos-qp-row",
+            role: "switch",
+            "aria-checked": String(qp.chips.includes(it.id)),
+            onclick: (e) => {
+              qp.chips = qp.chips.includes(it.id) ? qp.chips.filter((x) => x !== it.id) : [...qp.chips, it.id];
+              save();
+              renderQpChips(true);
+              const on = qp.chips.includes(it.id);
+              sw.classList.toggle("is-on", on);
+              e.currentTarget.setAttribute("aria-checked", String(on));
+            },
+          },
+          qpIcon(it),
+          h("span", { text: L.qp[it.id] }),
+          sw,
+        ),
+      );
+    }),
+  );
+  const el = h("div", { class: "mdos-qp-pop", role: "dialog", "aria-label": L.qp.menu, "data-exd": "" }, actions, pins);
+  doc.body.append(el);
+  const r = anchor.getBoundingClientRect();
+  const w = el.offsetWidth;
+  el.style.left = `${Math.max(8, Math.min(r.left - 10, innerWidth - w - 8))}px`;
+  el.style.bottom = `${Math.max(8, innerHeight - r.top + 12)}px`;
+  el.style.setProperty("--tip", `${Math.round(r.left + r.width / 2 - Math.max(8, Math.min(r.left - 10, innerWidth - w - 8)))}px`);
   anchor.classList.add("is-open");
+  const outside = (e) => {
+    if (!el.contains(e.target) && !anchor.contains(e.target)) closeQpMenu();
+  };
+  const key = (e) => {
+    if (e.key === "Escape") {
+      e.stopPropagation();
+      closeQpMenu();
+    }
+  };
+  doc.addEventListener("pointerdown", outside, true);
+  doc.addEventListener("keydown", key, true);
+  qpPop = { el, anchor, outside, key };
 }
 // The pinned buttons hang just above the composer: inside its shell (which is
 // position: relative and doesn't clip), placed with CSS — no positioning loop,
@@ -7058,14 +7121,14 @@ function renderLocker(anchor) {
       live.length
         ? h(
             "div",
-            { class: `mdos-lk-list${isTouch() ? " is-grid" : ""}`, role: "menu" },
+            { class: `mdos-lk-list${isTouch() ? " is-grid" : ""}`, role: "list" },
             ...live.map((k) => {
               const rec = lkRecs.get(k);
               return h(
                 "button",
                 {
                   type: "button",
-                  role: "menuitem",
+                  role: "listitem",
                   class: "mdos-lk-row",
                   onclick: () => {
                     closePop();
@@ -7097,6 +7160,7 @@ function renderLocker(anchor) {
     const keys = st.order.filter((k) => st.items[k] && !st.items[k].excluded);
     const removed = st.order.filter((k) => st.items[k]?.excluded);
     body.append(
+      ...[
       h(
         "div",
         { class: "mdos-lk-edit" },
@@ -7190,9 +7254,11 @@ function renderLocker(anchor) {
         h("button", { type: "button", class: "mdos-btn", text: L.lk.pick, onclick: () => (closePop(), lkStartPick()) }),
         h("button", { type: "button", class: "mdos-btn mdos-btn--primary", text: L.lk.done, onclick: () => ((lkEditing = false), renderLocker(anchor)) }),
       ),
+      ].filter(Boolean),
     );
   }
   // Phones and tablets: a sheet from the bottom edge, like iOS.
+  for (const n of [...body.childNodes]) if (n.nodeType === 3 && n.data === "null") n.remove();
   openPop(body, isTouch() ? null : anchor, { title: L.lk.title, wide: lkEditing, cls: isTouch() ? "mdos-pop--sheet" : "" });
 }
 // "Add by tapping": the next tap picks a floating element (not Marinara's own).
@@ -7376,6 +7442,7 @@ return () => {
   lkStopPick();
   lkReleaseAll();
   lkTopBtn?.remove();
+  closeQpMenu();
   for (const el of $$(".mdos-qp-plus, .mdos-qp-chips, .mdos-alert-overlay")) el.remove();
   for (const el of $$("[data-mdos-qp]")) el.toggleAttribute("data-mdos-qp", false);
   for (const el of $$("[data-mdos-null]")) el.toggleAttribute("data-mdos-null", false);

@@ -856,6 +856,9 @@ html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night
   gap: 10px;
 }
 .mdos-lk-list {
+  background: none !important;
+  color: inherit !important;
+  box-shadow: none !important;
   display: grid;
   gap: 2px;
   max-height: min(420px, 60vh);
@@ -1039,8 +1042,14 @@ html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night
   display: none;
 }
 .mdos-pop--sheet .mdos-lk-erow {
-  grid-template-columns: minmax(0, 1fr) auto auto;
-  row-gap: 6px;
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  row-gap: 4px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.mdos-pop--sheet .mdos-lk-keep {
+  justify-self: start;
+  font-size: 13px;
 }
 .mdos-pop--sheet .mdos-lk-erow .mdos-input {
   grid-column: 1 / -1;
@@ -1055,50 +1064,162 @@ html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night
 }
 
 /* ── Composer: the Claude app's input bar ────────────────────── */
-/* The text takes the whole first line; the + and tools sit below it on the
-   left, the send button on the right as a round accent button. */
+/* A big rounded card: the text on the first line, below it round grey
+   buttons (+, tools) on the left and the round accent send on the right. */
 html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) {
   flex-wrap: wrap !important;
   align-items: center !important;
-  column-gap: 4px !important;
-  row-gap: 2px !important;
-  padding: 12px 10px 8px 12px !important;
+  column-gap: 6px !important;
+  row-gap: 4px !important;
+  padding: 14px 12px 10px 12px !important;
+  border-radius: 28px !important;
+  border: 1px solid color-mix(in srgb, var(--mdos-fg, #000) 12%, transparent) !important;
+  background: var(--mdos-win-bg, #fff) !important;
+  box-shadow: 0 6px 24px -10px rgba(0, 0, 0, 0.22) !important;
+}
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]):focus-within {
+  border-color: color-mix(in srgb, var(--mdos-fg, #000) 22%, transparent) !important;
+  box-shadow: 0 8px 28px -10px rgba(0, 0, 0, 0.28) !important;
 }
 html.mdos .marinara-chat-input-shell > textarea[data-chat-composer] {
   order: -1;
   flex: 1 0 100% !important;
   width: 100% !important;
-  min-height: 26px;
-  padding: 2px 4px 8px !important;
-  font-size: 15px !important;
+  min-height: 28px;
+  padding: 2px 6px 8px !important;
+  font-size: 16px !important;
   line-height: 1.5 !important;
+}
+/* Round grey buttons (+, translate, emoji…). */
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > :is(button, div > button, .mdos-qp-plus):not(:last-child) {
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px;
+  border-radius: 999px !important;
+  background: color-mix(in srgb, var(--mdos-fg, #000) 7%, transparent) !important;
+  color: color-mix(in srgb, var(--mdos-fg, #000) 78%, transparent) !important;
+  box-shadow: none !important;
 }
 html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > :last-child {
   margin-left: auto !important;
 }
+/* Send / stop: a round accent button. */
 html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child {
-  width: 34px !important;
-  height: 34px !important;
-  border-radius: 11px !important;
-  background: var(--mdos-accent, #d97757) !important;
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 999px !important;
+  background: var(--mdos-accent, #c96442) !important;
   color: #fff !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18) !important;
+  box-shadow: none !important;
   opacity: 1 !important;
 }
 html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child:disabled {
-  background: color-mix(in srgb, var(--mdos-fg, #000) 14%, transparent) !important;
-  color: color-mix(in srgb, var(--mdos-fg, #000) 45%, transparent) !important;
-  box-shadow: none !important;
+  background: color-mix(in srgb, var(--mdos-fg, #000) 9%, transparent) !important;
+  color: color-mix(in srgb, var(--mdos-fg, #000) 40%, transparent) !important;
 }
 html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child svg {
+  width: 18px !important;
+  height: 18px !important;
   color: inherit !important;
 }
-/* The + reads as a round, bordered control, like the app's. */
-html.mdos .marinara-chat-input-shell .mdos-qp-plus {
-  width: 32px;
-  height: 32px;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--mdos-fg, #000) 16%, transparent);
+html.mdos .marinara-chat-input-shell .mdos-qp-plus svg {
+  width: 20px;
+  height: 20px;
 }
+/* Phones: the side margin stays; the card keeps its round corners. */
+html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .marinara-chat-input-shell:has(> textarea[data-chat-composer]) {
+  border-radius: 24px 24px 0 0 !important;
+}
+
+/* The + menu: the Claude app's card — grouped rows on a light surface. */
+.mdos-qp-pop {
+  position: fixed;
+  z-index: 9000;
+  width: min(330px, calc(100vw - 16px));
+  max-height: min(70vh, 560px);
+  overflow-y: auto;
+  padding: 12px;
+  border-radius: 26px;
+  display: grid;
+  gap: 12px;
+  color: var(--mdos-fg, #1d1d1f);
+  background: color-mix(in srgb, var(--mdos-win-bg, #fff) 94%, var(--mdos-fg, #000));
+  box-shadow:
+    0 20px 50px -12px rgba(0, 0, 0, 0.35),
+    0 0 0 1px color-mix(in srgb, var(--mdos-fg, #000) 8%, transparent);
+  font: 15px/1.3 var(--mdos-font);
+  animation: mdos-pop 140ms var(--mdos-ease);
+}
+.mdos-qp-group {
+  display: grid;
+  border-radius: 18px;
+  background: var(--mdos-win-bg, #fff);
+  overflow: hidden;
+}
+.mdos-qp-group-title {
+  padding: 12px 18px 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: color-mix(in srgb, var(--mdos-fg, #000) 55%, transparent);
+}
+.mdos-qp-row {
+  all: unset;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  min-height: 52px;
+  padding: 0 18px;
+  cursor: var(--mdos-cur-ptr, pointer);
+  -webkit-tap-highlight-color: transparent;
+}
+.mdos-qp-row + .mdos-qp-row {
+  box-shadow: inset 58px 1px 0 -57px color-mix(in srgb, var(--mdos-fg, #000) 12%, transparent);
+}
+.mdos-qp-row:hover,
+.mdos-qp-row:active {
+  background: color-mix(in srgb, var(--mdos-fg, #000) 6%, transparent);
+}
+.mdos-qp-row .mdos-qp-ico {
+  width: 24px;
+  height: 24px;
+  color: color-mix(in srgb, var(--mdos-fg, #000) 80%, transparent);
+}
+.mdos-qp-row .mdos-qp-ico svg {
+  width: 22px;
+  height: 22px;
+}
+.mdos-qp-row .mdos-qp-glyph {
+  font-size: 17px;
+}
+.mdos-qp-switch {
+  position: relative;
+  width: 44px;
+  height: 26px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--mdos-fg, #000) 16%, transparent);
+  transition: background 150ms ease;
+}
+.mdos-qp-switch::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: translate 150ms var(--mdos-ease);
+}
+.mdos-qp-switch.is-on {
+  background: #34c759;
+}
+.mdos-qp-switch.is-on::after {
+  translate: 18px 0;
+}
+
 .mdos-sheet-scrim {
   position: fixed;
   inset: 0;

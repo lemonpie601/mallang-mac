@@ -542,17 +542,32 @@ html.mdos .mari-chat-sidebar [data-drag-kind="chat"] {
   border-radius: 10px !important;
   align-items: center !important;
 }
-html.mdos .mari-chat-sidebar [data-drag-kind="chat"] > .relative.flex-shrink-0 :is(span.rounded-lg, .mari-chat-mode-avatar) {
+/* The avatar slot itself is 42px, so the picture never runs under the name. */
+html.mdos .mari-chat-sidebar [data-drag-kind="chat"] > .relative.flex-shrink-0 {
+  flex: none !important;
+  width: 42px !important;
+  height: 42px !important;
+  display: grid !important;
+  place-items: center;
+}
+/* One picture (or the mode icon): a full round 42px avatar. */
+html.mdos .mari-chat-sidebar [data-drag-kind="chat"] > .relative.flex-shrink-0 > :is(span.rounded-lg, .mari-chat-mode-avatar) {
+  position: relative !important;
+  inset: auto !important;
   width: 42px !important;
   height: 42px !important;
   border-radius: 50% !important;
   overflow: hidden;
 }
-html.mdos .mari-chat-sidebar [data-drag-kind="chat"] > .relative.flex-shrink-0 img {
+html.mdos .mari-chat-sidebar [data-drag-kind="chat"] > .relative.flex-shrink-0 > span.rounded-lg > img {
+  display: block;
   width: 100% !important;
   height: 100% !important;
-  object-fit: cover;
+  max-width: none !important;
+  object-fit: cover !important;
+  object-position: center top;
   border-radius: 50% !important;
+  transform: none !important;
 }
 html.mdos .mari-chat-sidebar [data-drag-kind="chat"] > .min-w-0.flex-1 > span:first-child {
   font-size: 14px !important;
