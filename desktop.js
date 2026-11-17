@@ -7094,11 +7094,254 @@ function lkScan() {
       lkRecs.delete(key);
     }
   }
+  lkDetectOwners();
 }
+// The name shown: the user's, else the owning extension's (when it is Korean),
+// else the button's label, like the original locker.
+const hasHangul = (t) => /[가-힣]/.test(t || "");
 const lkName = (key) => {
   const item = lkState().items[key];
-  return item?.name || item?.label || L.lk.unnamed;
+  if (!item) return L.lk.unnamed;
+  if (item.name) return item.name;
+  const ext = lkRuntime.get(item.ownerId)?.name || item.ownerName || "";
+  const label = item.label || "";
+  if (hasHangul(ext)) return ext;
+  if (hasHangul(label)) return label;
+  return ext || label || L.lk.unnamed;
 };
+
+// Which extension a stored button belongs to: the runtime list names them;
+// a button is matched by the extension stylesheet that styles its id/classes,
+// by its label equalling an extension's name, or (rarely, at most once a
+// minute) by finding its id/classes/label in the extensions' own code.
+let lkRuntime = new Map();
+let lkRuntimeAt = -1e9;
+const lkOwnerMiss = new Map();
+const lkSourceText = new Map();
+let lkSourceAt = -1e9;
+let lkSourceBusy = false;
+async function lkRefreshRuntime() {
+  if (performance.now() - lkRuntimeAt < 15_000) return;
+  lkRuntimeAt = performance.now();
+  try {
+    const res = await window.fetch("/api/personal-extensions/runtime/client", { cache: "no-store", credentials: "same-origin" });
+    if (!res.ok) return;
+    const list = await res.json();
+    const arr = Array.isArray(list) ? list : Array.isArray(list?.extensions) ? list.extensions : [];
+    const next = new Map();
+    for (const x of arr) if (x && typeof x.id === "string") next.set(x.id, { name: String(x.name || ""), url: String(x.runtimeUrl || ""), mode: String(x.executionMode || "") });
+    lkRuntime = next;
+  } catch {
+    /* offline or older server */
+  }
+}
+const LK_STATE_CLASS = /^(is|has|was|state)-|^(open|opened|closed|hidden|show|shown|active|visible|loading|expanded|collapsed|selected|disabled|on|off)$/;
+function lkProbes(el) {
+  const probes = [el];
+  for (let n = el.parentElement, i = 0; n && i < 4 && n !== doc.body && n !== html; n = n.parentElement, i++) probes.push(n);
+  let c = 0;
+  for (const d of el.querySelectorAll("*")) {
+    probes.push(d);
+    if (++c >= 20) break;
+  }
+  return probes;
+}
+function lkTokens(probes) {
+  const out = [];
+  for (const p of probes) {
+    if (p.id && /^[A-Za-z][\w-]{1,63}$/.test(p.id) && !/\d{5}/.test(p.id) && p.id !== "root") out.push({ t: `#${p.id}`, w: 5 });
+    for (const c of p.classList || []) {
+      if (c.length < 4 || LK_STATE_CLASS.test(c) || /^(bgh|mdos|exd)-/.test(c) || LK_TW.test(c)) continue;
+      out.push({ t: `.${c}`, w: /[-_]/.test(c) ? 3 : 1 });
+    }
+  }
+  return out;
+}
+const lkHasToken = (sel, token) => {
+  for (let from = 0; ; ) {
+    const i = sel.indexOf(token, from);
+    if (i < 0) return false;
+    const next = sel.charAt(i + token.length);
+    if (next === "" || /[^\w-]/.test(next)) return true;
+    from = i + 1;
+  }
+};
+function lkBest(scores, minimum) {
+  let best = "";
+  let top = 0;
+  let second = 0;
+  for (const [id, score] of scores) {
+    if (score > top) {
+      second = top;
+      top = score;
+      best = id;
+    } else if (score > second) second = score;
+  }
+  return top >= minimum && top > second ? best : "";
+}
+function lkCssOwner(el) {
+  const probes = lkProbes(el);
+  const tokens = lkTokens(probes);
+  if (!tokens.length) return "";
+  const scores = new Map();
+  for (const sheet of doc.styleSheets) {
+    const id = sheet.ownerNode?.dataset?.personalExtensionFullPageStyle;
+    if (!id) continue;
+    let rules;
+    try {
+      rules = sheet.cssRules;
+    } catch {
+      continue;
+    }
+    let score = 0;
+    let seen = 0;
+    let self = false;
+    const walk = (list) => {
+      for (const rule of list || []) {
+        if (++seen > 5000 || self) return;
+        const sel = rule.selectorText;
+        if (!sel) {
+          if (rule.cssRules) walk(rule.cssRules);
+          continue;
+        }
+        // This extension's own sheets restyle other extensions' buttons; skip them.
+        if (sel.includes("mdos-")) {
+          self = true;
+          return;
+        }
+        let weight = 0;
+        for (const tk of tokens) if (lkHasToken(sel, tk.t)) weight = Math.max(weight, tk.w);
+        if (!weight) continue;
+        let matched = false;
+        for (const p of probes) {
+          try {
+            if (p.matches(sel)) {
+              matched = true;
+              break;
+            }
+          } catch {
+            /* selector this engine can't match */
+          }
+        }
+        score += matched ? weight * 2 : weight >= 3 ? 1 : 0;
+      }
+    };
+    walk(rules);
+    if (!self && score > 0) scores.set(id, score);
+  }
+  return lkBest(scores, 4);
+}
+function lkLabelOwner(el, item) {
+  const norm = (v) => String(v || "").replace(/\s+/g, "").toLowerCase();
+  const label = norm(lkLabel(el) || item.label);
+  if (label.length < 2) return "";
+  const exact = [];
+  const partial = [];
+  for (const [id, ext] of lkRuntime) {
+    if (ext.mode && ext.mode !== "full-page") continue;
+    const name = norm(ext.name);
+    if (!name || /marinaradesktop/.test(name)) continue;
+    if (name === label) exact.push(id);
+    else if (label.length >= 3 && name.length >= 3 && (name.includes(label) || label.includes(name))) partial.push(id);
+  }
+  if (exact.length === 1) return exact[0];
+  if (!exact.length && partial.length === 1) return partial[0];
+  return "";
+}
+async function lkDetectOwners() {
+  await lkRefreshRuntime();
+  if (!lkRuntime.size) return;
+  const st = lkState();
+  let changed = false;
+  const pending = [];
+  for (const rec of lkRecs.values()) {
+    const item = st.items[rec.key];
+    if (!item || !rec.el.isConnected) continue;
+    if (item.ownerId && !lkRuntime.has(item.ownerId)) item.ownerId = "";
+    if (item.ownerId) continue;
+    if (performance.now() - (lkOwnerMiss.get(rec.key) || -1e9) < 30_000) continue;
+    const id = lkCssOwner(rec.el) || lkLabelOwner(rec.el, item);
+    if (id) {
+      item.ownerId = id;
+      item.ownerName = lkRuntime.get(id)?.name || "";
+      changed = true;
+      continue;
+    }
+    lkOwnerMiss.set(rec.key, performance.now());
+    const tokens = lkTokens(lkProbes(rec.el))
+      .filter((t) => t.w >= 3)
+      .map((t) => ({ t: t.t.slice(1), w: t.w }));
+    const label = rec.el.getAttribute("aria-label") || rec.el.title || "";
+    if (label.length >= 4) tokens.push({ t: label, w: 4, label: true });
+    if (tokens.length) pending.push({ item, tokens, scores: new Map() });
+  }
+  if (changed) {
+    save();
+    if (popEl?.querySelector(".mdos-lk")) renderLocker(null);
+  }
+  if (pending.length && !lkSourceBusy && performance.now() - lkSourceAt > 60_000) {
+    lkSourceBusy = true;
+    lkSourceAt = performance.now();
+    try {
+      await lkSearchSources(pending);
+    } finally {
+      lkSourceBusy = false;
+    }
+  }
+}
+async function lkSearchSources(pending) {
+  const sources = [];
+  for (const [id, ext] of lkRuntime) {
+    if ((ext.mode && ext.mode !== "full-page") || !ext.url || /marinara\s*desktop/i.test(ext.name)) continue;
+    let size = Infinity;
+    try {
+      size = performance.getEntriesByName(new URL(ext.url, location.href).href)[0]?.encodedBodySize || Infinity;
+    } catch {
+      /* ignore */
+    }
+    sources.push({ id, url: ext.url, size });
+  }
+  sources.sort((a, b) => a.size - b.size);
+  for (const src of sources) {
+    if (pending.every((p) => p.decided)) break;
+    let text = lkSourceText.get(src.url);
+    if (text == null) {
+      try {
+        const res = await window.fetch(src.url, { credentials: "same-origin" });
+        text = res.ok ? await res.text() : "";
+      } catch {
+        text = "";
+      }
+      lkSourceText.set(src.url, text);
+    }
+    if (!text) continue;
+    for (const p of pending) {
+      if (p.decided) continue;
+      let score = 0;
+      let labelHit = false;
+      for (const tk of p.tokens) {
+        if (text.includes(tk.t)) {
+          score += tk.w;
+          if (tk.label) labelHit = true;
+        }
+      }
+      if (score) p.scores.set(src.id, score);
+      if ((labelHit && score >= 7) || score >= 12) p.decided = true;
+    }
+  }
+  let changed = false;
+  for (const p of pending) {
+    const id = lkBest(p.scores, 3);
+    if (!id) continue;
+    p.item.ownerId = id;
+    p.item.ownerName = lkRuntime.get(id)?.name || "";
+    changed = true;
+  }
+  if (changed) {
+    save();
+    if (popEl?.querySelector(".mdos-lk")) renderLocker(null);
+  }
+}
 // Press the real button: pointer, mouse and click events at its centre,
 // with it briefly touchable.
 function lkActivate(el) {
@@ -7144,6 +7387,8 @@ function lkActivate(el) {
 let lkEditing = false;
 function openLocker(anchor = mbLocker.isConnected && isDesktop() ? mbLocker : null) {
   lkEditing = false;
+  lkOwnerMiss.clear();
+  lkDetectOwners();
   renderLocker(anchor);
 }
 function lkIcon(el) {
@@ -7216,7 +7461,13 @@ function renderLocker(anchor) {
               class: "mdos-input",
               maxlength: "40",
               value: item.name || "",
-              placeholder: item.label || L.lk.unnamed,
+              placeholder: (() => {
+                const keep = item.name;
+                item.name = "";
+                const auto = lkName(k);
+                item.name = keep;
+                return auto;
+              })(),
               "aria-label": L.lk.rename,
               onchange: (e) => {
                 item.name = e.target.value.trim().slice(0, 40);
@@ -7367,6 +7618,29 @@ function lkStopPick() {
   lkPick?.();
   lkPick = null;
 }
+
+// Editor sections: Marinara highlights the section in view while scrolling, so
+// a picked section lit every one it passed on the way. While it jumps, only
+// the picked one is lit.
+let jumpTimer = 0;
+on(
+  doc,
+  "click",
+  (event) => {
+    const tab = event.target instanceof Element ? event.target.closest(".mari-editor-tab") : null;
+    const nav = tab?.closest(".mari-editor-navigation-tabs");
+    if (!nav) return;
+    for (const t of nav.querySelectorAll("[data-mdos-picked]")) t.removeAttribute("data-mdos-picked");
+    tab.setAttribute("data-mdos-picked", "");
+    nav.classList.add("mdos-jumping");
+    marinara.clearTimeout(jumpTimer);
+    jumpTimer = marinara.setTimeout(() => {
+      nav.classList.remove("mdos-jumping");
+      tab.removeAttribute("data-mdos-picked");
+    }, 1100);
+  },
+  true,
+);
 
 // ── Convenience ───────────────────────────────────────────────
 

@@ -1103,24 +1103,46 @@ html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > :is(b
 html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > :last-child {
   margin-left: auto !important;
 }
-/* Send / stop: a round accent button. */
+/* Send / stop: a solid dark round button (the text colour), with an up
+   arrow in place of Marinara's paper plane — like the Claude app. */
 html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child {
   width: 38px !important;
   height: 38px !important;
   border-radius: 999px !important;
-  background: var(--mdos-accent, #c96442) !important;
-  color: #fff !important;
-  box-shadow: none !important;
+  background: var(--mdos-fg, #1d1d1f) !important;
+  color: var(--mdos-win-bg, #fff) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
   opacity: 1 !important;
+  transition: transform 120ms ease, background 150ms ease;
+}
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child:active {
+  transform: scale(0.92);
 }
 html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child:disabled {
-  background: color-mix(in srgb, var(--mdos-fg, #000) 9%, transparent) !important;
+  background: color-mix(in srgb, var(--mdos-fg, #000) 12%, transparent) !important;
   color: color-mix(in srgb, var(--mdos-fg, #000) 40%, transparent) !important;
+  box-shadow: none !important;
 }
 html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child svg {
   width: 18px !important;
   height: 18px !important;
   color: inherit !important;
+}
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child svg:is(.lucide-send, .lucide-send-horizontal, .lucide-send-horizontal-icon) {
+  display: none !important;
+}
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child:has(svg:is(.lucide-send, .lucide-send-horizontal)) {
+  display: grid !important;
+  place-items: center !important;
+}
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child:has(svg:is(.lucide-send, .lucide-send-horizontal))::after {
+  content: "";
+  display: block;
+  width: 18px;
+  height: 18px;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 19V5M5.5 11.5 12 5l6.5 6.5'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 19V5M5.5 11.5 12 5l6.5 6.5'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 html.mdos .marinara-chat-input-shell .mdos-qp-plus svg {
   width: 20px;
@@ -1294,12 +1316,22 @@ html.mdos [data-quick-connection-menu] .mari-connection-model:hover {
   background: color-mix(in srgb, var(--mdos-fg, #000) 4%, transparent) !important;
 }
 html.mdos [data-quick-connection-menu] .mari-connection-model-choice {
-  min-height: 68px !important;
-  padding-block: 12px !important;
-  gap: 14px !important;
+  min-height: 64px !important;
+  padding-block: 10px !important;
+  gap: 12px !important;
+}
+/* Like the app: the name and its description, and the check. Role and price
+   badges go (a warning badge, such as a missing key, stays), so the name
+   always has the room. */
+html.mdos [data-quick-connection-menu] .mari-connection-model-choice > [data-connection-model-copy] {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+html.mdos [data-quick-connection-menu] .mari-connection-model-choice > span:not(:first-child):not([data-connection-model-copy]):not(:has(.mari-connection-pill--warn)):not(.mari-connection-pill--warn) {
+  display: none !important;
 }
 html.mdos [data-quick-connection-menu] [data-model-title] {
-  font-size: 16.5px !important;
+  font-size: 15.5px !important;
   font-weight: 500 !important;
   line-height: 1.35 !important;
   letter-spacing: -0.01em;
@@ -1320,4 +1352,66 @@ html.mdos [data-quick-connection-menu] .mari-connection-model svg.lucide-check {
 }
 html.mdos [data-quick-connection-menu] [data-switcher-section] > :is(h3, div:first-child > strong) {
   font-size: 12px !important;
+}
+
+/* Editor section list: the current section is a soft tint (not a solid fill)
+   that fades between sections; while jumping to a picked section, only that
+   one is lit. */
+@container (min-width: 760px) {
+  html.mdos .mari-editor-header--with-nav .mari-editor-tab {
+    transition: background 180ms ease, color 180ms ease;
+  }
+  html.mdos .mari-editor-header--with-nav .mari-editor-tab[data-active="true"] {
+    background: color-mix(in srgb, var(--mdos-accent, #0a84ff) 16%, transparent) !important;
+    color: var(--mdos-accent, #0a84ff) !important;
+    font-weight: 600;
+  }
+  html.mdos .mari-editor-navigation-tabs.mdos-jumping .mari-editor-tab[data-active="true"]:not([data-mdos-picked]) {
+    background: transparent !important;
+    color: var(--marinara-editor-muted, inherit) !important;
+    font-weight: 500;
+  }
+  html.mdos .mari-editor-navigation-tabs.mdos-jumping .mari-editor-tab[data-mdos-picked] {
+    background: color-mix(in srgb, var(--mdos-accent, #0a84ff) 16%, transparent) !important;
+    color: var(--mdos-accent, #0a84ff) !important;
+    font-weight: 600;
+  }
+}
+
+/* Chat list (Messages): hairlines between chats, starting after the
+   picture; bigger rows and names on phones and tablets. */
+html.mdos .mari-chat-sidebar [data-drag-kind="chat"] {
+  position: relative;
+}
+html.mdos .mari-chat-sidebar [data-drag-kind="chat"]::after {
+  content: "";
+  position: absolute;
+  left: 62px;
+  right: 10px;
+  bottom: 0;
+  height: 1px;
+  background: color-mix(in srgb, var(--mdos-fg, #000) 9%, transparent);
+  pointer-events: none;
+}
+html.mdos .mari-chat-sidebar [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress)::after {
+  display: none;
+}
+html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"] {
+  min-height: 70px;
+  padding: 10px 12px !important;
+  gap: 12px !important;
+}
+html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"] > .min-w-0.flex-1 > span:first-child {
+  font-size: 16px !important;
+}
+html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"] > .min-w-0.flex-1 > span:not(:first-child) {
+  font-size: 13px !important;
+}
+html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"] > .relative.flex-shrink-0,
+html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"] > .relative.flex-shrink-0 > :is(span.rounded-lg, .mari-chat-mode-avatar) {
+  width: 48px !important;
+  height: 48px !important;
+}
+html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"]::after {
+  left: 72px;
 }
