@@ -6558,9 +6558,10 @@ function openQpMenu(anchor) {
 // position: relative and doesn't clip), placed with CSS — no positioning loop,
 // and no layout of the page around the composer to depend on.
 function renderQpChips(on) {
-  const shell = on ? qpShell() : null;
   const qp = on ? qpState() : null;
   const items = qp ? QP_ITEMS.filter((it) => qp.chips.includes(it.id) && (!it.when || it.when())) : [];
+  if (!items.length && !doc.querySelector(".mdos-qp-chips")) return;
+  const shell = on && items.length ? qpShell() : null;
   for (const row of doc.querySelectorAll(".mdos-qp-chips")) if (!shell || row.parentElement !== shell || !items.length) row.remove();
   if (!shell || !items.length) return;
   const sig = items.map((it) => it.id).join(",");
@@ -6892,10 +6893,15 @@ function lkUnion(el) {
   const r = el.getBoundingClientRect();
   let [l, t, rr, b] = [r.left, r.top, r.right, r.bottom];
   let n = 0;
+  const seen = typeof el.checkVisibility === "function";
   for (const d of el.querySelectorAll("*")) {
-    if (++n > 40) break;
+    if (++n > 80) break;
     const q = d.getBoundingClientRect();
     if (q.width < 1 || q.height < 1) continue;
+    // display/visibility only: our own transparency on the launcher must not
+    // hide what it unfolds; a large part that is itself transparent doesn't count.
+    if (seen && !d.checkVisibility({ visibilityProperty: true })) continue;
+    if ((q.width > 180 || q.height > 180) && Number(getComputedStyle(d).opacity) < 0.05) continue;
     l = Math.min(l, q.left);
     t = Math.min(t, q.top);
     rr = Math.max(rr, q.right);
@@ -6909,7 +6915,7 @@ function lkEnforce(rec) {
   const item = lkState().items[rec.key];
   if (!rec.el.isConnected || !item) return;
   if (item.float || item.excluded) return lkUnhide(rec);
-  if (!rec.hidden) lkHide(rec);
+  if (!rec.hidden && !rec.living) lkHide(rec);
   const u = lkUnion(rec.el);
   if (!rec.base && u.w <= 180 && u.h <= 180) rec.base = u;
   const b = rec.base;
@@ -6943,14 +6949,36 @@ function lkStore(el, { manual = false } = {}) {
   }
   let rec = lkRecs.get(key);
   if (rec && rec.el !== el) {
+    lkUnwatch(rec);
     lkUnhide(rec);
     rec = null;
   }
   if (!rec) {
     rec = { key, el, hidden: false, saved: null, base: null, revealed: false };
     lkRecs.set(key, rec);
+    lkWatch(rec);
   }
   return rec;
+}
+function lkWatch(rec) {
+  let frame = 0;
+  const soon = () => {
+    if (frame) return;
+    frame = requestAnimationFrame(() => {
+      frame = 0;
+      if (lkRecs.get(rec.key) === rec) lkEnforce(rec);
+    });
+  };
+  rec.ro = new ResizeObserver(soon);
+  rec.ro.observe(rec.el);
+  for (const c of rec.el.children) rec.ro.observe(c);
+  rec.mo = new MutationObserver(soon);
+  rec.mo.observe(rec.el, { attributes: true, attributeFilter: ["class", "hidden", "open", "aria-expanded", "data-state"], childList: true });
+}
+function lkUnwatch(rec) {
+  rec.ro?.disconnect();
+  rec.mo?.disconnect();
+  rec.ro = rec.mo = null;
 }
 // Finds a manually added button again (it may not look like a launcher).
 function lkResolve(key, item) {
@@ -6964,7 +6992,10 @@ function lkResolve(key, item) {
   void item;
 }
 function lkReleaseAll() {
-  for (const rec of lkRecs.values()) lkUnhide(rec);
+  for (const rec of lkRecs.values()) {
+    lkUnwatch(rec);
+    lkUnhide(rec);
+  }
   lkRecs.clear();
   lkPending.clear();
 }
@@ -7007,13 +7038,15 @@ function lockerTick() {
   }
   if (doc.hidden) return;
   const now = performance.now();
-  if (now - lkLastScan > 2000) {
+  const sig = `${doc.body.childElementCount}|${html.childElementCount}`;
+  if ((sig !== lkTopSig && now - lkLastScan > 1200) || now - lkLastScan > 8000) {
+    lkTopSig = sig;
     lkLastScan = now;
     lkScan();
   }
-  // The unfold check reads a few rects: every other sync is enough.
-  if (++lkTicks % 2 === 0) for (const rec of lkRecs.values()) lkEnforce(rec);
+  if (++lkTicks % 4 === 0) for (const rec of lkRecs.values()) lkEnforce(rec);
 }
+let lkTopSig = "";
 function lkScan() {
   const st = lkState();
   const seen = new Set();
@@ -7029,6 +7062,8 @@ function lkScan() {
         if (!lkPending.has(key)) {
           lkPending.set(key, performance.now());
           seen.add(`pending:${key}`);
+          // Come back for it once it has stayed a moment.
+          marinara.setTimeout(() => (lkLastScan = -1e9), 1300);
           continue;
         }
         if (performance.now() - lkPending.get(key) < 1200) {
@@ -7054,7 +7089,10 @@ function lkScan() {
     }
   }
   for (const [key, rec] of lkRecs) {
-    if (!rec.el.isConnected) lkRecs.delete(key);
+    if (!rec.el.isConnected) {
+      lkUnwatch(rec);
+      lkRecs.delete(key);
+    }
   }
 }
 const lkName = (key) => {
@@ -7086,6 +7124,9 @@ function lkActivate(el) {
   target.dispatchEvent(new PointerEvent("pointerup", { ...pointer, buttons: 0, pressure: 0 }));
   if (down) target.dispatchEvent(new MouseEvent("mouseup", { ...base, buttons: 0 }));
   if (target.isConnected && target !== doc.body) target.dispatchEvent(new MouseEvent("click", { ...base, buttons: 0 }));
+  if (rec) {
+    for (let i = 1; i <= 30; i++) marinara.setTimeout(() => !rec.living && lkEnforce(rec), 100 * i + 460);
+  }
   marinara.setTimeout(() => {
     if (rec) {
       rec.living = false;
@@ -7394,8 +7435,14 @@ on(doc, "focusin", (event) => {
 on(doc, "focusout", (event) => {
   if (event.target === countField) hideCount();
 });
+let countMoved = 0;
 on(doc, "input", (event) => {
-  if (event.target === countField) queueCount();
+  if (event.target !== countField) return;
+  countEl.textContent = `${countField.value.length.toLocaleString()}${L.chars}`;
+  if (performance.now() - countMoved > 500) {
+    countMoved = performance.now();
+    queueCount();
+  }
 });
 on(doc, "scroll", queueCount, { capture: true, passive: true });
 
