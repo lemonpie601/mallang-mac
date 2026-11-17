@@ -258,6 +258,50 @@ const L = KO
       allSettings: "모든 꾸미기 설정",
       greeting: (hour) =>
         hour < 5 ? "늦은 밤이에요" : hour < 12 ? "좋은 아침이에요" : hour < 18 ? "좋은 오후예요" : "좋은 저녁이에요",
+      chatTools: "채팅 도구",
+      sceneBarTop: "롤플 장면 바를 위쪽 아이콘으로 (실행 전에 확인)",
+      quickPaletteOn: "입력창 + 메뉴 (따옴표·별표·이미지·문구 보관함)",
+      chatToolsHint: "\"Scene Bar Top\"·\"퀵 팔레트\" 확장의 기능이에요. 그 확장들은 꺼 두세요(켜져 있으면 이쪽이 비켜요).",
+      scene: {
+        cancel: "취소",
+        back: { title: "대화로 돌아갈까요?", message: "장면은 끝나지 않고 그대로 남아 있어요.", ok: "돌아가기" },
+        end: { title: "장면을 끝낼까요?", message: "장면을 마무리하고 요약을 저장해요.", ok: "끝내기" },
+        discard: { title: "장면을 버릴까요?", message: "저장하지 않고 장면을 지워요. 되돌릴 수 없어요.", ok: "버리기", danger: true },
+      },
+      qp: {
+        menu: "빠른 입력",
+        quote: "대사 따옴표",
+        narration: "나레이션 별표",
+        image: "이미지 추가",
+        memo: "문구 보관함",
+        bookmark: "턴 북마크",
+        pinTitle: "입력창 위에 버튼으로",
+        openChat: "채팅방을 먼저 열어 주세요",
+        noBookmark: "턴 북마크 확장이 켜져 있지 않아요",
+        search: "제목이나 내용으로 검색",
+        add: "새 문구",
+        title: "제목",
+        content: "내용",
+        untitled: "제목 없음",
+        save: "저장",
+        cancel: "취소",
+        empty: "아직 문구가 없어요. 자주 쓰는 말을 넣어 두세요.",
+        noResult: "검색 결과가 없어요.",
+        insert: "입력창에 넣기",
+        copy: "복사",
+        pin: "위에 고정",
+        unpin: "고정 해제",
+        edit: "수정",
+        del: "삭제",
+        delConfirm: "한 번 더 누르면 삭제",
+        up: "위로",
+        down: "아래로",
+        saved: "저장했어요",
+        inserted: "입력창에 넣었어요",
+        copied: "복사했어요",
+        deleted: "삭제했어요",
+        needText: "제목이나 내용을 적어 주세요",
+      },
       focusMode: "집중 모드",
       focusExit: "집중 모드 끄기",
       chars: "자",
@@ -514,6 +558,50 @@ const L = KO
       allSettings: "All customize settings",
       greeting: (hour) =>
         hour < 5 ? "Burning the midnight oil" : hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening",
+      chatTools: "Chat tools",
+      sceneBarTop: "Roleplay scene bar as icons at the top (asks first)",
+      quickPaletteOn: "Composer + menu (quotes, asterisks, image, snippets)",
+      chatToolsHint: "The features of the \"Scene Bar Top\" and \"Quick Palette\" extensions. Turn those off (while they run, these step aside).",
+      scene: {
+        cancel: "Cancel",
+        back: { title: "Back to conversation?", message: "The scene stays open.", ok: "Go back" },
+        end: { title: "End this scene?", message: "The scene ends and a summary is saved.", ok: "End scene" },
+        discard: { title: "Discard this scene?", message: "The scene is deleted without saving. This can't be undone.", ok: "Discard", danger: true },
+      },
+      qp: {
+        menu: "Quick input",
+        quote: "Dialogue quotes",
+        narration: "Narration asterisks",
+        image: "Add image",
+        memo: "Snippets",
+        bookmark: "Turn bookmarks",
+        pinTitle: "Show as buttons above the composer",
+        openChat: "Open a chat first",
+        noBookmark: "The turn bookmark extension isn't on",
+        search: "Search titles and text",
+        add: "New snippet",
+        title: "Title",
+        content: "Text",
+        untitled: "Untitled",
+        save: "Save",
+        cancel: "Cancel",
+        empty: "No snippets yet. Keep the lines you use often here.",
+        noResult: "Nothing matches.",
+        insert: "Insert",
+        copy: "Copy",
+        pin: "Pin to top",
+        unpin: "Unpin",
+        edit: "Edit",
+        del: "Delete",
+        delConfirm: "Press again to delete",
+        up: "Move up",
+        down: "Move down",
+        saved: "Saved",
+        inserted: "Inserted",
+        copied: "Copied",
+        deleted: "Deleted",
+        needText: "Add a title or some text",
+      },
       focusMode: "Focus mode",
       focusExit: "Leave focus mode",
       chars: " chars",
@@ -766,6 +854,9 @@ const DEFAULTS = {
   dockAutohide: true,
   dockRecents: true,
   bootSplash: true,
+  sceneBarTop: true,
+  quickPalette: true,
+  qp: null,
   iconView: true,
   mainMinimized: false,
   windows: {},
@@ -4635,7 +4726,10 @@ function mountCustomize(win) {
         ),
       ),
     ],
-    chat: () => chatDesignSection(win, { group, row, hint, btn, rerender: () => show("chat") }),
+    chat: () => [
+      ...chatDesignSection(win, { group, row, hint, btn, rerender: () => show("chat") }),
+      group(L.chatTools, settingToggle("sceneBarTop", L.sceneBarTop, () => syncSoon()), settingToggle("quickPalette", L.quickPaletteOn, () => syncSoon()), hint(L.chatToolsHint)),
+    ],
     dock: () => [
       group(
         L.dock,
@@ -5646,6 +5740,7 @@ function sync() {
   toggleClass("mdos-touch-sheet", isTouch() && !!$(SEL.sheets));
   if (homeVisible()) readHomeApps();
   refreshBadges();
+  refreshChatTools();
   const hubApp = !!hubAppTab();
   toggleClass("mdos-hub-app", hubApp);
   refreshLocker();
@@ -5963,6 +6058,506 @@ on(
   true,
 );
 
+// ── Chat tools: scene bar on top, quick palette ───────────────
+// Features of two companion extensions, drawn in this theme and driven by
+// sync() (the 0.7 s check and the attribute observer) instead of their own
+// whole-page observers and per-frame positioning, which cost the chat its
+// smoothness while replies streamed in.
+
+function refreshChatTools() {
+  renderSceneBar();
+  mountQuickPalette();
+}
+
+// Toast: a small pill at the bottom of the screen.
+const toastEl = h("div", { id: "mdos-toast", role: "status" });
+ui.append(toastEl);
+let toastTimer = 0;
+function toast(text) {
+  toastEl.textContent = text;
+  toastEl.classList.add("is-on");
+  marinara.clearTimeout(toastTimer);
+  toastTimer = marinara.setTimeout(() => toastEl.classList.remove("is-on"), 2200);
+}
+
+// A macOS alert: title, message, Cancel and a default (or destructive) button.
+function confirmAlert({ title, message, ok, danger }) {
+  return new Promise((resolve) => {
+    const okBtn = h("button", { type: "button", class: `mdos-btn ${danger ? "mdos-btn--danger" : "mdos-btn--primary"}`, text: ok });
+    const cancelBtn = h("button", { type: "button", class: "mdos-btn", text: L.scene.cancel });
+    const overlay = h(
+      "div",
+      { class: "mdos-alert-overlay", "data-exd": "" },
+      h(
+        "div",
+        { class: "mdos-alert", role: "alertdialog", "aria-modal": "true", "aria-label": title },
+        h("div", { class: "mdos-alert-icon", svg: LOGO }),
+        h("h3", { text: title }),
+        h("p", { text: message }),
+        h("div", { class: "mdos-alert-actions" }, cancelBtn, okBtn),
+      ),
+    );
+    const close = (result) => {
+      overlay.remove();
+      doc.removeEventListener("keydown", onKey, true);
+      resolve(result);
+    };
+    const onKey = (e) => {
+      if (e.key === "Escape") {
+        e.stopPropagation();
+        close(false);
+      } else if (e.key === "Enter") {
+        e.stopPropagation();
+        e.preventDefault();
+        close(true);
+      }
+    };
+    overlay.addEventListener("click", (e) => e.target === overlay && close(false));
+    cancelBtn.onclick = () => close(false);
+    okBtn.onclick = () => close(true);
+    doc.addEventListener("keydown", onKey, true);
+    doc.body.append(overlay);
+    okBtn.focus();
+  });
+}
+const waitFor = (find, timeout = 1500) =>
+  new Promise((resolve) => {
+    const start = Date.now();
+    const step = () => {
+      const found = find();
+      if (found || Date.now() - start > timeout) return resolve(found || null);
+      marinara.setTimeout(step, 50);
+    };
+    step();
+  });
+
+// Scene bar: Marinara's roleplay scene bar (back to conversation / end scene /
+// discard / convert) sits under the transcript. It is hidden and its buttons
+// become a small toolbar pill at the top of the chat; end and discard ask
+// first, then press the original button and its inline "yes".
+const SCENE_KINDS = {
+  back: ["lucide-arrow-left"],
+  end: ["lucide-film"],
+  discard: ["lucide-trash2", "lucide-trash-2"],
+  convert: ["lucide-arrow-right-left"],
+};
+let sceneBar = null;
+let sceneDock = null;
+let sceneSig = "";
+const sceneKind = (button) => {
+  const icon = button.querySelector("svg");
+  return icon ? Object.keys(SCENE_KINDS).find((k) => SCENE_KINDS[k].some((c) => icon.classList.contains(c))) || null : null;
+};
+const sceneBusy = () => !!sceneBar?.querySelector('button[style*="--primary"], button[style*="--destructive"]');
+function removeSceneBar() {
+  sceneDock?.remove();
+  sceneDock = null;
+  sceneSig = "";
+  if (sceneBar?.isConnected) sceneBar.removeAttribute("data-mdos-scenebar");
+  sceneBar = null;
+}
+function renderSceneBar() {
+  // The original extension, if still on, keeps the job.
+  if (!state.sceneBarTop || mode === "off" || doc.querySelector(".sbt-dock")) return removeSceneBar();
+  if (!sceneBar?.isConnected) {
+    const film = doc.querySelector("div.flex-wrap.justify-center > button > svg.lucide-film");
+    sceneBar = film ? film.closest("div.flex-wrap") : null;
+    sceneBar?.setAttribute("data-mdos-scenebar", "");
+  }
+  if (!sceneBar) return removeSceneBar();
+  const host = sceneBar.closest(".mari-chat-area, .rpg-chat-area") || sceneBar.offsetParent || doc.body;
+  const buttons = [...sceneBar.querySelectorAll(":scope > button")]
+    .map((b) => ({ kind: sceneKind(b), title: b.title || b.textContent.trim(), icon: b.querySelector("svg") }))
+    .filter((b) => b.kind);
+  const busy = sceneBusy();
+  const sig = `${busy}|${buttons.map((b) => b.kind + b.title).join(",")}`;
+  if (sceneDock?.isConnected && sceneDock.parentElement === host && sig === sceneSig) return;
+  sceneSig = sig;
+  sceneDock?.remove();
+  sceneDock = h(
+    "div",
+    { class: "mdos-scenebar", role: "toolbar", "data-exd": "" },
+    ...buttons.map(({ kind, title, icon }) => {
+      const b = h("button", { type: "button", class: `mdos-scenebar-btn${kind === "discard" ? " is-danger" : ""}`, title, "aria-label": title, disabled: busy, onclick: () => runScene(kind) });
+      b.append(icon.cloneNode(true));
+      return b;
+    }),
+  );
+  host.append(sceneDock);
+}
+async function runScene(kind) {
+  const original = sceneBar && [...sceneBar.querySelectorAll(":scope > button")].find((b) => sceneKind(b) === kind);
+  if (!original) return;
+  // Converting already has Marinara's own confirmation.
+  if (kind === "convert") return original.click();
+  if (!(await confirmAlert(L.scene[kind]))) return;
+  if (!sceneBar?.isConnected) return;
+  original.click();
+  if (kind !== "end" && kind !== "discard") return;
+  const yes = await waitFor(() => sceneBar?.querySelector(kind === "end" ? 'button[style*="--primary"]' : 'button[style*="--destructive"]'));
+  if (!yes) return;
+  const no = yes.nextElementSibling;
+  yes.click();
+  if (kind !== "end") return;
+  // If ending fails (a connection error), the hidden bar is left asking
+  // "yes / no"; answer "no" so the toolbar comes back.
+  await new Promise((r) => marinara.setTimeout(r, 300));
+  await waitFor(() => !yes.isConnected || !yes.disabled, 10 * 60 * 1000);
+  if (yes.isConnected && no?.isConnected) no.click();
+  syncSoon();
+}
+
+// Quick palette: the composer's attach button becomes a + menu with quick
+// dialogue quotes / narration asterisks, image attach, a snippet library and
+// the turn-bookmark launcher. Any of them can also sit as small buttons on a
+// row above the composer.
+const QP_SHELL = ".marinara-chat-input-shell";
+const QP_COMPOSER = 'textarea[data-chat-composer="true"], textarea.mari-chat-input-textarea';
+const QP_BOOKMARK = ".tb-floating-launcher, .tb-topbar-launcher";
+const QP_ITEMS = [
+  { id: "quote", glyph: "“”", run: () => insertMarker('"') },
+  { id: "narration", glyph: "✱", run: () => insertMarker("*") },
+  { id: "image", icon: "image", run: () => qpAttach() },
+  { id: "memo", icon: "note", run: (anchor) => openSnippets(anchor) },
+  { id: "bookmark", icon: "bookmark", run: () => qpBookmarks(), when: () => !!doc.querySelector(QP_BOOKMARK) },
+];
+const QP_ICONS = {
+  plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  image: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>',
+  note: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M9 13h6M9 17h4"/></svg>',
+  bookmark: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"/></svg>',
+};
+// Settings and snippets live in this extension's own state. On first run,
+// whatever the Quick Palette extension mirrored to this browser is imported.
+function qpState() {
+  if (!state.qp || typeof state.qp !== "object") {
+    let old = null;
+    try {
+      old = JSON.parse(localStorage.getItem("qp-state-v1") || "null");
+    } catch {
+      /* none */
+    }
+    const memos = Array.isArray(old?.memos)
+      ? old.memos
+          .filter((m) => m && (String(m.content || "").trim() || String(m.title || "").trim()))
+          .map((m) => ({ id: String(m.id || newId()), title: String(m.title || "").slice(0, 200), content: String(m.content || ""), pinned: !!m.pinned, at: String(m.updatedAt || new Date().toISOString()) }))
+      : [];
+    const chips = old?.chips && typeof old.chips === "object" ? Object.keys(old.chips).filter((k) => old.chips[k] === true) : [];
+    state.qp = { chips, memos };
+    save();
+  }
+  return state.qp;
+}
+const qpShell = () => [...doc.querySelectorAll(QP_SHELL)].find((s) => s.offsetWidth > 0 && s.getClientRects().length) || null;
+const qpComposer = () => qpShell()?.querySelector(QP_COMPOSER) || null;
+function requireComposer() {
+  const t = qpComposer();
+  if (!t || t.disabled) {
+    toast(L.qp.openChat);
+    return null;
+  }
+  return t;
+}
+function setComposer(t, value, cursor) {
+  const setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")?.set;
+  if (setter) setter.call(t, value);
+  else t.value = value;
+  t.focus();
+  try {
+    t.setSelectionRange(cursor, cursor);
+  } catch {
+    /* ignore */
+  }
+  t.dispatchEvent(new Event("input", { bubbles: true }));
+}
+// Wraps a selection in the marker; otherwise adds a pair, or just one when the
+// paragraph already has an odd number (closing the open one).
+function insertMarker(marker) {
+  const t = requireComposer();
+  if (!t) return;
+  const v = t.value;
+  const start = t.selectionStart ?? v.length;
+  const end = t.selectionEnd ?? start;
+  if (start !== end) return setComposer(t, v.slice(0, start) + marker + v.slice(start, end) + marker + v.slice(end), end + marker.length * 2);
+  const ps = v.lastIndexOf("\n", start - 1) + 1;
+  let pe = v.indexOf("\n", start);
+  if (pe === -1) pe = v.length;
+  const odd = (v.slice(ps, pe).split(marker).length - 1) % 2 === 1;
+  setComposer(t, v.slice(0, start) + (odd ? marker : marker + marker) + v.slice(end), start + marker.length);
+}
+function insertText(text) {
+  const t = requireComposer();
+  if (!t) return false;
+  const v = t.value;
+  const start = t.selectionStart ?? v.length;
+  const end = t.selectionEnd ?? start;
+  setComposer(t, v.slice(0, start) + text + v.slice(end), start + text.length);
+  return true;
+}
+function qpAttach() {
+  const shell = qpShell();
+  const input = shell?.querySelector('input[type="file"]');
+  if (!input || shell.querySelector(QP_COMPOSER)?.disabled) return toast(L.qp.openChat);
+  input.click();
+}
+function qpBookmarks() {
+  const launcher = doc.querySelector(QP_BOOKMARK);
+  if (launcher) launcher.click();
+  else toast(L.qp.noBookmark);
+}
+const qpIcon = (item) => (item.icon ? h("span", { class: "mdos-qp-ico", svg: QP_ICONS[item.icon] }) : h("span", { class: "mdos-qp-ico mdos-qp-glyph", text: item.glyph }));
+// Pressing a button would take the focus (and a phone's keyboard) away from
+// the composer; keeping the pointerdown default off keeps both.
+const keepFocus = (el) => (el.addEventListener("pointerdown", (e) => e.preventDefault()), el);
+function mountQuickPalette() {
+  const on = state.quickPalette && mode !== "off" && !doc.querySelector(".qp-plus-btn");
+  for (const shell of doc.querySelectorAll(QP_SHELL)) {
+    const mine = shell.querySelector(":scope > .mdos-qp-plus");
+    if (!on) {
+      if (mine) {
+        mine.remove();
+        shell.removeAttribute("data-mdos-qp");
+      }
+      continue;
+    }
+    if (mine || !shell.querySelector('input[type="file"]') || !shell.querySelector(QP_COMPOSER)) continue;
+    shell.setAttribute("data-mdos-qp", "");
+    const plus = keepFocus(
+      h("button", {
+        type: "button",
+        class: "mdos-qp-plus",
+        title: L.qp.menu,
+        "aria-label": L.qp.menu,
+        "aria-haspopup": "menu",
+        svg: QP_ICONS.plus,
+        onclick: (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          openQpMenu(plus);
+        },
+      }),
+    );
+    shell.prepend(plus);
+  }
+  renderQpChips(on);
+}
+function openQpMenu(anchor) {
+  if (openMenu?.anchor === anchor) return closeMenu();
+  const qp = qpState();
+  const items = QP_ITEMS.filter((it) => !it.when || it.when());
+  const togglePin = (id) => {
+    qp.chips = qp.chips.includes(id) ? qp.chips.filter((x) => x !== id) : [...qp.chips, id];
+    save();
+    renderQpChips(true);
+  };
+  const r = anchor.getBoundingClientRect();
+  showMenuAt(
+    [
+      ...items.map((it) => ({ label: L.qp[it.id], action: () => it.run(anchor) })),
+      "-",
+      { label: L.qp.pinTitle, disabled: true },
+      ...items.map((it) => ({ label: L.qp[it.id], checked: qp.chips.includes(it.id), action: () => togglePin(it.id) })),
+    ],
+    r.left,
+    r.top,
+  );
+  // Opens upward from the + button, like the composer's other menus.
+  const menu = openMenu.el;
+  menu.classList.add("mdos-qp-menu");
+  menu.style.top = `${Math.max(MENUBAR_H + 3, r.top - menu.offsetHeight - 6)}px`;
+  for (const b of menu.querySelectorAll("button")) keepFocus(b);
+  openMenu.anchor = anchor;
+  anchor.classList.add("is-open");
+}
+// The pinned buttons sit in a row just above the composer, in the page flow
+// (no positioning loop).
+function renderQpChips(on) {
+  const shell = on ? qpShell() : null;
+  const qp = on ? qpState() : null;
+  const items = qp ? QP_ITEMS.filter((it) => qp.chips.includes(it.id) && (!it.when || it.when())) : [];
+  for (const row of doc.querySelectorAll(".mdos-qp-chips")) if (!shell || row.nextElementSibling !== shell || !items.length) row.remove();
+  if (!shell || !items.length) return;
+  const sig = items.map((it) => it.id).join(",");
+  let row = shell.previousElementSibling;
+  if (!row?.classList.contains("mdos-qp-chips")) {
+    row = h("div", { class: "mdos-qp-chips", role: "toolbar", "data-exd": "" });
+    shell.before(row);
+  }
+  if (row.dataset.sig === sig) return;
+  row.dataset.sig = sig;
+  row.replaceChildren(
+    ...items.map((it) =>
+      keepFocus(
+        h("button", {
+          type: "button",
+          class: "mdos-qp-chip",
+          title: L.qp[it.id],
+          "aria-label": L.qp[it.id],
+          onclick: (e) => {
+            e.preventDefault();
+            it.run(e.currentTarget);
+          },
+        }, qpIcon(it)),
+      ),
+    ),
+  );
+}
+
+// Snippet library (the palette's memos): a popover with search, add/edit,
+// pin, reorder, insert into the composer and copy.
+const snip = { editing: null, query: "", confirm: null, open: new Set() };
+let snipAnchor = null;
+function openSnippets(anchor) {
+  snipAnchor = anchor;
+  snip.editing = null;
+  snip.query = "";
+  snip.confirm = null;
+  renderSnippets(true);
+}
+function renderSnippets(first = false) {
+  const qp = qpState();
+  const list = h("div", { class: "mdos-snip-list" });
+  const search = h("input", {
+    type: "search",
+    class: "mdos-input mdos-snip-search",
+    placeholder: L.qp.search,
+    value: snip.query,
+    oninput: (e) => {
+      snip.query = e.target.value;
+      fillList();
+    },
+  });
+  const fillList = () => {
+    const q = snip.query.trim().toLowerCase();
+    const memos = q ? qp.memos.filter((m) => m.title.toLowerCase().includes(q) || m.content.toLowerCase().includes(q)) : qp.memos;
+    list.replaceChildren(...(memos.length ? memos.map((m) => snipRow(m, !q)) : [h("div", { class: "mdos-snip-empty", text: qp.memos.length ? L.qp.noResult : L.qp.empty })]));
+  };
+  fillList();
+  const body = h(
+    "div",
+    { class: "mdos-pop-body mdos-snip" },
+    h("div", { class: "mdos-snip-top" }, search, h("button", { type: "button", class: "mdos-btn mdos-btn--primary", text: `+ ${L.qp.add}`, onclick: () => ((snip.editing = { id: null, title: "", content: "" }), renderSnippets()) })),
+    snip.editing ? snipEditor() : null,
+    list,
+  );
+  const scroll = popEl?.querySelector(".mdos-snip-list")?.scrollTop || 0;
+  openPop(body, first ? snipAnchor : null, { title: L.qp.memo, wide: true });
+  if (!first) popEl.classList.add("is-centered");
+  list.scrollTop = scroll;
+}
+function snipRow(m, canMove) {
+  const qp = qpState();
+  const open = snip.open.has(m.id);
+  const act = (label, text, onclick, cls = "") => h("button", { type: "button", class: `mdos-snip-act ${cls}`, title: label, "aria-label": label, text, onclick: (e) => (e.stopPropagation(), onclick()) });
+  const move = (d) => {
+    const i = qp.memos.indexOf(m);
+    const j = i + d;
+    if (j < 0 || j >= qp.memos.length || qp.memos[j].pinned !== m.pinned) return;
+    [qp.memos[i], qp.memos[j]] = [qp.memos[j], qp.memos[i]];
+    save();
+    renderSnippets();
+  };
+  const del = () => {
+    if (snip.confirm !== m.id) {
+      snip.confirm = m.id;
+      return renderSnippets();
+    }
+    qp.memos = qp.memos.filter((x) => x !== m);
+    snip.confirm = null;
+    save();
+    renderSnippets();
+    toast(L.qp.deleted);
+  };
+  return h(
+    "div",
+    { class: `mdos-snip-row${m.pinned ? " is-pinned" : ""}${open ? " is-open" : ""}` },
+    h(
+      "button",
+      {
+        type: "button",
+        class: "mdos-snip-head",
+        onclick: () => {
+          if (open) snip.open.delete(m.id);
+          else snip.open.add(m.id);
+          renderSnippets();
+        },
+      },
+      h("b", { text: (m.pinned ? "★ " : "") + (m.title || L.qp.untitled) }),
+      h("span", { text: open ? new Date(m.at).toLocaleString() : m.content.replace(/\s+/g, " ").slice(0, 80) }),
+    ),
+    open ? h("div", { class: "mdos-snip-body", text: m.content }) : null,
+    h(
+      "div",
+      { class: "mdos-snip-acts" },
+      h("button", {
+        type: "button",
+        class: "mdos-btn mdos-btn--primary mdos-snip-insert",
+        text: L.qp.insert,
+        onclick: () => {
+          closePop();
+          if (insertText(m.content)) toast(L.qp.inserted);
+        },
+      }),
+      act(L.qp.copy, "⧉", () => {
+        const done = () => toast(L.qp.copied);
+        navigator.clipboard?.writeText(m.content).then(done, () => toast("✕"));
+      }),
+      act(m.pinned ? L.qp.unpin : L.qp.pin, m.pinned ? "★" : "☆", () => {
+        m.pinned = !m.pinned;
+        qp.memos = [...qp.memos.filter((x) => x.pinned), ...qp.memos.filter((x) => !x.pinned)];
+        save();
+        renderSnippets();
+      }),
+      act(L.qp.edit, "✎", () => {
+        snip.editing = { id: m.id, title: m.title, content: m.content };
+        renderSnippets();
+      }),
+      canMove ? act(L.qp.up, "↑", () => move(-1)) : null,
+      canMove ? act(L.qp.down, "↓", () => move(1)) : null,
+      act(snip.confirm === m.id ? L.qp.delConfirm : L.qp.del, snip.confirm === m.id ? L.qp.delConfirm : "🗑", del, `is-danger${snip.confirm === m.id ? " is-confirm" : ""}`),
+    ),
+  );
+}
+function snipEditor() {
+  const ed = snip.editing;
+  const title = h("input", { type: "text", class: "mdos-input", placeholder: L.qp.title, maxlength: "200", value: ed.title, oninput: (e) => (ed.title = e.target.value) });
+  const content = h("textarea", { class: "mdos-input mdos-snip-text", placeholder: L.qp.content, oninput: (e) => (ed.content = e.target.value) });
+  content.value = ed.content;
+  marinara.setTimeout(() => title.focus(), 0);
+  return h(
+    "div",
+    { class: "mdos-snip-editor" },
+    title,
+    content,
+    h(
+      "div",
+      { class: "mdos-row mdos-snip-editor-acts" },
+      h("button", { type: "button", class: "mdos-btn", text: L.qp.cancel, onclick: () => ((snip.editing = null), renderSnippets()) }),
+      h("button", {
+        type: "button",
+        class: "mdos-btn mdos-btn--primary",
+        text: L.qp.save,
+        onclick: () => {
+          const qp = qpState();
+          const t = ed.title.trim();
+          if (!t && !ed.content.trim()) return toast(L.qp.needText);
+          const at = new Date().toISOString();
+          const m = ed.id && qp.memos.find((x) => x.id === ed.id);
+          if (m) Object.assign(m, { title: t || L.qp.untitled, content: ed.content, at });
+          else {
+            const i = qp.memos.findIndex((x) => !x.pinned);
+            qp.memos.splice(i === -1 ? qp.memos.length : i, 0, { id: newId(), title: t || L.qp.untitled, content: ed.content, pinned: false, at });
+          }
+          snip.editing = null;
+          save();
+          renderSnippets();
+          toast(L.qp.saved);
+        },
+      }),
+    ),
+  );
+}
+
 // ── Convenience ───────────────────────────────────────────────
 
 // New chat in whichever mode the chat list shows (Conversation if none yet).
@@ -6074,6 +6669,9 @@ return () => {
   observer.disconnect();
   themeObserver.disconnect();
   for (const mo of nullObservers) mo.disconnect();
+  removeSceneBar();
+  for (const el of $$(".mdos-qp-plus, .mdos-qp-chips, .mdos-alert-overlay")) el.remove();
+  for (const el of $$("[data-mdos-qp]")) el.toggleAttribute("data-mdos-qp", false);
   for (const el of $$("[data-mdos-null]")) el.toggleAttribute("data-mdos-null", false);
   marinara.clearInterval(clockTimer);
   marinara.clearInterval(viewTimer);
