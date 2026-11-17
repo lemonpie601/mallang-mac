@@ -129,6 +129,10 @@ const L = KO
       },
       creditPick: "보여 줄 크레딧",
       ledgerTopUse: "많이 쓴 곳",
+      ledgerView: "보기 방식",
+      ledgerViews: { summary: "요약", calendar: "달력", daily: "일별 막대", top: "많이 쓴 곳", facts: "숫자 모음" },
+      ledgerLess: "적게",
+      ledgerMore: "많이",
       lockerEmpty: "보관함에 담긴 확장 버튼이 없어요",
       creditsEmpty: "홈을 한 번 열면 크레딧이 여기 표시돼요",
       pickPhoto: "사진을 골라 주세요",
@@ -373,6 +377,10 @@ const L = KO
       },
       creditPick: "Credit to show",
       ledgerTopUse: "Top uses",
+      ledgerView: "View",
+      ledgerViews: { summary: "Summary", calendar: "Calendar", daily: "Daily bars", top: "Top uses", facts: "Numbers" },
+      ledgerLess: "Less",
+      ledgerMore: "More",
       lockerEmpty: "No extension buttons in the locker yet",
       creditsEmpty: "Open Home once to load your credits here",
       pickPhoto: "Choose a photo",
@@ -1231,7 +1239,12 @@ const leaveHubApp = () => !!hubAppTab() && click($("#marinara-home-tab-home"));
 // App agents paint their own backdrop (Otome Hearth is always dark, for
 // example). The window's title strip takes that colour, with light or dark
 // controls to match, instead of a light strip over a dark app.
+// Cached per tab and theme: getComputedStyle forces a style pass, and sync
+// runs over once a second.
+let tintKey = "";
 function tintHubApp(on) {
+  const key = on ? `${hubAppTab()?.id}|${html.dataset.theme}|${themeCssSeen.length}` : "";
+  if (key === tintKey) return;
   let bg = "";
   if (on) {
     let el = $('[data-component="HomeBrowserHub.Content"]')?.firstElementChild;
@@ -1243,6 +1256,8 @@ function tintHubApp(on) {
       }
     }
   }
+  // Remember only a found colour: a tab that just opened may not have painted yet.
+  tintKey = on && !bg ? "" : key;
   if (bg) setVar("--mdos-hubapp-bg", bg);
   else html.style.removeProperty("--mdos-hubapp-bg");
   html.dataset.mdosHubTone = bg ? (luminance(bg) < 0.35 ? "dark" : "light") : "";
@@ -2104,9 +2119,14 @@ function openHomeTab(key) {
   };
   marinara.setTimeout(poll, 100);
 }
+let homeAppsSig = "";
 function readHomeApps() {
   const tabs = $$(SEL.homeTabs);
   if (!tabs.length) return;
+  // Cloning each tab is only needed when the tabs themselves changed.
+  const sig = tabs.map((t) => `${t.id}\u0001${t.textContent}`).join("\u0002");
+  if (sig === homeAppsSig) return;
+  homeAppsSig = sig;
   // Visible tab text ("Noodle"), not the aria-label ("Open Noodle") or an unread badge.
   const tabText = (t) => {
     const copy = t.cloneNode(true);
@@ -2579,33 +2599,96 @@ function widgetBody(w) {
         r.pct != null ? h("i", { class: "mdos-crd-bar", style: `--p:${r.pct}%` }) : null,
       ];
     }
-    case "ledger": {
-      // The credit extension's "API 가계부", synced: month total, change,
-      // today / month-end, the daily heat map and where the money went.
-      const d = state.ledger;
-      const head = h("div", { class: "mdos-wg-label mdos-lg-head" }, h("span", { text: L.widgetNames.ledger }), d?.month ? h("em", { text: d.month }) : null);
-      if (!d?.total) return [head, h("div", { class: "mdos-wg-empty", text: L.creditsEmpty })];
-      const total = h("div", { class: "mdos-lg-total" }, h("b", { text: d.total }), d.usd ? h("span", { text: d.usd }) : null);
-      const chip = d.chip
-        ? h("div", { class: "mdos-lg-cmp" }, h("span", { class: `mdos-lg-chip${d.up ? " is-up" : d.down ? " is-down" : ""}`, text: d.chip }), w.size === "s" ? null : h("small", { text: d.cmpNote || "" }))
-        : null;
-      if (w.size === "s") return [head, total, chip];
-      const facts = h("div", { class: "mdos-lg-facts" }, ...(d.facts || []).slice(0, w.size === "l" ? 4 : 2).map(([k, v]) => h("span", {}, k, h("b", { text: v }))));
-      if (w.size === "m") return [head, total, chip, facts];
-      const cal = h("div", { class: "mdos-lg-cal", style: `--off:${d.cal?.offset || 0}` });
-      (d.cal?.days || []).forEach((day, i) =>
-        cal.append(h("i", { class: `lv${day.lv}${day.today ? " is-today" : ""}`, style: i === 0 ? `grid-column-start:${(d.cal.offset || 0) + 1}` : "", title: day.t || "" })),
-      );
-      const uses = h(
-        "div",
-        { class: "mdos-lg-uses" },
-        h("div", { class: "mdos-lg-uses-title", text: L.ledgerTopUse }),
-        ...(d.uses || []).slice(0, 4).map((u) => h("div", { class: "mdos-lg-use" }, h("i", { style: `background:${u.color}` }), h("span", { text: u.name }), h("b", { text: u.pct }))),
-      );
-      return [head, total, chip, h("div", { class: "mdos-lg-grid" }, cal, uses), facts];
-    }
+    case "ledger":
+      return ledgerBody(w, state.ledger);
     default:
       return [];
+  }
+}
+// The credit extension's "API 가계부", synced: month total, change, today /
+// month-end, the daily heat map and where the money went. One data set, five
+// ways to look at it (w.view), each laid out for the three sizes.
+const LEDGER_VIEWS = ["summary", "calendar", "daily", "top", "facts"];
+function ledgerBody(w, d) {
+  const view = LEDGER_VIEWS.includes(w.view) ? w.view : "summary";
+  const s = w.size === "s";
+  const l = w.size === "l";
+  const title = view === "summary" ? L.widgetNames.ledger : L.ledgerViews[view];
+  const head = h("div", { class: "mdos-wg-label mdos-lg-head" }, h("span", { text: title }), d?.month ? h("em", { text: d.month }) : null);
+  if (!d?.total) return [head, h("div", { class: "mdos-wg-empty", text: L.creditsEmpty })];
+  const total = (small) => h("div", { class: `mdos-lg-total${small ? " is-small" : ""}` }, h("b", { text: d.total }), d.usd && !small ? h("span", { text: d.usd }) : null);
+  const chip = (note) =>
+    d.chip
+      ? h("div", { class: "mdos-lg-cmp" }, h("span", { class: `mdos-lg-chip${d.up ? " is-up" : d.down ? " is-down" : ""}`, text: d.chip }), note ? h("small", { text: d.cmpNote || "" }) : null)
+      : null;
+  const facts = (n) => h("div", { class: "mdos-lg-facts" }, ...(d.facts || []).slice(0, n).map(([k, v]) => h("span", {}, k, h("b", { text: v }))));
+  const days = d.cal?.days || [];
+  const cal = (fill) => {
+    const el = h("div", { class: `mdos-lg-cal${fill ? " is-fill" : ""}` });
+    days.forEach((day, i) =>
+      el.append(h("i", { class: `lv${day.lv}${day.today ? " is-today" : ""}`, style: i === 0 ? `grid-column-start:${(d.cal.offset || 0) + 1}` : "", title: day.t || "" })),
+    );
+    return el;
+  };
+  const uses = (n) =>
+    h(
+      "div",
+      { class: "mdos-lg-uses" },
+      view === "top" ? null : h("div", { class: "mdos-lg-uses-title", text: L.ledgerTopUse }),
+      ...(d.uses || []).slice(0, n).map((u) => h("div", { class: "mdos-lg-use" }, h("i", { style: `background:${u.color}` }), h("span", { text: u.name }), h("b", { text: u.pct }))),
+    );
+  switch (view) {
+    case "calendar": {
+      if (s) return [head, cal(true)];
+      const legend = h(
+        "div",
+        { class: "mdos-lg-legend" },
+        h("span", { text: L.ledgerLess }),
+        ...[0, 1, 2, 3, 4].map((lv) => h("i", { class: `lv${lv}` })),
+        h("span", { text: L.ledgerMore }),
+      );
+      if (!l) return [head, h("div", { class: "mdos-lg-split" }, h("div", { class: "mdos-lg-col" }, total(true), chip(false)), cal(true))];
+      return [head, total(), chip(true), cal(true), legend];
+    }
+    case "daily": {
+      // Bars by the day's own amount; days without one fall back to the heat level.
+      const max = Math.max(0, ...days.map((x) => x.n || 0));
+      const bars = h(
+        "div",
+        { class: "mdos-lg-bars" },
+        ...days.map((day) => {
+          const p = max > 0 ? (day.n || 0) / max : day.lv / 4;
+          return h("i", { class: `${day.today ? "is-today" : ""}${p > 0 ? "" : " is-zero"}`, style: `--h:${Math.round(p * 100)}%`, title: day.t || "" });
+        }),
+      );
+      if (s) return [head, total(true), bars];
+      if (!l) return [head, total(), bars];
+      return [head, total(), chip(true), bars, facts(4)];
+    }
+    case "top": {
+      // A ring of the shares, coloured like the credit extension's pie.
+      let at = 0;
+      const stops = (d.uses || []).map((u) => {
+        const pct = Math.max(0, parseFloat(u.pct) || 0);
+        const from = at;
+        at = Math.min(100, at + pct);
+        return `${u.color} ${from}% ${at}%`;
+      });
+      if (at < 100) stops.push(`var(--mdos-widget-fill) ${at}% 100%`);
+      const ring = h("div", { class: "mdos-lg-ring", style: `background:conic-gradient(${stops.join(",")})` });
+      if (s) return [head, uses(3)];
+      if (!l) return [head, h("div", { class: "mdos-lg-split" }, ring, uses(4))];
+      return [head, total(), h("div", { class: "mdos-lg-split is-big" }, ring, uses(5)), facts(2)];
+    }
+    case "facts": {
+      const list = [[L.widgetNames.ledger, d.total], ...(d.facts || [])].slice(0, s ? 2 : l ? 7 : 4);
+      return [head, h("div", { class: "mdos-lg-tiles" }, ...list.map(([k, v]) => h("div", { class: "mdos-lg-tile" }, h("small", { text: k }), h("b", { text: v }))))];
+    }
+    default: {
+      if (s) return [head, total(), chip(false)];
+      if (!l) return [head, total(), chip(true), facts(2)];
+      return [head, total(), chip(true), h("div", { class: "mdos-lg-grid" }, cal(false), uses(4)), facts(4)];
+    }
   }
 }
 // Scrolls a widget's list by dragging with the mouse (touch scrolls natively)
@@ -2732,6 +2815,7 @@ function scrapeLedger(card) {
     lv: Number((b.className.match(/lv(\d)/) || [0, 0])[1]),
     today: b.classList.contains("is-today"),
     t: `${textOf(b.querySelector("span"))} · ${textOf(b.querySelector("small"))}`.slice(0, 24),
+    n: parseFloat(textOf(b.querySelector("small")).replace(/[^\d.]/g, "")) || 0,
   }));
   const first = card.querySelector(".mac-cal .mac-cal-day");
   const start = first ? parseInt(getComputedStyle(first).gridColumnStart, 10) : 1;
@@ -2753,9 +2837,15 @@ function scrapeLedger(card) {
     })),
   };
 }
+let creditSig = "";
 function scrapeCredits() {
   const home = $("#mac-credit-home");
   if (!home) return;
+  // The cards' text (plus element count, for the heat map and bars) changes
+  // whenever their numbers do; skip the ~30 queries otherwise.
+  const sig = `${home.getElementsByTagName("*").length}|${home.textContent}`;
+  if (sig === creditSig) return;
+  creditSig = sig;
   const rows = [];
   for (const card of home.querySelectorAll(".mlh-crcard")) {
     const brand = textOf(card.querySelector(".mlh-cr-brand b"));
@@ -3019,8 +3109,8 @@ function tickWidgets() {
     for (const el of $$(`.mdos-wg[data-wid="${w.id}"] .mdos-wg-body`)) el.replaceChildren(...widgetBody(w));
   }
 }
-function addWidget(type, size) {
-  const w = { id: newId(), type, size, style: type === "note" ? "note" : "glass", x: null, y: null };
+function addWidget(type, size, extra) {
+  const w = { id: newId(), type, size, style: type === "note" ? "note" : "glass", x: null, y: null, ...extra };
   if (type === "dday") Object.assign(w, { title: L.ddayDefault, date: "", style: "accent" });
   if (type === "note") w.color = NOTE_COLORS[0];
   state.widgets.push(w);
@@ -3111,6 +3201,22 @@ function openWidgetEditor(w, anchor) {
           })(),
         )
       : null,
+    w.type === "ledger"
+      ? field(
+          L.ledgerView,
+          (() => {
+            const sel = h("select", {
+              class: "mdos-cc-select",
+              onchange: (e) => {
+                w.view = e.target.value;
+                rerender();
+              },
+            });
+            for (const v of LEDGER_VIEWS) sel.append(h("option", { value: v, text: L.ledgerViews[v], selected: (w.view || "summary") === v }));
+            return sel;
+          })(),
+        )
+      : null,
     w.type === "dday"
       ? field(
           L.title,
@@ -3161,8 +3267,9 @@ function openWidgetGallery(anchor) {
   const grid = h("div", { class: "mdos-gallery" });
   const render = () =>
     grid.replaceChildren(
-      ...WIDGET_TYPES.map((type) => {
-        const sample = widgetEl({ id: `preview-${type}`, type, size: "s", style: type === "note" ? "note" : type === "dday" ? "accent" : "glass", title: L.ddayDefault, color: NOTE_COLORS[0] });
+      // Each way to view the API budget is its own gallery entry.
+      ...WIDGET_TYPES.flatMap((type) => (type === "ledger" ? LEDGER_VIEWS.map((view) => [type, { view }]) : [[type, null]])).map(([type, extra]) => {
+        const sample = widgetEl({ id: `preview-${type}`, type, size: "s", style: type === "note" ? "note" : type === "dday" ? "accent" : "glass", title: L.ddayDefault, color: NOTE_COLORS[0], ...extra });
         sample.classList.add("is-sample");
         return h(
           "button",
@@ -3170,12 +3277,12 @@ function openWidgetGallery(anchor) {
             type: "button",
             class: "mdos-gallery-item",
             onclick: () => {
-              addWidget(type, size);
+              addWidget(type, size, extra);
               closePop();
             },
           },
           sample,
-          h("span", { text: L.widgetNames[type] }),
+          h("span", { text: extra?.view && extra.view !== "summary" ? `${L.widgetNames.ledger} · ${L.ledgerViews[extra.view]}` : L.widgetNames[type] }),
         );
       }),
     );
@@ -5218,6 +5325,7 @@ const DLG_RE = /"[^"\n]{1,800}"|“[^”\n]{1,800}”|「[^」\n]{1,800}」|『[
 const DLG_SKIP = 'code, pre, [class*="mrpc-"]';
 const dlgCache = new WeakMap();
 let dlgCount = -1;
+let dlgScans = 0;
 function dialogueRanges(el) {
   const nodes = [];
   let text = "";
@@ -5250,11 +5358,21 @@ function dialogueRanges(el) {
 function scanDialogue(force = false) {
   if (!state.rpTone || !CSS.highlights || typeof Highlight === "undefined" || mode === "off") return;
   const els = $$('[data-chat-mode="roleplay"] .mari-message-content');
+  if (!els.length && !dlgCount) return;
   let changed = force || els.length !== dlgCount;
+  // Finished messages don't change, so only the last two (the one streaming
+  // in and the one before) are read each time; every tenth scan, or when the
+  // message count changes, all of them are checked (an edit, a swipe).
+  const full = changed || ++dlgScans % 10 === 0;
   const all = [];
-  for (const el of els) {
-    const key = el.textContent;
+  for (let i = 0; i < els.length; i++) {
+    const el = els[i];
     let c = dlgCache.get(el);
+    if (c && !full && i < els.length - 2 && (!c.ranges[0] || c.ranges[0].startContainer.isConnected)) {
+      all.push(...c.ranges);
+      continue;
+    }
+    const key = el.textContent;
     if (!c || c.key !== key || (c.ranges[0] && !c.ranges[0].startContainer.isConnected)) {
       c = { key, ranges: dialogueRanges(el) };
       dlgCache.set(el, c);
@@ -5294,9 +5412,16 @@ function applySettings() {
   }
 }
 
+// Widgets show minutes at most, so they are rebuilt only when the minute
+// turns, and not at all while the tab is hidden (caught up when it shows).
+let tickMinute = "";
 function tick() {
+  if (doc.hidden) return;
   const now = new Date();
   setText(mbClock, `${menubarDateFmt.format(now)}  ${timeFmt.format(now)}`);
+  const minute = `${now.toDateString()} ${now.getHours()}:${now.getMinutes()}`;
+  if (minute === tickMinute) return;
+  tickMinute = minute;
   tickWidgets();
 }
 const clockTimer = marinara.setInterval(tick, 15_000);
@@ -5441,12 +5566,27 @@ function sync() {
   lastPanel = panel;
 
   const topbar = $(SEL.topbar);
-  if (topbar && !desktopHome) setVar("--mdos-topbar-h", `${topbar.offsetHeight}px`);
+  // Measured by a ResizeObserver, not offsetHeight here: reading layout right
+  // after this sync's class changes forced a layout pass every run.
+  if (topbar !== topbarSeen) {
+    topbarRO?.disconnect();
+    topbarSeen = topbar;
+    if (topbar) {
+      topbarRO ||= new ResizeObserver((entries) => {
+        const last = entries[entries.length - 1];
+        const hgt = last?.borderBoxSize?.[0]?.blockSize ?? last?.target.offsetHeight;
+        if (hgt && !desktopHome) setVar("--mdos-topbar-h", `${Math.round(hgt)}px`);
+      });
+      topbarRO.observe(topbar);
+    }
+  }
   renderDock();
   updateDockState();
   updateMenubar();
 }
 
+let topbarSeen = null;
+let topbarRO = null;
 // The main window comes back whenever Marinara shows something new in it.
 let lastView = "";
 const detailIds = new WeakMap();
@@ -5487,7 +5627,12 @@ observer.observe(hostRoot || doc.body, {
 const pollTimer = marinara.setInterval(() => {
   if (!doc.hidden && !gesture) syncSoon();
 }, 700);
-const viewTimer = marinara.setInterval(watchMainView, 800);
+const viewTimer = marinara.setInterval(() => {
+  if (!doc.hidden) watchMainView();
+}, 800);
+on(doc, "visibilitychange", () => {
+  if (!doc.hidden) tick();
+});
 const dlgTimer = marinara.setInterval(() => {
   if (!doc.hidden && !gesture) scanDialogue();
 }, 1200);

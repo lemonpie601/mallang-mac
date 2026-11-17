@@ -255,9 +255,14 @@ html.mdos [data-mdos-win="main"] [data-component="TopBar"] > .absolute.bottom-0 
 
 /* ── Scrollbars ──────────────────────────────────────────────── */
 
-html.mdos [data-mdos-win] * {
-  scrollbar-width: thin;
+/* scrollbar-color inherits, so it is set once per window; only the width
+   needs the scrolling elements themselves (no universal selector over the
+   transcript, which restyled on every streamed token). */
+html.mdos [data-mdos-win] {
   scrollbar-color: color-mix(in srgb, var(--mdos-fg) 22%, transparent) transparent;
+}
+html.mdos [data-mdos-win] :is([class*="overflow-"], textarea, pre) {
+  scrollbar-width: thin;
 }
 html.mdos ::-webkit-scrollbar {
   width: 11px;
