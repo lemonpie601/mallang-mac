@@ -782,6 +782,12 @@ try {
 const state = { ...DEFAULTS, ...(stored.desktop && typeof stored.desktop === "object" ? stored.desktop : {}) };
 state.windows = { ...(state.windows || {}) };
 state.icons = { ...(state.icons || {}) };
+{
+  const scrub = (v) =>
+    typeof v === "string" ? (/^(?:#|rgb|hsl|color\()/i.test(v) ? v : cleanText(v)) : Array.isArray(v) ? v.map(scrub) : v && typeof v === "object" ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, k === "color" ? x : scrub(x)])) : v;
+  if (state.credits) state.credits = scrub(state.credits);
+  if (state.ledger) state.ledger = scrub(state.ledger);
+}
 // Images live under their own storage key so ordinary saves stay small.
 const images = {
   wallpaper: "",
@@ -2789,15 +2795,17 @@ function refreshLocker() {
 // page. The result is cached, so the widgets keep showing it anywhere.
 // A provider that hasn't answered yet leaves "NULL", "undefined" or "NaN" in
 // the card ("$NULL", "/ null"); those show as nothing (the widget prints —).
-const textOf = (el) => {
-  const t = (el?.textContent || "")
+const textOf = (el) => cleanText(el?.textContent);
+function cleanText(text) {
+  if (typeof text !== "string") return "";
+  const t = text
     .replace(/\b(?:null|undefined|NaN)\b/gi, "")
     .replace(/[$₩¥€£](?!\s*[\d.])/g, "")
     .replace(/\s+/g, " ")
     .replace(/^[\s/·:|,-]+|[\s/·:|,-]+$/g, "")
     .trim();
   return /[\p{L}\p{N}]/u.test(t) ? t : "";
-};
+}
 function scrapeLedger(card) {
   if (!card) return null;
   const facts = [];
@@ -5528,7 +5536,11 @@ function sync() {
   // The home screen stays styled under open sheets: a sheet sliding away must
   // reveal our home, not Marinara's default one. Only the Dock and the home
   // indicator follow whether a sheet is open (mdos-touch-sheet).
-  toggleClass("mdos-touch-home", isTouch() && onHome && !appOpen);
+  // On a tablet small apps float as cards over the home screen, so it stays
+  // styled under them; on a phone they cover it. mdos-touch-app hides the
+  // Dock and shows the home indicator either way.
+  toggleClass("mdos-touch-home", isTouch() && onHome && (!appOpen || html.classList.contains("mdos-tablet")));
+  toggleClass("mdos-touch-app", isTouch() && appOpen);
   toggleClass("mdos-touch-sheet", isTouch() && !!$(SEL.sheets));
   if (homeVisible()) readHomeApps();
   const hubApp = !!hubAppTab();

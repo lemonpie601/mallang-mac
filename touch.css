@@ -24,7 +24,14 @@ html.mdos-tablet {
 
 /* ── Home screen ─────────────────────────────────────────────── */
 
-html.mdos-touch-home [data-component="CenterContent"],
+/* The wallpaper is painted on Marinara's own centre area as well as on our
+   layer underneath: on iPad a theme or shell layer between them hid it, so
+   picking a wallpaper seemed to do nothing. */
+html.mdos-touch-home [data-component="CenterContent"] {
+  background: var(--mdos-wallpaper) !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
 html.mdos-touch-home [data-component="CenterContent"] .mari-app-background-paint,
 html.mdos-touch-home :is([data-component="HomeBrowserHub"], [data-component="HomeBrowserHub"] > div, [data-component="HomeBrowserHub.Content"], [data-component="HomeBrowserHub.HomePage"]) {
   background: transparent !important;
@@ -110,7 +117,7 @@ html.mdos-touch #mdos-dock {
   transform: translate(-50%, calc(100% + 40px));
   transition: transform 300ms var(--mdos-ease);
 }
-html.mdos-touch.mdos-touch-home:not(.mdos-touch-sheet) #mdos-dock {
+html.mdos-touch.mdos-touch-home:not(.mdos-touch-sheet, .mdos-touch-app) #mdos-dock {
   transform: translateX(-50%);
 }
 html.mdos-touch #mdos-dock .mdos-dock-item:not([data-touch="1"]),
@@ -133,7 +140,7 @@ html.mdos-touch .mdos-dock-item {
 
 /* ── Home indicator (inside apps) ────────────────────────────── */
 
-html.mdos-touch:is(:not(.mdos-touch-home), .mdos-touch-sheet) #mdos-homebar {
+html.mdos-touch:is(:not(.mdos-touch-home), .mdos-touch-sheet, .mdos-touch-app) #mdos-homebar {
   all: unset;
   display: block;
   position: fixed;
@@ -283,7 +290,7 @@ html.mdos-tablet :is([data-component="RightPanelMobile"], aside[data-component="
 }
 /* iPad draws its own home indicator at the very bottom; ours sits above it
    instead of on top of it. */
-html.mdos-tablet:is(:not(.mdos-touch-home), .mdos-touch-sheet) #mdos-homebar {
+html.mdos-tablet:is(:not(.mdos-touch-home), .mdos-touch-sheet, .mdos-touch-app) #mdos-homebar {
   bottom: calc(env(safe-area-inset-bottom, 0px) + 2px);
 }
 
