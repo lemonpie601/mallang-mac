@@ -551,32 +551,12 @@ html.mdos-touch:not(.mdos-tablet) :is(.mari-right-panel-header, .mari-sidebar-he
 html.mdos-touch .mari-chat-sidebar .mari-chrome-segmented:has(> [data-chat-mode-tab]) {
   display: none !important;
 }
-/* The list / menu buttons sit in the home-indicator row at the bottom
-   (left and right of the bar), clear of the chat's own header and of
-   whatever extensions place at the top. */
+/* The list / menu buttons stay at the top left, where they are easy to find;
+   desktop.js moves them down below a button an extension floats in that
+   corner (a relationship tracker…) so it stays seen (--mdos-tctl-top). */
 html.mdos-touch:not(.mdos-touch-home):not(.mdos-touch-app):not(.mdos-touch-panel) #mdos-tctl {
-  top: auto !important;
-  left: 10px !important;
-  right: 10px;
-  bottom: max(2px, calc(env(safe-area-inset-bottom, 0px) - 22px));
-  justify-content: space-between;
-  pointer-events: none;
-}
-html.mdos-touch #mdos-tctl .mdos-tctl-btn {
-  pointer-events: auto;
-  width: 34px;
-  height: 34px;
-}
-html.mdos-touch #mdos-tctl .mdos-tctl-btn svg {
-  width: 17px;
-  height: 17px;
-}
-html.mdos-split #mdos-tctl {
-  left: 370px !important;
-}
-/* Room for that row under the composer. */
-html.mdos-touch:is(:not(.mdos-touch-home), .mdos-touch-sheet) .chat-input-container {
-  padding-bottom: max(44px, calc(env(safe-area-inset-bottom, 0px) + 22px)) !important;
+  top: var(--mdos-tctl-top, calc(env(safe-area-inset-top, 0px) + 10px)) !important;
+  transition: top 200ms var(--mdos-ease), left 200ms var(--mdos-ease);
 }
 
 /* Phone composer: the bottom row stays one line — the model pill takes only

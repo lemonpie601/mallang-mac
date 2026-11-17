@@ -5920,6 +5920,7 @@ function syncBody() {
   }
   toggleClass("mdos-split", split && listOpen);
   toggleClass("mdos-touch-panel", isTouch() && !!$once('[data-component="RightPanelMobile"], [data-component="MobileDetailSheet"]'));
+  if (isTouch()) placeTouchControls();
   if (homeVisible()) readHomeApps();
   refreshBadges();
   refreshChatTools();
@@ -7830,6 +7831,32 @@ const tctlMenu = h("button", {
   onclick: () => openTouchMenu(),
 });
 ui.append(h("div", { id: "mdos-tctl", "data-exd": "" }, tctlList, tctlMenu));
+// The buttons keep to the top left, but step down below anything another
+// extension floats in that corner (a relationship tracker…), so it stays
+// visible. Only floating elements outside Marinara's app count (not its own
+// chat header). Checked on each sync; it moves only when the corner changes.
+let tctlTop = "";
+function placeTouchControls() {
+  const box = tctlList.parentElement;
+  if (!box || getComputedStyle(box).display === "none") return;
+  const r = box.getBoundingClientRect();
+  let top = safeProbe.getBoundingClientRect().top + 10;
+  const blockerAt = (x, y) =>
+    doc.elementsFromPoint(x, y).find((e) => e !== html && e !== doc.body && !e.closest("#root, #mdos-ui, [data-mdos], [data-exd]") && getComputedStyle(e).position === "fixed");
+  for (let i = 0; i < 4; i++) {
+    const hit = [r.left + 19, r.left + 65, r.right - 6].map((x) => blockerAt(x, top + 19)).find(Boolean);
+    if (!hit) break;
+    top = Math.round(hit.getBoundingClientRect().bottom + 8);
+  }
+  const next = `${Math.round(top)}px`;
+  if (next !== tctlTop) {
+    tctlTop = next;
+    setVar("--mdos-tctl-top", next);
+  }
+}
+// Where the status bar ends (env(safe-area-inset-top) in px).
+const safeProbe = h("div", { "aria-hidden": "true", "data-exd": "", style: "position:fixed;top:env(safe-area-inset-top,0px);left:0;width:0;height:0;visibility:hidden;pointer-events:none" });
+ui.append(safeProbe);
 function openTouchMenu() {
   const grid = h(
     "div",
