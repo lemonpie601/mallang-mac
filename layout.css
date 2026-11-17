@@ -401,3 +401,209 @@ html.mdos.mdos-hub-app[data-mdos-hub-tone="dark"] [data-mdos-win="main"] [data-c
 html.mdos.mdos-hub-app[data-mdos-hub-tone="dark"] [data-mdos-win="main"] .mdos-light {
   box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.18);
 }
+
+/* ── Editors: System Settings layout ─────────────────────────── */
+/* Character, persona, preset and lorebook editors cram the name, a row of
+   section tabs and the actions into one header line. With room (the main
+   window's own container, 760px+), the sections become a sidebar list on the
+   left, the name and actions a title strip on the right, and the fields sit
+   in grouped cards below it — like System Settings. The colours stay
+   Marinara's editor (theme) colours. */
+@container (min-width: 760px) {
+  html.mdos .mari-editor-shell:has(> .mari-editor-header--with-nav) {
+    display: grid !important;
+    grid-template-columns: 208px minmax(0, 1fr) auto;
+    grid-template-rows: auto minmax(0, 1fr);
+    height: 100%;
+    min-height: 0;
+  }
+  html.mdos .mari-editor-shell > .mari-editor-header--with-nav {
+    display: contents !important;
+  }
+  html.mdos .mari-editor-header--with-nav > .mari-editor-navigation {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 14px 10px;
+    border-right: 1px solid var(--marinara-editor-divider);
+    background: color-mix(in srgb, var(--marinara-editor-surface-bg) 70%, var(--marinara-editor-bg));
+  }
+  html.mdos .mari-editor-header--with-nav > .mari-editor-header-main {
+    grid-column: 2;
+    grid-row: 1;
+    min-height: 60px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--marinara-editor-divider);
+    background: color-mix(in srgb, var(--marinara-editor-surface-bg) 76%, transparent);
+  }
+  html.mdos .mari-editor-header--with-nav > .mari-editor-actions {
+    grid-column: 3;
+    grid-row: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 !important;
+    padding: 0 16px 0 8px;
+    border-bottom: 1px solid var(--marinara-editor-divider);
+    background: color-mix(in srgb, var(--marinara-editor-surface-bg) 76%, transparent);
+  }
+  html.mdos .mari-editor-shell:has(> .mari-editor-header--with-nav) > .mari-editor-body {
+    grid-column: 2 / 4;
+    grid-row: 2;
+    min-height: 0;
+  }
+  /* The section list: one row per section, the current one filled. */
+  html.mdos .mari-editor-header--with-nav .mari-editor-navigation-compact {
+    display: none !important;
+  }
+  html.mdos .mari-editor-header--with-nav .mari-editor-navigation-tabs {
+    display: flex !important;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+  }
+  html.mdos .mari-editor-header--with-nav .mari-editor-tab {
+    justify-content: flex-start !important;
+    width: 100%;
+    height: 32px;
+    min-height: 32px;
+    padding: 0 10px !important;
+    border: 0 !important;
+    border-radius: 7px !important;
+    background: transparent;
+    box-shadow: none !important;
+    font-size: 13px !important;
+    font-weight: 500;
+    text-align: left;
+  }
+  html.mdos .mari-editor-header--with-nav .mari-editor-tab:not([data-active="true"]):hover {
+    background: color-mix(in srgb, var(--marinara-editor-text, currentColor) 8%, transparent) !important;
+  }
+  html.mdos .mari-editor-header--with-nav .mari-editor-tab-label {
+    display: inline !important;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  html.mdos .mari-editor-header--with-nav .mari-editor-tab[data-active="true"] {
+    background: var(--mdos-accent) !important;
+    color: #fff !important;
+  }
+  html.mdos .mari-editor-header--with-nav .mari-editor-tab[data-active="true"] .mari-editor-tab-badge {
+    border-color: transparent;
+    background: rgba(255, 255, 255, 0.25);
+    color: #fff;
+  }
+  /* Content: a wider column of grouped cards with air between sections. */
+  html.mdos .mari-editor-shell:has(> .mari-editor-header--with-nav) .mari-editor-content {
+    padding: 24px 28px 48px !important;
+  }
+  html.mdos .mari-editor-shell:has(> .mari-editor-header--with-nav) .mari-editor-content-inner {
+    max-width: 760px !important;
+  }
+  html.mdos .mari-editor-shell [data-editor-section] {
+    scroll-margin-top: 16px;
+  }
+  html.mdos .mari-editor-shell [data-editor-section] + [data-editor-section] {
+    margin-top: 28px !important;
+  }
+}
+/* Grouped cards and fields at every width: softer, flatter, macOS radii. */
+html.mdos .mari-editor-shell .mari-editor-panel {
+  border-radius: 12px !important;
+  box-shadow: none !important;
+}
+html.mdos .mari-editor-shell .mari-editor-field {
+  border-radius: 7px !important;
+}
+html.mdos .mari-editor-shell .mari-editor-field:focus-within,
+html.mdos .mari-editor-shell .mari-editor-field:focus {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--mdos-accent) 35%, transparent) !important;
+  border-color: var(--mdos-accent) !important;
+}
+html.mdos .mari-editor-shell .mari-editor-action--primary {
+  background: var(--mdos-accent) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+}
+
+/* ── Chat list: Messages ─────────────────────────────────────── */
+/* Conversation, Roleplay and Game are separate apps now (Dock), so the
+   window's own mode switcher goes; its unread counts are still read. */
+html.mdos-desktop [data-mdos-win="chats"] .mari-chrome-segmented:has(> [data-chat-mode-tab]) {
+  display: none !important;
+}
+/* Rows: a round 42px picture, bold name, grey detail, time top-right. */
+html.mdos .mari-chat-sidebar [data-drag-kind="chat"] {
+  min-height: 60px;
+  padding: 8px 10px !important;
+  gap: 10px !important;
+  border-radius: 10px !important;
+  align-items: center !important;
+}
+html.mdos .mari-chat-sidebar [data-drag-kind="chat"] > .relative.flex-shrink-0 :is(span.rounded-lg, .mari-chat-mode-avatar) {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 50% !important;
+  overflow: hidden;
+}
+html.mdos .mari-chat-sidebar [data-drag-kind="chat"] > .relative.flex-shrink-0 img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+  border-radius: 50% !important;
+}
+html.mdos .mari-chat-sidebar [data-drag-kind="chat"] > .min-w-0.flex-1 > span:first-child {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em;
+}
+html.mdos .mari-chat-sidebar [data-drag-kind="chat"] > .min-w-0.flex-1 > span:not(:first-child) {
+  font-size: 12px !important;
+}
+html.mdos .mari-chat-sidebar [data-drag-kind="chat"] > .tabular-nums {
+  align-self: flex-start;
+  margin-top: 2px;
+  font-size: 11.5px !important;
+}
+/* The open chat: a filled accent row (the side bar marker isn't needed). */
+html.mdos .mari-chat-sidebar [data-drag-kind="chat"] > .mari-chrome-accent-progress {
+  display: none !important;
+}
+html.mdos .mari-chat-sidebar [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress) {
+  background: var(--mdos-accent) !important;
+  box-shadow: none !important;
+  --tw-ring-shadow: 0 0 #0000 !important;
+}
+html.mdos .mari-chat-sidebar [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress) :is(span, svg, button) {
+  color: #fff !important;
+}
+/* Delete shows on hover only (touch keeps it, there is no hover). */
+html.mdos-desktop .mari-chat-sidebar [data-drag-kind="chat"] > button:last-child {
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+html.mdos-desktop .mari-chat-sidebar [data-drag-kind="chat"]:is(:hover, :focus-within) > button:last-child {
+  opacity: 1;
+}
+
+/* ── Presets & lorebooks: Mail-style lists ───────────────────── */
+/* Flat rows divided by hairlines, a big title over the list. */
+html.mdos [data-component="RightPanel"] :is([data-drag-kind="preset"], [data-drag-kind="lorebook"]) {
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--mdos-sep, rgba(127, 127, 127, 0.18)) !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  padding-block: 10px !important;
+}
+html.mdos [data-component="RightPanel"] :is([data-drag-kind="preset"], [data-drag-kind="lorebook"]):hover {
+  background: var(--mdos-fill, rgba(127, 127, 127, 0.08)) !important;
+}
+html.mdos [data-mdos-win="panel"] .mari-right-panel-header h2 {
+  font-size: 17px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.015em;
+}
