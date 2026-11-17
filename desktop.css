@@ -1990,3 +1990,44 @@ html.mdos-cursor :is(.cursor-default, :disabled) {
 html.mdos-cursor :is(input:not([type="checkbox"], [type="radio"], [type="range"], [type="button"], [type="submit"], [type="color"], [type="file"]), textarea, [contenteditable="true"], [contenteditable=""]) {
   cursor: text;
 }
+
+/* ── Notification badges (desktop.js refreshBadges) ──────────── */
+/* A red count at the icon's top-right corner. The icon itself clips its
+   content, so the badge hangs off the button, placed by the icon's width. */
+/* Element-qualified: both buttons start from all: unset (home.css loads later). */
+button.mdos-lp-app,
+button.mdos-launch {
+  position: relative;
+}
+.mdos-lp-app { --mdos-badge-icon: 84px; }
+html.mdos-touch .mdos-lp-app { --mdos-badge-icon: var(--mdos-sb-icon); }
+.mdos-launch { --mdos-badge-icon: 56px; }
+.mdos-wg--launcher.mdos-wg--s .mdos-launch { --mdos-badge-icon: 38px; }
+.mdos-dicon { --mdos-badge-icon: 58px; }
+[data-mdos-badge]::after {
+  content: attr(data-mdos-badge);
+  position: absolute;
+  top: -6px;
+  left: calc(50% + var(--mdos-badge-icon, 56px) / 2 - 14px);
+  z-index: 3;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  background: #ff3b30;
+  color: #fff;
+  font: 700 12px/20px var(--mdos-font);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+.mdos-dock-item[data-mdos-badge]::after {
+  left: auto;
+  right: -6px;
+}
+/* The large New chat widget lays its buttons out as rows, icon first. */
+.mdos-wg--launcher.mdos-wg--l .mdos-launch[data-mdos-badge]::after {
+  left: calc(var(--mdos-badge-icon) - 14px);
+}

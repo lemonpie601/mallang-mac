@@ -2462,6 +2462,7 @@ function widgetBody(w) {
               {
                 type: "button",
                 class: "mdos-launch",
+                "data-mode": n,
                 onclick: (event) => {
                   event.stopPropagation();
                   if (!editMode) startChat(n);
@@ -4131,6 +4132,7 @@ function deskIconEl(d) {
     "div",
     {
       class: "mdos-dicon",
+      "data-app": app.id,
       role: "button",
       tabindex: "0",
       "data-did": d.id,
@@ -5584,6 +5586,7 @@ function sync() {
   toggleClass("mdos-touch-app", isTouch() && appOpen);
   toggleClass("mdos-touch-sheet", isTouch() && !!$(SEL.sheets));
   if (homeVisible()) readHomeApps();
+  refreshBadges();
   const hubApp = !!hubAppTab();
   toggleClass("mdos-hub-app", hubApp);
   refreshLocker();
@@ -5636,6 +5639,111 @@ function sync() {
   renderDock();
   updateDockState();
   updateMenubar();
+}
+
+// ── Notification badges ───────────────────────────────────────
+// Red counts on app icons, like a phone: chats waiting in Conversation,
+// Roleplay and Game (on the Chats app and the New chat widget's buttons) and
+// Home tabs such as Noodle. Chat counts come from Marinara's own chat list
+// when it is in the page (its red unread pills); otherwise (phones and tablets
+// keep the list unmounted) from the chat list API every 45 s, which carries
+// the unread count of messages characters sent on their own.
+const MODE_KEYS = ["conversation", "roleplay", "game"];
+const UNREAD_PILL = ".bg-red-500.text-white";
+const unread = { modes: [0, 0, 0], tabs: {} };
+let apiUnread = null;
+let apiUnreadAt = -1e9;
+let apiUnreadBusy = false;
+let badgeSig = "";
+const pillCount = (el) => {
+  if (!el) return 0;
+  const t = el.textContent.trim();
+  return /\+$/.test(t) ? 100 : parseInt(t, 10) || 1;
+};
+function refreshApiUnread() {
+  if (apiUnreadBusy || doc.hidden || performance.now() - apiUnreadAt < 45_000) return;
+  apiUnreadBusy = true;
+  apiUnreadAt = performance.now();
+  window
+    .fetch("/api/chats", { credentials: "same-origin" })
+    .then((r) => (r.ok ? r.json() : null))
+    .then((list) => {
+      if (!Array.isArray(list)) return;
+      const modes = [0, 0, 0];
+      for (const c of list) {
+        const n = Number(c?.metadata?.autonomousUnreadCount) || 0;
+        const i = MODE_KEYS.indexOf(c?.mode);
+        if (n > 0 && i >= 0) modes[i] += n;
+      }
+      apiUnread = modes;
+      syncSoon();
+    })
+    .catch(() => {})
+    .finally(() => (apiUnreadBusy = false));
+}
+function readUnread() {
+  const modeTabs = $$("[data-chat-mode-tab]");
+  if (modeTabs.length) {
+    // The list shows one mode at a time: its rows carry the counts; the other
+    // modes' tabs carry their totals.
+    const modes = [0, 0, 0];
+    for (const tab of modeTabs) {
+      const i = MODE_KEYS.indexOf(tab.getAttribute("data-chat-mode-tab"));
+      if (i < 0) continue;
+      modes[i] =
+        tab.getAttribute("aria-pressed") === "true"
+          ? $$(SEL.chatRows).reduce((sum, row) => sum + pillCount(row.querySelector(UNREAD_PILL)), 0)
+          : pillCount(tab.querySelector(UNREAD_PILL));
+    }
+    unread.modes = modes;
+  } else {
+    refreshApiUnread();
+    if (apiUnread) unread.modes = apiUnread;
+  }
+  // Home tab badges (Noodle's new timeline…) are only in the page while Home
+  // is; the last ones seen are kept until then.
+  const tabs = $$(SEL.homeTabs);
+  if (tabs.length) {
+    const next = {};
+    for (const t of tabs) {
+      const key = (t.id || "").replace(/^marinara-home-tab-/, "");
+      const n = pillCount(t.querySelector('[data-component*="Badge"]'));
+      if (key && key !== "home" && n) next[`tab:${key}`] = n;
+    }
+    unread.tabs = next;
+  }
+}
+function badgeFor(el) {
+  if (el.hasAttribute("data-mode")) return unread.modes[Number(el.getAttribute("data-mode"))] || 0;
+  const id = el.getAttribute("data-app");
+  if (id === "chats") return unread.modes[0] + unread.modes[1] + unread.modes[2];
+  return unread.tabs[id] || 0;
+}
+function applyBadges(force = false) {
+  const sig = JSON.stringify(unread);
+  if (!force && sig === badgeSig) return;
+  badgeSig = sig;
+  for (const root of [ui, widgetLayer, appLayer, sbEl]) {
+    if (!root) continue;
+    for (const el of root.querySelectorAll("[data-app], .mdos-launch[data-mode]")) setBadge(el, badgeFor(el));
+  }
+}
+function setBadge(el, n) {
+  const text = n > 99 ? "99+" : n > 0 ? String(n) : "";
+  if ((el.getAttribute("data-mdos-badge") || "") === text) return;
+  if (text) el.setAttribute("data-mdos-badge", text);
+  else el.removeAttribute("data-mdos-badge");
+}
+// Icons are rebuilt by many renderers; a cheap count of badge-able nodes
+// tells sync when to label fresh ones.
+let badgeNodes = -1;
+function refreshBadges() {
+  readUnread();
+  let count = 0;
+  for (const root of [ui, widgetLayer, appLayer, sbEl]) if (root) count += root.querySelectorAll("[data-app], .mdos-launch[data-mode]").length;
+  const fresh = count !== badgeNodes;
+  badgeNodes = count;
+  applyBadges(fresh);
 }
 
 let topbarSeen = null;
