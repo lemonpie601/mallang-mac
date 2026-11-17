@@ -123,7 +123,7 @@ const L = KO
         dday: "디데이",
         greeting: "인사말",
         credits: "API 크레딧",
-        locker: "확장 보관함",
+        locker: "확장",
         ledger: "API 가계부",
         credit: "크레딧",
       },
@@ -133,7 +133,7 @@ const L = KO
       ledgerViews: { summary: "요약", calendar: "달력", daily: "일별 막대", top: "많이 쓴 곳", facts: "숫자 모음" },
       ledgerLess: "적게",
       ledgerMore: "많이",
-      lockerEmpty: "보관함에 담긴 확장 버튼이 없어요",
+      lockerEmpty: "모아 둔 확장 버튼이 없어요",
       creditsEmpty: "홈을 한 번 열면 크레딧이 여기 표시돼요",
       pickPhoto: "사진을 골라 주세요",
       notePlaceholder: "메모를 적어 보세요",
@@ -259,7 +259,7 @@ const L = KO
       greeting: (hour) =>
         hour < 5 ? "늦은 밤이에요" : hour < 12 ? "좋은 아침이에요" : hour < 18 ? "좋은 오후예요" : "좋은 저녁이에요",
       lk: {
-        title: "확장 보관함",
+        title: "확장",
         edit: "편집",
         done: "완료",
         empty: "담긴 버튼이 없어요. 다른 확장이 화면에 띄운 버튼은 저절로 담겨요.",
@@ -271,15 +271,24 @@ const L = KO
         removed: "뺀 버튼",
         rename: "이름",
         auto: "새로 뜨는 버튼은 저절로 담기",
-        on: "확장 보관함 쓰기",
+        on: "확장 버튼 모으기",
         pick: "직접 담기",
         pickBanner: "담을 버튼을 눌러 주세요",
         pickNo: "마리나라 기본 화면의 버튼은 담을 수 없어요",
-        picked: "보관함에 담았어요",
+        picked: "확장에 담았어요",
         up: "위로",
         down: "아래로",
         unnamed: "이름 없는 버튼",
-        foreign: "\"확장 보관함\" 확장이 켜져 있어서 그쪽이 버튼을 모으고 있어요. 이 기능을 쓰려면 그 확장을 꺼 주세요.",
+        engine: "버튼을 모으는 쪽",
+        engineBuiltin: "내장",
+        engineBgh: "확장 보관함 확장",
+        engineHint: "어느 쪽을 써도 이름·순서·화면에 두기·뺀 버튼·저절로 담기는 서로 맞춰져요.",
+        bghOff: "\"확장 보관함\" 확장이 꺼져 있거나 설치돼 있지 않아요. 마리나라 설정 → 확장에서 켜 주세요.",
+        bghReload: "새로 고침하면 \"확장 보관함\" 확장이 버튼을 모아요.",
+        reload: "새로 고침",
+        bghEdit: "이름·순서·화면에 두기는 \"확장 보관함\" 확장의 보관함 아이콘 → 보관함 편집에서 고쳐요.",
+        bghOpen: "확장 보관함 열기",
+        bghNoButton: "\"확장 보관함\" 아이콘을 찾지 못했어요",
       },
       chatTools: "채팅 도구",
       sceneBarTop: "롤플 장면 바를 위쪽 아이콘으로 (실행 전에 확인)",
@@ -450,7 +459,7 @@ const L = KO
         dday: "Countdown",
         greeting: "Greeting",
         credits: "API credits",
-        locker: "Extension locker",
+        locker: "Extensions",
         ledger: "API budget",
         credit: "Credit",
       },
@@ -460,7 +469,7 @@ const L = KO
       ledgerViews: { summary: "Summary", calendar: "Calendar", daily: "Daily bars", top: "Top uses", facts: "Numbers" },
       ledgerLess: "Less",
       ledgerMore: "More",
-      lockerEmpty: "No extension buttons in the locker yet",
+      lockerEmpty: "No extension buttons gathered yet",
       creditsEmpty: "Open Home once to load your credits here",
       pickPhoto: "Choose a photo",
       notePlaceholder: "Write a note",
@@ -586,7 +595,7 @@ const L = KO
       greeting: (hour) =>
         hour < 5 ? "Burning the midnight oil" : hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening",
       lk: {
-        title: "Extension locker",
+        title: "Extensions",
         edit: "Edit",
         done: "Done",
         empty: "Nothing here yet. Buttons other extensions float on the screen are collected here.",
@@ -598,15 +607,24 @@ const L = KO
         removed: "Removed",
         rename: "Name",
         auto: "Collect new buttons automatically",
-        on: "Use the extension locker",
+        on: "Gather extension buttons",
         pick: "Add by tapping",
         pickBanner: "Tap the button to add",
         pickNo: "Marinara's own buttons can't be added",
-        picked: "Added to the locker",
+        picked: "Added to Extensions",
         up: "Move up",
         down: "Move down",
         unnamed: "Unnamed button",
-        foreign: "The \"Extension locker\" extension is on and collects the buttons. Turn it off to use this one.",
+        engine: "Gathered by",
+        engineBuiltin: "Built in",
+        engineBgh: "The 확장 보관함 extension",
+        engineHint: "Either way, names, order, kept-on-screen, removed buttons and auto-collect stay in sync between the two.",
+        bghOff: "The \"확장 보관함\" extension is off or not installed. Turn it on in Marinara's Settings → Extensions.",
+        bghReload: "Reload so the \"확장 보관함\" extension gathers the buttons.",
+        reload: "Reload",
+        bghEdit: "Names, order and keep-on-screen are edited in the \"확장 보관함\" extension (its box icon → edit).",
+        bghOpen: "Open 확장 보관함",
+        bghNoButton: "Couldn't find the 확장 보관함 icon",
       },
       chatTools: "Chat tools",
       sceneBarTop: "Roleplay scene bar as icons at the top (asks first)",
@@ -914,6 +932,7 @@ const DEFAULTS = {
   messengerPane: true,
   listW: 320,
   lockerOn: true,
+  lockerEngine: "builtin", // "builtin" | "bgh" (the 확장 보관함 extension)
   locker: null,
   quickPalette: true,
   qp: null,
@@ -976,7 +995,12 @@ if (state.wallpaperImage) {
 }
 let widgetSeq = Date.now();
 // Extension locker records (key -> { key, el, hidden, saved, base, revealed }); see lockerTick.
+function hasHangul(t) {
+  return /[가-힣]/.test(t || "");
+}
 const lkRecs = new Map();
+// The 확장 보관함 extension's names by button label (desktop.js bghPull).
+const bghNames = new Map();
 const newId = () => `w${(widgetSeq++).toString(36)}`;
 if (!Array.isArray(state.widgets)) {
   state.widgets = [
@@ -3236,16 +3260,25 @@ function dragScroll(el) {
   raf(fade);
   return el;
 }
+// The hidden buttons: built in, from our records in our order (no page-wide
+// query); with the 확장 보관함 extension in charge, the ones it marked.
+function storedEls() {
+  if (lkBuiltin()) {
+    const st = state.locker;
+    if (!st) return [];
+    return st.order.map((k) => lkRecs.get(k)).filter((r) => r?.saved && r.el.isConnected).map((r) => r.el);
+  }
+  return $$("[data-bgh-stored]");
+}
 function lockerItems() {
-  return $$("[data-bgh-stored]")
+  return storedEls()
     .map((el) => {
       const own = [...lkRecs.values()].find((r) => r.el === el);
+      const raw = (el.getAttribute("aria-label") || el.title || el.textContent || "").trim();
+      const theirs = own ? null : bghNames.get(lkClean(lkLabel(el)));
       const label = own
         ? lkName(own.key)
-        : (el.getAttribute("aria-label") || el.title || el.textContent || "")
-            .trim()
-            .replace(/\s*(열기|Open)$/i, "")
-            .slice(0, 30);
+        : (theirs?.name || (hasHangul(theirs?.owner) ? theirs.owner : "") || raw.replace(/\s*(열기|Open)$/i, "")).slice(0, 30);
       // Clone the button's own artwork (already on the page); else a letter.
       const art = el.querySelector("svg, img");
       return { el, label, icon: art ? art.cloneNode(true) : label.charAt(0) };
@@ -3254,7 +3287,7 @@ function lockerItems() {
 }
 let lockerSig = "";
 function refreshLocker() {
-  const sig = $$("[data-bgh-stored]")
+  const sig = `${lkBuiltin() ? "b" : "x"}|${bghNames.size}|` + storedEls()
     .map((el) => el.getAttribute("aria-label") || el.title || "")
     .join("|");
   if (sig === lockerSig) return;
@@ -7079,16 +7112,140 @@ const LK_TW = /^(flex|grid|block|inline|hidden|fixed|absolute|relative|sticky|in
 const lkPending = new Map();
 let lkLastScan = -1e9;
 let lkTicks = 0;
-// The old locker extension running? Checked at most every 5 s (a page-wide miss otherwise).
-let lkForeignAt = -1e9;
-let lkForeignHit = false;
-const lkForeign = () => {
-  if (performance.now() - lkForeignAt > 5000) {
-    lkForeignAt = performance.now();
-    lkForeignHit = !!doc.querySelector(".bgh-topbar-btn, .bgh-panel");
+
+// Who gathers the buttons: the built-in engine, or the "확장 보관함"
+// extension (state.lockerEngine). Built in, that extension stays installed but
+// sleeps for the page: its own cleanup (window.__marinaraBogwanham) puts its
+// buttons back and ours take over. With it in charge, ours only lists and
+// presses the buttons it hid (data-bgh-stored). Both keep their settings in
+// sync, matched by the button's label (bghPull / bghPush).
+const BGH_HOOK = "__marinaraBogwanham";
+const BGH_NAME = "확장 보관함";
+const lkBuiltin = () => state.lockerEngine !== "bgh";
+const bghRunning = () => typeof window[BGH_HOOK] === "function";
+let bghSlept = false;
+function bghSleep() {
+  try {
+    const stop = window[BGH_HOOK];
+    void Promise.resolve(stop()).catch(() => {});
+    bghSlept = true;
+    lkLastScan = -1e9; // its buttons come back: gather them next tick
+  } catch {
+    /* already stopping */
   }
-  return lkForeignHit;
-};
+}
+// Its id comes from the runtime list (enabled extensions only).
+async function bghId() {
+  await lkRefreshRuntime();
+  for (const [id, x] of lkRuntime) if (x.name === BGH_NAME) return id;
+  return null;
+}
+const bghUrl = (id) => `/api/personal-extensions/${encodeURIComponent(id)}/storage`;
+async function bghRead(id) {
+  const r = await window.fetch(bghUrl(id), { credentials: "same-origin", cache: "no-store" });
+  if (!r.ok) return null;
+  const j = await r.json();
+  const v = (j && typeof j === "object" && "value" in j ? j.value : j)?.bogwanham;
+  return v && typeof v === "object" && v.items && typeof v.items === "object" ? v : null;
+}
+// Its choices into ours when it saved after our last sync (or when asked).
+async function bghPull(force = false) {
+  try {
+    const id = await bghId();
+    const b = id ? await bghRead(id) : null;
+    if (!b) return false;
+    bghNames.clear();
+    for (const it of Object.values(b.items)) {
+      const label = lkClean(it?.label || "");
+      if (label) bghNames.set(label, { name: String(it.name || "").slice(0, 40), owner: String(it.ownerName || ""), float: !!it.float, excluded: !!it.excluded });
+    }
+    const st = lkState();
+    const at = Number(b.savedAt) || 0;
+    if (!force && at <= (st.syncAt || 0)) return false;
+    st.auto = b.autoCollect !== false;
+    st.legacy = { ...(st.legacy || {}) };
+    for (const [label, x] of bghNames) st.legacy[label] = { name: x.name, float: x.float, excluded: x.excluded };
+    for (const item of Object.values(st.items)) {
+      const x = bghNames.get(lkClean(item.label || ""));
+      if (x) Object.assign(item, { name: x.name, float: x.float, excluded: x.excluded });
+    }
+    const rank = new Map((b.order || []).map((k, i) => [lkClean(b.items[k]?.label || ""), i]));
+    const pos = (k) => rank.get(lkClean(st.items[k]?.label || "")) ?? 1e6;
+    st.order = [...st.order].sort((a, c) => pos(a) - pos(c));
+    st.syncAt = at;
+    save();
+    return true;
+  } catch {
+    return false;
+  }
+}
+// Ours into its storage (built in, after an edit): the same fields, its order
+// following ours. Only buttons it knows (a new one it learns by itself).
+let bghPushTimer = 0;
+function bghPushSoon() {
+  marinara.clearTimeout(bghPushTimer);
+  bghPushTimer = marinara.setTimeout(bghPush, 1500);
+}
+async function bghPush() {
+  try {
+    const id = await bghId();
+    const b = id ? await bghRead(id) : null;
+    if (!b) return;
+    const st = lkState();
+    const ours = new Map();
+    for (const [k, it] of Object.entries(st.items)) ours.set(lkClean(it.label || ""), { k, it });
+    let changed = b.autoCollect !== (st.auto !== false);
+    b.autoCollect = st.auto !== false;
+    for (const it of Object.values(b.items)) {
+      const m = ours.get(lkClean(it?.label || ""));
+      if (!m) continue;
+      const next = { name: m.it.name || "", float: !!m.it.float, excluded: !!m.it.excluded };
+      if ((it.name || "") !== next.name || !!it.float !== next.float || !!it.excluded !== next.excluded) {
+        Object.assign(it, next);
+        if (next.float) it.floatUserSet = true;
+        changed = true;
+      }
+    }
+    const pos = (k) => {
+      const m = ours.get(lkClean(b.items[k]?.label || ""));
+      const i = m ? st.order.indexOf(m.k) : -1;
+      return i < 0 ? 1e6 : i;
+    };
+    const order = [...(b.order || [])].sort((a, c) => pos(a) - pos(c));
+    if (order.join("|") !== (b.order || []).join("|")) {
+      b.order = order;
+      changed = true;
+    }
+    if (!changed) return;
+    b.savedAt = Date.now();
+    st.syncAt = b.savedAt;
+    save();
+    await window.fetch(bghUrl(id), {
+      method: "PATCH",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json", "x-marinara-csrf": "1" },
+      body: JSON.stringify({ bogwanham: b }),
+    });
+  } catch {
+    /* offline: the next edit tries again */
+  }
+}
+function setLockerEngine(engine) {
+  if (state.lockerEngine === engine) return;
+  if (engine === "bgh") {
+    // Hand over: our hidden buttons come back, our choices go to it first.
+    void bghPush();
+    lkReleaseAll();
+  }
+  updateSetting("lockerEngine", engine);
+  if (engine === "builtin") {
+    void bghPull(true).then(() => {
+      lkLastScan = -1e9;
+      lockerTick();
+    });
+  }
+  lockerTick();
+}
 function lkState() {
   if (!state.locker || typeof state.locker !== "object") {
     // First run: the old extension's choices (names, kept on screen, removed)
@@ -7303,7 +7460,8 @@ function lkWatch(rec) {
   rec.ro.observe(rec.el);
   for (const c of rec.el.children) rec.ro.observe(c);
   rec.mo = new MutationObserver(soon);
-  rec.mo.observe(rec.el, { attributes: true, attributeFilter: ["class", "hidden", "open", "aria-expanded", "data-state"], childList: true });
+  // "style" too: an extension rewriting its button's style would undo our hiding.
+  rec.mo.observe(rec.el, { attributes: true, attributeFilter: ["class", "style", "hidden", "open", "aria-expanded", "data-state"], childList: true });
 }
 function lkUnwatch(rec) {
   rec.ro?.disconnect();
@@ -7366,23 +7524,30 @@ function placeTopbarLocker(show) {
     nav.append(lkTopBtn);
   }
 }
+let bghPulled = false;
 function lockerTick() {
-  const active = state.lockerOn && mode !== "off";
+  const active = state.lockerOn && mode !== "off" && lkBuiltin();
   mbLocker.hidden = !(state.lockerOn && mode !== "off");
   placeTopbarLocker(false);
   if (!active) {
     if (lkRecs.size) lkReleaseAll();
     return;
   }
+  // Built in: the other extension, if it runs on this page, sleeps.
+  if (bghRunning()) bghSleep();
+  if (!bghPulled) {
+    bghPulled = true;
+    void bghPull();
+  }
   if (doc.hidden) return;
   const now = performance.now();
   const sig = `${doc.body.childElementCount}|${html.childElementCount}`;
-  if ((sig !== lkTopSig && now - lkLastScan > 1200) || now - lkLastScan > 8000) {
+  if ((sig !== lkTopSig && now - lkLastScan > 1200) || now - lkLastScan > 15000) {
     lkTopSig = sig;
     lkLastScan = now;
     lkScan();
   }
-  if (++lkTicks % 4 === 0) for (const rec of lkRecs.values()) lkEnforce(rec);
+  if (++lkTicks % 20 === 0) for (const rec of lkRecs.values()) lkEnforce(rec);
 }
 let lkTopSig = "";
 function lkScan() {
@@ -7436,7 +7601,7 @@ function lkScan() {
 }
 // The name shown: the user's, else the owning extension's (when it is Korean),
 // else the button's label, like the original locker.
-const hasHangul = (t) => /[가-힣]/.test(t || "");
+
 const lkName = (key) => {
   const item = lkState().items[key];
   if (!item) return L.lk.unnamed;
@@ -7753,9 +7918,51 @@ function lkActivate(el) {
 let lkEditing = false;
 function openLocker(anchor = mbLocker.isConnected && isDesktop() ? mbLocker : null) {
   lkEditing = false;
-  lkOwnerMiss.clear();
-  lkDetectOwners();
+  if (lkBuiltin()) {
+    lkOwnerMiss.clear();
+    lkDetectOwners();
+  } else {
+    // Its names, then the list again with them.
+    void bghPull().then(() => {
+      if (qpPopOpenLocker()) renderLocker(anchor);
+    });
+  }
   renderLocker(anchor);
+}
+const qpPopOpenLocker = () => !!doc.querySelector(".mdos-pop .mdos-lk");
+// Which side gathers (both modes, at the top of the editor).
+function lkEngineChooser(anchor) {
+  const seg = h(
+    "div",
+    { class: "mdos-seg mdos-lk-engine", role: "radiogroup", "aria-label": L.lk.engine },
+    ...[
+      ["builtin", L.lk.engineBuiltin],
+      ["bgh", L.lk.engineBgh],
+    ].map(([id, label]) =>
+      h("button", {
+        type: "button",
+        role: "radio",
+        "aria-checked": String((state.lockerEngine || "builtin") === id),
+        class: `mdos-seg-btn${(state.lockerEngine || "builtin") === id ? " is-on" : ""}`,
+        text: label,
+        onclick: () => {
+          setLockerEngine(id);
+          renderLocker(anchor);
+        },
+      }),
+    ),
+  );
+  const notes = [h("p", { class: "mdos-lk-hint", text: L.lk.engineHint })];
+  if (!lkBuiltin() && !bghRunning()) {
+    // It isn't running here: slept by us earlier on this page, or off.
+    const known = [...lkRuntime.values()].some((x) => x.name === BGH_NAME);
+    notes.push(
+      known || bghSlept
+        ? h("p", { class: "mdos-lk-note" }, L.lk.bghReload, " ", h("button", { type: "button", class: "mdos-btn", text: L.lk.reload, onclick: () => location.reload() }))
+        : h("p", { class: "mdos-lk-note", text: L.lk.bghOff }),
+    );
+  }
+  return h("div", { class: "mdos-lk-engine-box" }, h("h4", { text: L.lk.engine }), seg, ...notes);
 }
 function lkIcon(el) {
   const art = el.querySelector("svg, img");
@@ -7767,8 +7974,56 @@ function renderLocker(anchor) {
   const st = lkState();
   const live = st.order.filter((k) => lkRecs.get(k)?.el.isConnected && !st.items[k]?.excluded);
   const body = h("div", { class: "mdos-pop-body mdos-lk" });
-  if (lkForeign()) body.append(h("p", { class: "mdos-lk-note", text: L.lk.foreign }));
-  if (!lkEditing) {
+  if (!lkEditing && !lkBuiltin()) {
+    // The 확장 보관함 extension gathers: its buttons, by its names.
+    const items = lockerItems();
+    body.append(
+      items.length
+        ? h(
+            "div",
+            { class: `mdos-lk-list${isTouch() ? " is-grid" : ""}`, role: "list" },
+            ...items.map((it) =>
+              h(
+                "button",
+                {
+                  type: "button",
+                  role: "listitem",
+                  class: "mdos-lk-row",
+                  onclick: () => {
+                    closePop();
+                    marinara.setTimeout(() => lkActivate(it.el), 0);
+                  },
+                },
+                h("span", { class: "mdos-lk-ico" }, lkIcon(it.el)),
+                h("span", { class: "mdos-lk-name", text: it.label }),
+              ),
+            ),
+          )
+        : h("p", { class: "mdos-lk-empty", text: L.lk.empty }),
+      h("div", { class: "mdos-row mdos-lk-foot" }, h("button", { type: "button", class: "mdos-btn", text: L.lk.edit, onclick: () => ((lkEditing = true), renderLocker(anchor)) })),
+    );
+  } else if (lkEditing && !lkBuiltin()) {
+    body.append(
+      lkEngineChooser(anchor),
+      h("p", { class: "mdos-lk-hint", text: L.lk.bghEdit }),
+      h(
+        "div",
+        { class: "mdos-row mdos-lk-foot" },
+        h("button", {
+          type: "button",
+          class: "mdos-btn",
+          text: L.lk.bghOpen,
+          onclick: () => {
+            const btn = doc.querySelector(".bgh-topbar-btn");
+            closePop();
+            if (btn) marinara.setTimeout(() => btn.click(), 0);
+            else toast(L.lk.bghNoButton);
+          },
+        }),
+        h("button", { type: "button", class: "mdos-btn mdos-btn--primary", text: L.lk.done, onclick: () => ((lkEditing = false), renderLocker(anchor)) }),
+      ),
+    );
+  } else if (!lkEditing) {
     body.append(
       live.length
         ? h(
@@ -7799,6 +8054,7 @@ function renderLocker(anchor) {
   } else {
     const rerender = () => {
       save();
+      bghPushSoon();
       lockerTick();
       renderLocker(anchor);
     };
@@ -7813,6 +8069,7 @@ function renderLocker(anchor) {
     const removed = st.order.filter((k) => st.items[k]?.excluded);
     body.append(
       ...[
+      lkEngineChooser(anchor),
       h(
         "div",
         { class: "mdos-lk-edit" },
@@ -7838,6 +8095,7 @@ function renderLocker(anchor) {
               onchange: (e) => {
                 item.name = e.target.value.trim().slice(0, 40);
                 save();
+                bghPushSoon();
               },
             }),
             h("button", { type: "button", class: "mdos-snip-act", title: L.lk.up, "aria-label": L.lk.up, text: "↑", onclick: () => move(k, -1) }),
@@ -7898,7 +8156,7 @@ function renderLocker(anchor) {
         "label",
         { class: "mdos-cc-toggle" },
         h("span", { text: L.lk.auto }),
-        h("input", { type: "checkbox", role: "switch", checked: st.auto !== false, onchange: (e) => ((st.auto = e.target.checked), save()) }),
+        h("input", { type: "checkbox", role: "switch", checked: st.auto !== false, onchange: (e) => ((st.auto = e.target.checked), save(), bghPushSoon()) }),
       ),
       h(
         "label",

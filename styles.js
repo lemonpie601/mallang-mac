@@ -2586,6 +2586,48 @@ html.mdos [data-quick-connection-menu] ::-webkit-scrollbar-thumb {
   border-radius: 3px !important;
   background: color-mix(in srgb, var(--mp-ink) 22%, transparent) !important;
 }
+
+/* ── Extensions: who gathers (built in / the 확장 보관함 extension) ── */
+.mdos-lk-engine-box {
+  display: grid;
+  gap: 6px;
+  padding-bottom: 10px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--mdos-sep, rgba(127, 127, 127, 0.2));
+}
+.mdos-lk-engine-box h4 {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  opacity: 0.6;
+}
+.mdos-lk-engine {
+  width: 100%;
+  background: color-mix(in srgb, currentColor 9%, transparent);
+}
+.mdos-lk-engine .mdos-seg-btn {
+  min-height: 26px;
+}
+.mdos-lk-engine .mdos-seg-btn {
+  flex: 1 1 0;
+}
+.mdos-lk-engine .mdos-seg-btn.is-on {
+  background: color-mix(in srgb, currentColor 24%, transparent);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+  color: inherit;
+  font-weight: 650;
+}
+.mdos-lk-hint {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.45;
+  opacity: 0.7;
+}
+.mdos-lk-note .mdos-btn {
+  margin-left: 6px;
+  vertical-align: middle;
+}
 `,
   String.raw`/* ══════════════ touch.css ══════════════ */
 /* ──────────────────────────────────────────────────────────────
