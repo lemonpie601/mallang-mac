@@ -578,13 +578,7 @@ html.mdos-split #mdos-tctl {
 html.mdos-touch:is(:not(.mdos-touch-home), .mdos-touch-sheet) .chat-input-container {
   padding-bottom: max(44px, calc(env(safe-area-inset-bottom, 0px) + 22px)) !important;
 }
-/* Pinned composer buttons stay at the composer's top left; in a
-   conversation they move to the top right, where they don't cover the button
-   an extension keeps at the bottom left (a relationship tracker…). */
-[data-chat-mode="conversation"] .mdos-qp-chips {
-  left: auto !important;
-  right: 12px;
-}
+
 /* Phone composer: the bottom row stays one line — the model pill takes only
    the room that is left (the round buttons keep their 36px). */
 html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell:has(> textarea[data-chat-composer]) :is(> button, > div > button)[aria-haspopup="dialog"]:has(svg.lucide-link) {
