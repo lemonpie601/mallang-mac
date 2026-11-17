@@ -184,7 +184,7 @@ html.mdos-desktop-home [data-component="HomeBrowserHub.HomePage"] > div.relative
   align-items: center;
   gap: 7px;
   min-width: 0;
-  cursor: pointer;
+  cursor: var(--mdos-cur-ptr, pointer);
   -webkit-tap-highlight-color: transparent;
 }
 .mdos-launch .mdos-app-icon {
@@ -648,7 +648,7 @@ html.mdos-desktop.mdos-edit #mdos-widgets {
   font-size: 13px;
   font-weight: 600;
   color: var(--mdos-widget-ink-2);
-  cursor: pointer;
+  cursor: var(--mdos-cur-ptr, pointer);
 }
 
 /* Analog clock */
@@ -724,7 +724,7 @@ html.mdos-desktop.mdos-edit #mdos-widgets {
   color: #1d1d1f;
   background: rgba(235, 235, 240, 0.95);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-  cursor: default;
+  cursor: var(--mdos-cur, default);
 }
 .mdos-wg-remove {
   top: 6px;
@@ -795,7 +795,7 @@ html.mdos-desktop.mdos-edit #mdos-dock {
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  cursor: default;
+  cursor: var(--mdos-cur, default);
 }
 .mdos-gallery-item:focus-visible {
   outline: 2px solid var(--mdos-accent, #0a84ff);
@@ -824,7 +824,7 @@ html.mdos-desktop.mdos-edit #mdos-dock {
   padding: 6px 2px;
   border-radius: 10px;
   pointer-events: auto;
-  cursor: default;
+  cursor: var(--mdos-cur, default);
   user-select: none;
   outline: none;
 }
@@ -1028,7 +1028,7 @@ html.mdos-desktop-home.mdos-no-credits [data-component="HomeBrowserHub.HomePage"
   align-items: center;
   gap: 5px;
   min-width: 0;
-  cursor: pointer;
+  cursor: var(--mdos-cur-ptr, pointer);
 }
 .mdos-locker-ico {
   display: grid;

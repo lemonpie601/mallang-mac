@@ -144,7 +144,7 @@ html.mdos-touch:is(:not(.mdos-touch-home), .mdos-touch-sheet) #mdos-homebar {
   width: 150px;
   height: 22px;
   transform: translateX(-50%);
-  cursor: pointer;
+  cursor: var(--mdos-cur-ptr, pointer);
   touch-action: none;
   -webkit-tap-highlight-color: transparent;
 }
@@ -218,29 +218,35 @@ html.mdos-tablet aside[data-component="ChatSidebarPanel"] {
   box-shadow: 0 30px 80px -16px rgba(0, 0, 0, 0.55) !important;
 }
 
-/* Tablet in landscape: like an iPad home screen, widgets get their own column
-   on the left and the app grid fills the rest, inside a centred page, instead
-   of four huge square widgets and six far-apart icons across the whole width. */
+/* Tablet in landscape: a centred page with the widgets spread across the
+   whole width (six cells a row, filling gaps), the app grid below them. */
 @media (orientation: landscape) and (min-width: 1000px) {
   html.mdos-tablet {
     --mdos-sb-icon: 68px;
-    --mdos-sb-cols: 6;
-    --mdos-sb-wcols: 2;
+    --mdos-sb-cols: 8;
+    --mdos-sb-wcols: 6;
   }
   html.mdos-tablet.mdos-touch-home [data-component="HomeBrowserHub.HomePage"] > div.relative {
     padding-inline: max(32px, calc((100vw - 1180px) / 2)) !important;
   }
   html.mdos-tablet #mdos-sb {
-    grid-template-columns: minmax(300px, 340px) minmax(0, 1fr);
-    align-items: start;
-    gap: 40px;
+    gap: 32px;
     margin-bottom: 32px;
   }
-  html.mdos-tablet .mdos-sb-widgets:empty + .mdos-sb-apps {
-    grid-column: 1 / -1;
+  /* Fixed rows instead of aspect ratios, so a large widget spans two rows
+     and small ones fill the cells beside it. */
+  html.mdos-tablet .mdos-sb-widgets {
+    grid-auto-rows: 172px;
+    grid-auto-flow: row dense;
+  }
+  html.mdos-tablet #mdos-sb .mdos-wg {
+    aspect-ratio: auto;
+    height: auto;
+  }
+  html.mdos-tablet #mdos-sb .mdos-wg--l {
+    grid-row: span 2;
   }
   html.mdos-tablet .mdos-sb-apps {
-    align-content: start;
     gap: 28px 12px;
   }
   /* Panels get the width a two-column settings page needs. */

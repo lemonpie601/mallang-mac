@@ -182,7 +182,7 @@ html.mdos [data-mdos-win] .mari-shell-panel-edge::after {
   align-items: center;
   padding-left: 16px;
   box-sizing: border-box;
-  cursor: default;
+  cursor: var(--mdos-cur, default);
   user-select: none;
 }
 .mdos-titlebar--main {
@@ -202,7 +202,7 @@ html.mdos [data-mdos-win] .mari-shell-panel-edge::after {
   display: grid;
   place-items: center;
   box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.22);
-  cursor: default;
+  cursor: var(--mdos-cur, default);
 }
 .mdos-light--close {
   background: #ff5f57;
@@ -327,7 +327,7 @@ html.mdos-gesture iframe {
   pointer-events: none !important;
 }
 html[data-mdos-gesture="move"] * {
-  cursor: default !important;
+  cursor: var(--mdos-cur, default) !important;
 }
 
 #mdos-snap {
@@ -388,7 +388,7 @@ html.mdos-touch #mdos-menubar {
   border-radius: 6px;
   white-space: nowrap;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
-  cursor: default;
+  cursor: var(--mdos-cur, default);
 }
 .mdos-mb-item:hover,
 .mdos-mb-item.is-open {
@@ -447,7 +447,7 @@ html.mdos-touch #mdos-menubar {
   gap: 6px;
   padding: 4px 10px 4px 6px;
   border-radius: 5px;
-  cursor: default;
+  cursor: var(--mdos-cur, default);
 }
 .mdos-menu-item:hover:not(:disabled),
 .mdos-menu-item:focus-visible {
@@ -585,7 +585,7 @@ html.mdos-desktop.mdos-dock-autohide #mdos-dock:not(.is-peek) {
   transition:
     width 110ms ease-out,
     height 110ms ease-out;
-  cursor: default;
+  cursor: var(--mdos-cur, default);
   flex: none;
 }
 .mdos-dock-item .mdos-app-icon {
@@ -730,7 +730,7 @@ html.mdos-desktop.mdos-dock-autohide #mdos-dock:not(.is-peek) {
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  cursor: default;
+  cursor: var(--mdos-cur, default);
   animation: mdos-lp-in 320ms var(--mdos-ease) both;
   animation-delay: calc(var(--i) * 14ms);
 }
@@ -830,7 +830,7 @@ html.mdos-desktop.mdos-dock-autohide #mdos-dock:not(.is-peek) {
   aspect-ratio: 16 / 10;
   border-radius: 8px;
   box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.3);
-  cursor: default;
+  cursor: var(--mdos-cur, default);
 }
 .mdos-cc-swatch[aria-checked="true"] {
   outline: 2px solid var(--mdos-accent, var(--mdos-menu-hover));
@@ -851,7 +851,7 @@ html.mdos-desktop.mdos-dock-autohide #mdos-dock:not(.is-peek) {
   border-radius: 50%;
   background: var(--c);
   box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.25);
-  cursor: default;
+  cursor: var(--mdos-cur, default);
 }
 .mdos-cc-accent--app {
   background: conic-gradient(#ec4b97, #f29744, #36cdde, #ec4b97);
@@ -902,7 +902,7 @@ html.mdos-desktop.mdos-dock-autohide #mdos-dock:not(.is-peek) {
   font-size: 12px;
   font-weight: 500;
   background: rgba(255, 255, 255, 0.16);
-  cursor: default;
+  cursor: var(--mdos-cur, default);
 }
 .mdos-cc-btn:hover {
   background: rgba(255, 255, 255, 0.26);
@@ -1012,7 +1012,7 @@ html.mdos-desktop.mdos-dock-autohide #mdos-dock:not(.is-peek) {
   place-items: center;
   font-size: 16px;
   background: rgba(255, 255, 255, 0.12);
-  cursor: default;
+  cursor: var(--mdos-cur, default);
 }
 .mdos-pop-body {
   display: grid;
@@ -1067,7 +1067,7 @@ html.mdos-desktop.mdos-dock-autohide #mdos-dock:not(.is-peek) {
   font: 500 12px var(--mdos-font);
   color: #fff;
   background: rgba(255, 255, 255, 0.16);
-  cursor: default;
+  cursor: var(--mdos-cur, default);
 }
 .mdos-btn:hover {
   background: rgba(255, 255, 255, 0.26);
@@ -1104,7 +1104,7 @@ html.mdos-desktop.mdos-dock-autohide #mdos-dock:not(.is-peek) {
   border-radius: 6px;
   text-align: center;
   font-size: 12px;
-  cursor: default;
+  cursor: var(--mdos-cur, default);
 }
 .mdos-seg-btn[aria-checked="true"] {
   background: rgba(255, 255, 255, 0.22);
@@ -1119,7 +1119,7 @@ html.mdos-desktop.mdos-dock-autohide #mdos-dock:not(.is-peek) {
   height: 24px;
   border-radius: 50%;
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
-  cursor: default;
+  cursor: var(--mdos-cur, default);
 }
 .mdos-iconed-preview {
   display: flex;
@@ -1275,7 +1275,7 @@ html.mdos-classic #mdos-return {
   color: #fff;
   background: rgba(30, 30, 38, 0.82);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  cursor: pointer;
+  cursor: var(--mdos-cur-ptr, pointer);
   opacity: 0.55;
   transition: opacity 160ms ease;
 }
@@ -1404,7 +1404,7 @@ html.mdos-calm .mdos-wg {
   display: grid;
   place-items: center;
   color: var(--mdos-fg-2, #6e6e73);
-  cursor: default;
+  cursor: var(--mdos-cur, default);
 }
 .mdos-tool:hover {
   background: var(--mdos-fill, rgba(0, 0, 0, 0.05));
@@ -1492,7 +1492,7 @@ html.mdos-calm .mdos-wg {
   gap: 2px;
   padding: 8px 10px;
   border-radius: 8px;
-  cursor: default;
+  cursor: var(--mdos-cur, default);
 }
 .mdos-notes-item b {
   font-weight: 600;
@@ -1560,7 +1560,7 @@ html.mdos-calm .mdos-wg {
   gap: 7px;
   font-size: 12px;
   text-align: center;
-  cursor: pointer;
+  cursor: var(--mdos-cur-ptr, pointer);
 }
 .mdos-web-fav .mdos-app-icon {
   width: 56px;
@@ -1681,7 +1681,7 @@ html.mdos-desktop.mdos-edit[data-mdos-layout="grid"] #mdos-widgets {
   border-radius: 7px;
   font-size: 13px;
   font-weight: 500;
-  cursor: default;
+  cursor: var(--mdos-cur, default);
 }
 .mdos-set-nav-item .mdos-app-icon {
   width: 22px;
@@ -1762,7 +1762,7 @@ html.mdos-desktop.mdos-edit[data-mdos-layout="grid"] #mdos-widgets {
   border: 0;
   border-radius: 7px;
   background: none;
-  cursor: pointer;
+  cursor: var(--mdos-cur-ptr, pointer);
 }
 @container mdos-app (max-width: 560px) {
   .mdos-set {
@@ -1859,7 +1859,7 @@ html:not([data-theme="light"]) .mdos-appwin .mdos-cc-select option {
   all: unset;
   display: grid;
   gap: 4px;
-  cursor: pointer;
+  cursor: var(--mdos-cur-ptr, pointer);
   border-radius: 10px;
 }
 .mdos-yt-item img,
@@ -1971,4 +1971,22 @@ html:not([data-theme="light"]) .mdos-appwin .mdos-cc-select option {
 .mdos-reader-row {
   font-size: 13.5px;
   color: var(--mdos-fg-2);
+}
+
+/* ── Mouse pointer (Customize → Appearance) ──────────────────── */
+/* Set on <html> and inherited, so resize edges, grab handles and anything
+   else that asks for its own cursor keeps it. Links and buttons take the
+   pointer version; text fields keep the I-beam. */
+html.mdos-cursor,
+html.mdos-cursor body {
+  cursor: var(--mdos-cur);
+}
+html.mdos-cursor :is(a[href], button, [role="button"], [role="tab"], [role="menuitem"], [role="option"], [role="switch"], select, summary, label, .cursor-pointer, input:is([type="checkbox"], [type="radio"], [type="button"], [type="submit"], [type="color"], [type="file"])):not(:disabled) {
+  cursor: var(--mdos-cur-ptr) !important;
+}
+html.mdos-cursor :is(.cursor-default, :disabled) {
+  cursor: var(--mdos-cur) !important;
+}
+html.mdos-cursor :is(input:not([type="checkbox"], [type="radio"], [type="range"], [type="button"], [type="submit"], [type="color"], [type="file"]), textarea, [contenteditable="true"], [contenteditable=""]) {
+  cursor: text;
 }

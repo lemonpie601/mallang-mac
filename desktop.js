@@ -86,6 +86,12 @@ const L = KO
       iconShape: "아이콘 모양",
       iconStyles: { gradient: "그라데이션", glass: "유리", pastel: "파스텔", tinted: "틴트", dark: "다크" },
       iconShapes: { squircle: "둥근 사각", circle: "동그라미", rounded: "각진 사각" },
+      cursor: "마우스 포인터",
+      cursorSize: "포인터 크기",
+      cursors: { system: "시스템 기본", mac: "검은 화살표", white: "흰 화살표", accent: "강조색 화살표", dot: "동그라미", custom: "내 이미지" },
+      cursorSizes: { m: "보통", l: "크게", xl: "아주 크게" },
+      cursorImage: "포인터 이미지 올리기…",
+      cursorHint: "내 이미지는 배경이 투명한 PNG가 좋아요. 그림의 왼쪽 위 끝이 클릭하는 점이에요. 검은·흰 화살표는 링크와 버튼 위에서 손가락 모양으로 바뀌어요.",
       editIcons: "아이콘 편집…",
       editIcon: "아이콘 편집",
       editWidgets: "위젯 편집",
@@ -324,6 +330,12 @@ const L = KO
       iconShape: "Icon shape",
       iconStyles: { gradient: "Gradient", glass: "Glass", pastel: "Pastel", tinted: "Tinted", dark: "Dark" },
       iconShapes: { squircle: "Squircle", circle: "Circle", rounded: "Rounded" },
+      cursor: "Mouse pointer",
+      cursorSize: "Pointer size",
+      cursors: { system: "System", mac: "Black arrow", white: "White arrow", accent: "Accent arrow", dot: "Dot", custom: "My image" },
+      cursorSizes: { m: "Regular", l: "Large", xl: "Extra large" },
+      cursorImage: "Upload pointer image…",
+      cursorHint: "A PNG with a transparent background works best. The image's top-left corner is the click point. The black and white arrows turn into a hand over links and buttons.",
       editIcons: "Edit icons…",
       editIcon: "Edit icon",
       editWidgets: "Edit widgets",
@@ -729,6 +741,8 @@ const DEFAULTS = {
   windows: {},
   iconStyle: "gradient",
   iconShape: "squircle",
+  cursor: "system",
+  cursorSize: "m",
   icons: {},
   widgets: null,
   reduceTransparency: false,
@@ -764,6 +778,7 @@ state.icons = { ...(state.icons || {}) };
 const images = {
   wallpaper: "",
   chatBg: "",
+  cursor: "",
   icons: {},
   photos: {},
   ...(stored.desktopImages && typeof stored.desktopImages === "object" ? stored.desktopImages : {}),
@@ -4345,6 +4360,23 @@ function mountCustomize(win) {
           settingToggle("iconView", L.iconView),
           h("div", { class: "mdos-row" }, btn(L.editIcons, () => openIconPicker())),
         ),
+        group(
+          L.cursor,
+          row(L.cursor, settingSelect("cursor", Object.entries(L.cursors), () => show("appearance"))),
+          !["system", "custom"].includes(state.cursor) ? row(L.cursorSize, settingSelect("cursorSize", Object.entries(L.cursorSizes))) : null,
+          state.cursor === "custom"
+            ? h(
+                "div",
+                { class: "mdos-row" },
+                btn(L.cursorImage, () =>
+                  pickCursorImage((data) => {
+                    if (storeImage(() => (images.cursor = data))) applyCursor();
+                  }),
+                ),
+              )
+            : null,
+          hint(L.cursorHint),
+        ),
       ];
     },
     wallpaper: () => [group(L.wallpaper, wallpaperSwatches(), ...wallpaperImageControls())],
@@ -5020,6 +5052,71 @@ function applyAccent() {
   const color = accent.theme ? themePalette.accent || "#0a84ff" : accent.color;
   toggleClass("mdos-accent", !!color);
   setVar("--mdos-accent", color || "var(--primary)");
+  cursorAccent = color || "#0a84ff";
+  applyCursor();
+}
+// ── Mouse pointer ─────────────────────────────────────────────
+// Drawn as small SVGs (or the user's own PNG) and set on <html>, so every
+// element that doesn't ask for its own cursor (resize edges, grab handles,
+// text fields) shows it. Links and buttons get --mdos-cur-ptr.
+let cursorAccent = "#0a84ff";
+const CURSOR_PX = { m: 24, l: 34, xl: 48 };
+const ARROW_PATH = "M5 2.5v17.2l4.3-4.1 2.7 6.2 2.8-1.2-2.7-6.1h6z";
+function cursorCss(svg, px, hx, hy, fallback) {
+  const url = `data:image/svg+xml,${encodeURIComponent(svg.replace(/SIZE/g, px))}`;
+  return `url("${url}") ${Math.round(hx * px / 24)} ${Math.round(hy * px / 24)}, ${fallback}`;
+}
+function arrowSvg(fill, stroke) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="SIZE" height="SIZE" viewBox="0 0 24 24"><path d="${ARROW_PATH}" fill="${fill}" stroke="${stroke}" stroke-width="1.4" stroke-linejoin="round"/></svg>`;
+}
+function dotSvg(fill, r) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="SIZE" height="SIZE" viewBox="0 0 24 24"><circle cx="12" cy="12" r="${r}" fill="${fill}" stroke="#fff" stroke-opacity="0.9" stroke-width="1.2"/></svg>`;
+}
+function applyCursor() {
+  const kind = state.cursor || "system";
+  const px = CURSOR_PX[state.cursorSize] || 24;
+  const accent = /^#[0-9a-f]{3,8}$|^rgb/i.test(cursorAccent) ? cursorAccent : "#0a84ff";
+  let cur = "";
+  let ptr = "pointer";
+  if (kind === "mac") cur = cursorCss(arrowSvg("#000", "#fff"), px, 5, 2.5, "default");
+  else if (kind === "white") cur = cursorCss(arrowSvg("#fff", "#000"), px, 5, 2.5, "default");
+  else if (kind === "accent") cur = ptr = cursorCss(arrowSvg(accent, "#fff"), px, 5, 2.5, "default");
+  else if (kind === "dot") {
+    cur = cursorCss(dotSvg("rgba(60,60,67,0.5)", 7), px, 12, 12, "default");
+    ptr = cursorCss(dotSvg(accent, 9), px, 12, 12, "pointer");
+  } else if (kind === "custom" && images.cursor) cur = ptr = `url(${JSON.stringify(images.cursor)}) 0 0, default`;
+  toggleClass("mdos-cursor", !!cur && mode !== "off");
+  if (cur) {
+    setVar("--mdos-cur", cur);
+    setVar("--mdos-cur-ptr", ptr);
+  } else {
+    html.style.removeProperty("--mdos-cur");
+    html.style.removeProperty("--mdos-cur-ptr");
+  }
+}
+// The user's own pointer: a PNG (keeps transparency) no larger than 64 px.
+function pickCursorImage(onPicked) {
+  const input = h("input", { type: "file", accept: "image/*", hidden: true });
+  input.addEventListener("change", async () => {
+    const file = input.files?.[0];
+    input.remove();
+    if (!file) return;
+    try {
+      const bitmap = await createImageBitmap(file);
+      const scale = Math.min(1, 64 / Math.max(bitmap.width, bitmap.height));
+      const canvas = doc.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+      canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+      canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+      bitmap.close?.();
+      onPicked(canvas.toDataURL("image/png"));
+    } catch (error) {
+      marinara.log.warn("Pointer image failed", error);
+      window.alert(L.tooLarge);
+    }
+  });
+  doc.body.append(input);
+  input.click();
 }
 function applyWallpaper() {
   const image = images.wallpaper;
@@ -5186,6 +5283,7 @@ function applySettings() {
   toggleClass("mdos-calm", reducedMotion());
   html.dataset.mdosIconStyle = state.iconStyle;
   html.dataset.mdosIconShape = state.iconShape;
+  applyCursor();
   html.dataset.mdosRp = state.rpStyle;
   html.dataset.mdosConvo = state.convoStyle;
   if (!state.dockAutohide) dock.classList.remove("is-peek");
@@ -5227,6 +5325,7 @@ function refreshMode() {
   const prev = mode;
   mode = next;
   toggleClass("mdos", next !== "off");
+  applyCursor();
   toggleClass("mdos-desktop", next === "desktop");
   toggleClass("mdos-touch", next === "touch");
   if (prev === "desktop") {
