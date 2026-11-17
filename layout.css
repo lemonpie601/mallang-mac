@@ -192,8 +192,10 @@ html.mdos [data-mdos-win="panel"] {
 
 /* ── Character & persona libraries: icon grid ────────────────── */
 
-/* :has() is limited to the library's own list containers inside the panel. */
-html.mdos.mdos-icon-view [data-component="RightPanel"] :is(
+/* :has() is limited to the library's own list containers inside the panel.
+   Desktop windows only: the icon styling below needs the panel window, and on
+   a tablet the grid alone squeezed each full row (actions and all) into 92px. */
+html.mdos-desktop.mdos-icon-view [data-component="RightPanel"] :is(
     .flex-col:has(> [data-drag-kind="character"]),
     .flex-col:has(> [data-drag-kind="persona"])
   ) {

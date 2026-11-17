@@ -253,6 +253,34 @@ html.mdos-tablet aside[data-component="ChatSidebarPanel"] {
   }
 }
 
+/* Marinara's dimmed backdrop behind a sheet starts under its top bar. On our
+   home screen that bar is hidden, so the backdrop covers the whole screen
+   instead of leaving a sharp strip of home icons above it. */
+html.mdos-touch-home [class*="z-[45]"][class*="bg-black/50"] {
+  top: 0 !important;
+}
+/* Inside an app the status-bar strip above the top bar takes the bar's colour
+   instead of showing a band of wallpaper. */
+html.mdos-touch:not(.mdos-touch-home) body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  z-index: 40;
+  background: color-mix(in srgb, var(--mdos-win-bg) 86%, transparent);
+  pointer-events: none;
+}
+/* Floating tablet sheets sit clear of the screen edge, so Marinara's bottom
+   safe-area padding only showed as an empty band under the chat list. */
+html.mdos-tablet :is([data-component="RightPanelMobile"], aside[data-component="ChatSidebarPanel"]) {
+  padding-bottom: 0 !important;
+}
+/* iPad draws its own home indicator at the very bottom; ours sits above it
+   instead of on top of it. */
+html.mdos-tablet:is(:not(.mdos-touch-home), .mdos-touch-sheet) #mdos-homebar {
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 2px);
+}
+
 /* Phone: on the home screen Marinara's top bar is hidden, so sheets opened
    from it (settings, chat list, agents, editors) start at the very top like
    a full-screen app, instead of leaving a 3rem strip of empty home above. */
