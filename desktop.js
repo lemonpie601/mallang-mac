@@ -1198,6 +1198,11 @@ const wallpaper = h("div", { id: "mdos-wallpaper", "aria-hidden": "true" });
 const widgetLayer = h("div", { id: "mdos-widgets" });
 const snapPreview = h("div", { id: "mdos-snap", "aria-hidden": "true" });
 const hostRoot = $(SEL.root);
+// apps + touch CSS ship in styles.js (Marinara caps extension CSS at 256 KiB);
+// they go after the manifest CSS, as the last two stylesheets did.
+const lateCss = h("style", { id: "mdos-late-css", "data-exd": "" });
+lateCss.textContent = typeof MDOS_LATE_CSS === "string" ? MDOS_LATE_CSS : "";
+doc.head.append(lateCss);
 doc.body.prepend(wallpaper);
 // The widget layer sits before #root so Marinara's windows paint above it.
 if (hostRoot?.parentNode) hostRoot.parentNode.insertBefore(widgetLayer, hostRoot);
@@ -3321,7 +3326,9 @@ function scrapeLedger(card) {
 // missing balance line, an empty sub-amount), on its own cards. Those cells
 // are hidden — tagged, not removed, so its own rendering is untouched. A small
 // observer catches its re-renders between our 2.5 s reads.
-const NULL_TEXT = /^\s*(?:null|undefined|NaN)\s*$/i;
+// Also runs of them: the credit extension joins two empty parts of a card into
+// one "nullnull" text (`${extra}${googleHelperStatusHTML(w)}`).
+const NULL_TEXT = /^\s*(?:(?:null|undefined|NaN)\s*)+$/i;
 const nullWatched = new WeakSet();
 const nullObservers = new Set();
 function hideNullCells(root) {
@@ -6094,6 +6101,9 @@ function syncBody() {
   toggleClass("mdos-hub-app", hubApp);
   refreshLocker();
   tintHubApp(hubApp);
+  // Hide the credit extension's "null" text as soon as its board appears.
+  const creditHome = $once("#mac-credit-home");
+  if (creditHome && !nullWatched.has(creditHome)) watchCreditNulls(creditHome);
   if (onHome && performance.now() - lastCreditScrape > 2500) {
     lastCreditScrape = performance.now();
     scrapeCredits();
@@ -8403,6 +8413,7 @@ return () => {
   wallpaper.remove();
   widgetLayer.remove();
   returnPill.remove();
+  lateCss.remove();
   for (const cls of [...html.classList]) if (cls.startsWith("mdos")) html.classList.remove(cls);
   for (const key of Object.keys(html.dataset)) if (key.startsWith("mdos")) delete html.dataset[key];
   for (const name of [...html.style]) if (name.startsWith("--mdos-")) html.style.removeProperty(name);

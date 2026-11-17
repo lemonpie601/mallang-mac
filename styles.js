@@ -1,3 +1,15 @@
+// Marinara Desktop — the last two stylesheets (apps, touch).
+//
+// Marinara caps an extension's CSS at 256 KiB: the manifest's cssPath files
+// are joined and checked on import ("Validation Error" past the cap). These
+// two stylesheets therefore ship inside this script. manifest.json lists it
+// first in jsPaths, so MDOS_LATE_CSS is defined before desktop.js runs, and
+// desktop.js puts it in a <style> after the manifest CSS, keeping the old
+// order (desktop, theme, layout, home, then apps, touch).
+// Edit the CSS here as plain CSS: it is a String.raw template, so it must not
+// contain a backtick or a dollar sign followed by a brace.
+const MDOS_LATE_CSS = [
+  String.raw`/* ══════════════ apps.css ══════════════ */
 /* ──────────────────────────────────────────────────────────────
    Marinara Desktop — chat screens modelled on desktop apps.
 
@@ -2485,3 +2497,591 @@ html.mdos [data-quick-connection-menu] [data-switcher-star][aria-pressed="true"]
 html.mdos:not(.mdos-touch) [data-quick-connection-menu] .mari-connection-model:not(:hover):not(:focus-within) :is([data-switcher-settings], [data-switcher-star]:not([aria-pressed="true"])) {
   opacity: 0;
 }
+`,
+  String.raw`/* ══════════════ touch.css ══════════════ */
+/* ──────────────────────────────────────────────────────────────
+   Marinara Desktop — phones and touch tablets.
+
+   Marinara already shows one thing at a time on touch screens (full-
+   screen sheets). We turn its Home into a phone-style home screen:
+   widgets and an app grid over the wallpaper (#mdos-sb), a floating
+   Dock, and a home indicator bar in every app to get back.
+
+   html.mdos-touch       — phone or touch tablet
+   html.mdos-tablet      — touch screen at least 700 px wide
+   html.mdos-touch-home  — the home screen is showing (no sheet open)
+   ────────────────────────────────────────────────────────────── */
+
+html.mdos-touch {
+  --mdos-sb-icon: 60px;
+  --mdos-sb-cols: 4;
+  --mdos-sb-wcols: 2;
+}
+html.mdos-tablet {
+  --mdos-sb-icon: 72px;
+  --mdos-sb-cols: 6;
+  --mdos-sb-wcols: 4;
+}
+
+/* ── Home screen ─────────────────────────────────────────────── */
+
+/* The wallpaper is painted on Marinara's own centre area as well as on our
+   layer underneath: on iPad a theme or shell layer between them hid it, so
+   picking a wallpaper seemed to do nothing. */
+html.mdos-touch-home [data-component="CenterContent"] {
+  background: var(--mdos-wallpaper) !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+html.mdos-touch-home [data-component="CenterContent"] .mari-app-background-paint,
+html.mdos-touch-home :is([data-component="HomeBrowserHub"], [data-component="HomeBrowserHub"] > div, [data-component="HomeBrowserHub.Content"], [data-component="HomeBrowserHub.HomePage"]) {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+html.mdos-touch-home [data-component="TopBar"],
+html.mdos-touch-home .mari-home-browser-starfield,
+html.mdos-touch-home .mari-seasonal-home,
+html.mdos-touch-home .mari-home-browser-chrome,
+html.mdos-touch-home .mari-home-hero > .max-w-5xl > div:first-child {
+  display: none !important;
+}
+html.mdos-touch-home [data-component="HomeBrowserHub.HomePage"] > div.relative {
+  padding: calc(env(safe-area-inset-top, 0px) + 16px) 18px calc(var(--mdos-sb-icon) + 70px) !important;
+}
+
+#mdos-sb {
+  display: grid;
+  gap: 26px;
+  margin-bottom: 26px;
+  font-family: var(--mdos-font);
+}
+.mdos-sb-widgets {
+  display: grid;
+  grid-template-columns: repeat(var(--mdos-sb-wcols), minmax(0, 1fr));
+  gap: 16px;
+}
+.mdos-sb-widgets:empty {
+  display: none;
+}
+#mdos-sb .mdos-wg {
+  position: relative;
+  width: auto;
+  height: auto;
+  aspect-ratio: 1;
+}
+#mdos-sb .mdos-wg--m {
+  grid-column: span 2;
+  aspect-ratio: 2.1;
+}
+#mdos-sb .mdos-wg--l {
+  grid-column: span 2;
+  aspect-ratio: 1;
+}
+#mdos-sb .mdos-wg-time {
+  font-size: clamp(30px, 9vw, 46px);
+}
+.mdos-sb-apps {
+  display: grid;
+  grid-template-columns: repeat(var(--mdos-sb-cols), minmax(0, 1fr));
+  gap: 22px 8px;
+}
+.mdos-sb-apps .mdos-lp-app {
+  gap: 6px;
+  animation: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.mdos-sb-apps .mdos-app-icon {
+  width: var(--mdos-sb-icon);
+  height: var(--mdos-sb-icon);
+}
+.mdos-sb-apps .mdos-lp-app:active .mdos-app-icon {
+  filter: brightness(0.75);
+  transform: scale(0.94);
+}
+.mdos-sb-apps .mdos-lp-label {
+  font-size: 11.5px;
+  max-width: calc(var(--mdos-sb-icon) + 18px);
+  color: var(--mdos-widget-ink, #fff);
+}
+
+/* The New chat launcher and the credit cards share the desktop widget design
+   (home.css); on a phone they simply stack under the app grid. */
+html.mdos-touch-home [data-component="HomeBrowserHub.HomePage"] > div.relative > :is(.mari-home-hero, #mac-credit-home) {
+  margin-bottom: 18px !important;
+}
+
+/* ── Dock (home screen only) ─────────────────────────────────── */
+
+html.mdos-touch #mdos-dock {
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 10px);
+  transform: translate(-50%, calc(100% + 40px));
+  transition: transform 300ms var(--mdos-ease);
+}
+html.mdos-touch.mdos-touch-home:not(.mdos-touch-sheet, .mdos-touch-app) #mdos-dock {
+  transform: translateX(-50%);
+}
+html.mdos-touch #mdos-dock .mdos-dock-item:not([data-touch="1"]),
+html.mdos-touch #mdos-dock .mdos-dock-sep,
+html.mdos-touch #mdos-dock .mdos-dock-label,
+html.mdos-touch #mdos-dock .mdos-dock-dot {
+  display: none !important;
+}
+html.mdos-touch .mdos-dock-inner {
+  gap: 18px;
+  height: auto;
+  padding: 12px 16px;
+  border-radius: 30px;
+}
+html.mdos-touch .mdos-dock-item {
+  width: var(--mdos-sb-icon) !important;
+  height: var(--mdos-sb-icon) !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── Home indicator (inside apps) ────────────────────────────── */
+
+html.mdos-touch:is(:not(.mdos-touch-home), .mdos-touch-sheet, .mdos-touch-app) #mdos-homebar {
+  all: unset;
+  display: block;
+  position: fixed;
+  left: 50%;
+  bottom: max(2px, calc(env(safe-area-inset-bottom, 0px) - 14px));
+  /* Above app agents' own full-screen layers too, or it can't be tapped. */
+  z-index: 2147483000;
+  width: 150px;
+  height: 22px;
+  transform: translateX(-50%);
+  cursor: var(--mdos-cur-ptr, pointer);
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+#mdos-homebar::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: 50%;
+  height: 5px;
+  margin-top: -2.5px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--foreground) 55%, transparent);
+}
+/* Leave room so the indicator never sits on the message box. */
+/* The composer stays clear of the home indicator below it, so a tap on the
+   composer's bottom row never lands on the indicator. */
+html.mdos-touch:is(:not(.mdos-touch-home), .mdos-touch-sheet) .chat-input-container {
+  padding-bottom: max(26px, calc(env(safe-area-inset-bottom, 0px) + 10px)) !important;
+}
+
+/* ── Apps as phone apps ──────────────────────────────────────── */
+
+html.mdos-touch :is([data-component="RightPanelMobile"], aside[data-component="ChatSidebarPanel"]) {
+  background: var(--mdos-win-bg) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+/* Large titles, like phone apps. */
+html.mdos-touch :is(.mari-right-panel-header, .mari-sidebar-header) {
+  height: 64px !important;
+  align-items: flex-end !important;
+  padding-bottom: 8px !important;
+}
+html.mdos-touch :is(.mari-right-panel-header, .mari-sidebar-header) h2 {
+  font-size: 28px !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em;
+  color: var(--mdos-fg) !important;
+}
+html.mdos-touch :is(.mari-right-panel-header, .mari-sidebar-header) :is([class*="#4de5dd"], [data-component="RightPanelHeaderIcon"]) {
+  display: none !important;
+}
+html.mdos-touch :is(.mari-right-panel-header, .mari-sidebar-header) > .absolute.bottom-0 {
+  display: none !important;
+}
+/* Rows get the comfortable height of a phone list. */
+html.mdos-touch [data-drag-kind="chat"] {
+  min-height: 58px;
+  border-radius: 12px !important;
+}
+html.mdos-touch [data-component="TopBar"] {
+  background: color-mix(in srgb, var(--mdos-win-bg) 86%, transparent) !important;
+  backdrop-filter: blur(18px) saturate(170%);
+  -webkit-backdrop-filter: blur(18px) saturate(170%);
+  box-shadow: inset 0 -0.5px 0 var(--mdos-sep);
+}
+
+/* Tablet: apps open as floating sheets instead of covering the screen. */
+html.mdos-tablet [data-component="RightPanelMobile"] {
+  inset: 36px max(36px, calc((100vw - 720px) / 2)) 36px !important;
+  width: auto !important;
+  border-radius: 20px !important;
+  overflow: hidden !important;
+  box-shadow: 0 30px 80px -16px rgba(0, 0, 0, 0.55) !important;
+  --mari-right-panel-width: min(720px, calc(100vw - 72px)) !important;
+}
+html.mdos-tablet aside[data-component="ChatSidebarPanel"] {
+  inset: 24px auto 24px 24px !important;
+  width: min(400px, calc(100vw - 48px)) !important;
+  border-radius: 20px !important;
+  overflow: hidden !important;
+  box-shadow: 0 30px 80px -16px rgba(0, 0, 0, 0.55) !important;
+}
+
+/* Tablet in landscape: a centred page with the widgets spread across the
+   whole width (six cells a row, filling gaps), the app grid below them. */
+@media (orientation: landscape) and (min-width: 1000px) {
+  html.mdos-tablet {
+    --mdos-sb-icon: 68px;
+    --mdos-sb-cols: 8;
+    --mdos-sb-wcols: 6;
+  }
+  html.mdos-tablet.mdos-touch-home [data-component="HomeBrowserHub.HomePage"] > div.relative {
+    padding-inline: max(32px, calc((100vw - 1180px) / 2)) !important;
+  }
+  html.mdos-tablet #mdos-sb {
+    gap: 32px;
+    margin-bottom: 32px;
+  }
+  /* Fixed rows instead of aspect ratios, so a large widget spans two rows
+     and small ones fill the cells beside it. */
+  html.mdos-tablet .mdos-sb-widgets {
+    grid-auto-rows: 172px;
+    grid-auto-flow: row dense;
+  }
+  html.mdos-tablet #mdos-sb .mdos-wg {
+    aspect-ratio: auto;
+    height: auto;
+  }
+  html.mdos-tablet #mdos-sb .mdos-wg--l {
+    grid-row: span 2;
+  }
+  html.mdos-tablet .mdos-sb-apps {
+    gap: 28px 12px;
+  }
+  /* Panels get the width a two-column settings page needs. */
+  html.mdos-tablet [data-component="RightPanelMobile"] {
+    inset: 28px max(36px, calc((100vw - 900px) / 2)) 28px !important;
+    --mari-right-panel-width: min(900px, calc(100vw - 72px)) !important;
+  }
+  html.mdos-tablet aside[data-component="ChatSidebarPanel"] {
+    inset: 20px auto 20px 20px !important;
+  }
+}
+
+/* Marinara's dimmed backdrop behind a sheet starts under its top bar. On our
+   home screen that bar is hidden, so the backdrop covers the whole screen
+   instead of leaving a sharp strip of home icons above it. */
+html.mdos-touch [class*="z-[45]"][class*="bg-black/50"] {
+  top: 0 !important;
+}
+/* Inside an app the status-bar strip above the top bar takes the bar's colour
+   instead of showing a band of wallpaper. */
+html.mdos-touch:not(.mdos-touch-home) body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  z-index: 40;
+  background: var(--background, var(--mdos-win-bg));
+  pointer-events: none;
+}
+/* Floating tablet sheets sit clear of the screen edge, so Marinara's bottom
+   safe-area padding only showed as an empty band under the chat list. */
+html.mdos-tablet :is([data-component="RightPanelMobile"], aside[data-component="ChatSidebarPanel"]) {
+  padding-bottom: 0 !important;
+}
+/* iPad draws its own home indicator at the very bottom; ours sits above it
+   instead of on top of it. */
+html.mdos-tablet:is(:not(.mdos-touch-home), .mdos-touch-sheet, .mdos-touch-app) #mdos-homebar {
+  bottom: 2px;
+  height: 16px;
+  width: 120px;
+}
+
+/* Phone: on the home screen Marinara's top bar is hidden, so sheets opened
+   from it (settings, chat list, agents, editors) start at the very top like
+   a full-screen app, instead of leaving a 3rem strip of empty home above. */
+html.mdos-touch:not(.mdos-tablet) :is([data-component="RightPanelMobile"], aside[data-component="ChatSidebarPanel"], [data-component="MobileDetailSheet"]) {
+  top: env(safe-area-inset-top, 0px) !important;
+}
+
+/* ── Overlays on touch screens ───────────────────────────────── */
+
+html.mdos-touch #mdos-launchpad {
+  padding: calc(env(safe-area-inset-top, 0px) + 28px) 18px 40px;
+}
+html.mdos-touch .mdos-lp-grid {
+  margin-top: 28px;
+  grid-template-columns: repeat(var(--mdos-sb-cols), minmax(0, 1fr));
+  gap: 22px 8px;
+}
+html.mdos-touch .mdos-lp-app .mdos-app-icon {
+  width: var(--mdos-sb-icon);
+  height: var(--mdos-sb-icon);
+}
+html.mdos-touch .mdos-lp-label {
+  font-size: 11.5px;
+  max-width: calc(var(--mdos-sb-icon) + 18px);
+}
+html.mdos-touch #mdos-cc {
+  top: auto;
+  left: 8px;
+  right: 8px;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
+  width: auto;
+  max-height: 82vh;
+  border-radius: 24px;
+  transform: translateY(20px);
+}
+html.mdos-tablet #mdos-cc {
+  left: auto;
+  width: 380px;
+}
+html.mdos-touch #mdos-cc.is-open {
+  transform: none;
+}
+.mdos-cc-done {
+  width: 100%;
+  height: 38px !important;
+  background: var(--mdos-accent, #0a84ff) !important;
+  font-size: 14px !important;
+}
+html.mdos-touch.mdos-edit #mdos-editbar {
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
+}
+html.mdos-touch .mdos-pop {
+  width: min(360px, calc(100vw - 24px));
+}
+
+/* ── Small apps full-screen on touch screens ─────────────────── */
+
+html.mdos-touch .mdos-appwin {
+  left: 0 !important;
+  top: 0 !important;
+  width: 100vw !important;
+  height: 100% !important;
+  translate: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  z-index: 60 !important;
+  padding-top: env(safe-area-inset-top, 0px);
+  box-sizing: border-box;
+}
+html.mdos-tablet .mdos-appwin {
+  left: max(24px, calc((100vw - 900px) / 2)) !important;
+  top: 24px !important;
+  width: min(900px, calc(100vw - 48px)) !important;
+  height: calc(100% - 48px) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 30px 80px -16px rgba(0, 0, 0, 0.55) !important;
+  padding-top: 0;
+}
+html.mdos-touch .mdos-appwin .mdos-grip {
+  display: none;
+}
+html.mdos-touch .mdos-appwin-bar {
+  height: 52px;
+}
+html.mdos-touch .mdos-appwin-body {
+  padding-bottom: 22px;
+}
+html.mdos-touch .mdos-light {
+  width: 16px;
+  height: 16px;
+}
+html.mdos-touch .mdos-appwin .mdos-light--zoom {
+  display: none;
+}
+
+/* ── Home screen editing ─────────────────────────────────────── */
+
+.mdos-sb-cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.mdos-sb-cell .mdos-wg-badge {
+  top: -6px;
+  left: calc(50% - var(--mdos-sb-icon) / 2 - 8px);
+}
+html.mdos-edit .mdos-sb-cell .mdos-wg-badge {
+  display: grid;
+}
+html.mdos-edit .mdos-sb-cell .mdos-app-icon {
+  animation: mdos-jiggle 0.3s ease-in-out infinite alternate;
+}
+html.mdos-edit .mdos-sb-cell:nth-child(2n) .mdos-app-icon {
+  animation-delay: -0.15s;
+}
+.mdos-sb-move {
+  display: none;
+  gap: 4px;
+}
+html.mdos-edit .mdos-sb-move {
+  display: flex;
+}
+.mdos-sb-move button {
+  all: unset;
+  width: 26px;
+  height: 22px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  font-size: 10px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.32);
+}
+html.mdos-touch.mdos-edit #mdos-editbar {
+  flex-wrap: wrap;
+  justify-content: center;
+  width: calc(100vw - 24px);
+  box-sizing: border-box;
+}
+
+/* ── Tablet split view (desktop.js: mdos-split) ──────────────── */
+/* A chat open with its list: the list is docked on the left, full height,
+   no dimming or floating card; the chat moves over to make room. The top
+   bar's chat button folds the list away (the chat then fills the screen). */
+@media (min-width: 1000px) {
+  html.mdos-tablet.mdos-split aside[data-component="ChatSidebarPanel"] {
+    inset: 0 auto 0 0 !important;
+    width: 360px !important;
+    padding-top: env(safe-area-inset-top, 0px);
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    border-right: 1px solid color-mix(in srgb, var(--mdos-fg, #000) 12%, transparent) !important;
+    transform: none !important;
+  }
+  html.mdos-split [class*="z-[45]"][class*="bg-black/50"] {
+    display: none !important;
+  }
+  html.mdos-split [data-component="CenterContent"] {
+    margin-left: 360px !important;
+  }
+  html.mdos-split #mdos-homebar {
+    margin-left: 180px;
+  }
+}
+
+/* ── No top bar on phones and tablets ────────────────────────── */
+/* Marinara's top bar (home, chats, panel buttons) is hidden, like the
+   desktop's; its buttons stay in the page for this extension to press.
+   Sheets that started below it start at the top. */
+html.mdos-touch {
+  --mari-topbar-height: 0px;
+}
+html.mdos-touch [data-component="TopBar"] {
+  display: none !important;
+}
+#mdos-tctl {
+  display: none;
+}
+html.mdos-touch:not(.mdos-touch-home):not(.mdos-touch-app):not(.mdos-touch-panel) #mdos-tctl {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 10px);
+  left: 12px;
+  z-index: 60;
+  display: flex;
+  gap: 8px;
+  transition: left 200ms var(--mdos-ease);
+}
+/* A full-screen list on a phone covers the chat: no buttons over it. */
+html.mdos-touch.mdos-touch-sheet:not(.mdos-split) #mdos-tctl {
+  display: none !important;
+}
+html.mdos-split #mdos-tctl {
+  left: 372px !important;
+}
+.mdos-tctl-btn {
+  all: unset;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  color: var(--foreground, var(--mdos-fg));
+  background: color-mix(in srgb, var(--background, #fff) 72%, transparent);
+  backdrop-filter: blur(16px) saturate(170%);
+  -webkit-backdrop-filter: blur(16px) saturate(170%);
+  box-shadow:
+    0 2px 10px -3px rgba(0, 0, 0, 0.25),
+    inset 0 0 0 0.5px color-mix(in srgb, var(--foreground, #000) 16%, transparent);
+  -webkit-tap-highlight-color: transparent;
+  cursor: var(--mdos-cur-ptr, pointer);
+}
+.mdos-tctl-btn:active {
+  transform: scale(0.92);
+}
+.mdos-tctl-btn svg {
+  width: 19px;
+  height: 19px;
+}
+/* The menu sheet: the panels as app icons. */
+.mdos-tmenu {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  gap: 18px 6px;
+  padding: 4px 0 6px;
+}
+.mdos-tmenu .mdos-lp-app {
+  --mdos-badge-icon: 58px;
+  gap: 6px;
+  animation: none;
+}
+.mdos-tmenu .mdos-app-icon {
+  width: 58px !important;
+  height: 58px !important;
+}
+.mdos-tmenu .mdos-lp-label {
+  font-size: 11.5px;
+  color: inherit;
+}
+/* Phone sheets now start right under the status bar; the chat list's own
+   header no longer shares that row with a top bar. */
+html.mdos-touch:not(.mdos-tablet) :is(.mari-right-panel-header, .mari-sidebar-header) {
+  padding-top: 4px;
+}
+
+/* ══ Phones & tablets, round 2 ═════════════════════════════════ */
+/* Chat apps are separate apps: the list doesn't switch between them (the
+   menu sheet and the home screen do). */
+html.mdos-touch .mari-chat-sidebar .mari-chrome-segmented:has(> [data-chat-mode-tab]) {
+  display: none !important;
+}
+/* The list / menu buttons stay at the top left, where they are easy to find;
+   desktop.js moves them down below a button an extension floats in that
+   corner (a relationship tracker…) so it stays seen (--mdos-tctl-top). */
+html.mdos-touch:not(.mdos-touch-home):not(.mdos-touch-app):not(.mdos-touch-panel) #mdos-tctl {
+  top: var(--mdos-tctl-top, calc(env(safe-area-inset-top, 0px) + 10px)) !important;
+  transition: top 200ms var(--mdos-ease), left 200ms var(--mdos-ease);
+}
+
+/* Phone composer: the bottom row stays one line — the model pill takes only
+   the room that is left (the round buttons keep their 36px). */
+html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell:has(> textarea[data-chat-composer]) :is(> button, > div > button)[aria-haspopup="dialog"]:has(svg.lucide-link) {
+  flex: 1 1 56px !important;
+  min-width: 0 !important;
+}
+html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:not(:last-child):has(> button[aria-haspopup="dialog"]) {
+  flex: 1 1 56px !important;
+  min-width: 0 !important;
+}
+
+/* Phone conversation composer: like the roleplay one — edge to edge, round
+   top corners only, resting on the bottom with room for the home indicator. */
+html.mdos-touch:not(.mdos-tablet) [data-chat-mode="conversation"] :is(.mari-chat-input, .chat-input-container) {
+  padding: 0 !important;
+}
+html.mdos-touch:not(.mdos-tablet) [data-chat-mode="conversation"] .marinara-chat-input-shell:has(> textarea[data-chat-composer]) {
+  margin: 0 !important;
+  border-radius: 24px 24px 0 0 !important;
+  border-width: 1px 0 0 !important;
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px) !important;
+  box-shadow: 0 -6px 20px -14px rgba(0, 0, 0, 0.35) !important;
+}
+`,
+].join("\n");
