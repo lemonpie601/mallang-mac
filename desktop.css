@@ -2135,3 +2135,69 @@ html.mdos-pane-ready .mdos-pane-toggle svg {
 html.mdos-pane [data-mdos-win="main"] .mdos-titlebar--main {
   padding-left: 4px;
 }
+
+/* ── Chat apps: title, list name, "pick a chat" ─────────────── */
+
+/* The chat's name, centred in the chat window's title strip. */
+.mdos-chat-title {
+  display: none;
+}
+html.mdos-desktop .mdos-chat-title {
+  position: absolute;
+  top: 0;
+  left: 96px;
+  right: 96px;
+  height: var(--mdos-topbar-h, 44px);
+  z-index: 39;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 600 13px/1 var(--mdos-font);
+  letter-spacing: -0.005em;
+  color: var(--foreground, var(--mdos-fg));
+  opacity: 0.88;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+html.mdos-in-rp:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mdos-chat-title {
+  color: var(--mdos-ink);
+}
+html.mdos-chat-other .mdos-chat-title {
+  display: none;
+}
+
+/* The list's title names the app it shows (Conversation / Roleplay / Game). */
+html.mdos-desktop [data-mdos-win="chats"] .mari-sidebar-header h2[data-mdos-title]:not([data-mdos-title=""]) {
+  font-size: 0 !important;
+}
+html.mdos-desktop [data-mdos-win="chats"] .mari-sidebar-header h2[data-mdos-title]:not([data-mdos-title=""])::before {
+  content: attr(data-mdos-title);
+  font: 700 13px/1 var(--mdos-font);
+  color: var(--foreground, var(--mdos-fg));
+}
+
+/* A chat of another app behind the list: an empty view until one is picked. */
+.mdos-pickchat {
+  position: absolute;
+  inset: 0;
+  z-index: 38;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: var(--marinara-page-background, var(--background, var(--mdos-win-bg, #fff)));
+  color: var(--mdos-fg-2, var(--muted-foreground));
+  font: 500 14px/1.4 var(--mdos-font);
+}
+.mdos-pickchat-icon .mdos-app-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 15px;
+  opacity: 0.9;
+}
+.mdos-pickchat p {
+  margin: 0;
+}

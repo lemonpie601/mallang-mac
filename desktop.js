@@ -326,6 +326,7 @@ const L = KO
         needText: "제목이나 내용을 적어 주세요",
       },
       messengerPane: "메신저 한 창 (목록을 대화 창에 붙이기)",
+      pickChat: "목록에서 채팅을 골라 주세요",
       toggleList: "채팅 목록 접기/펼치기",
       menu: "메뉴",
       focusMode: "집중 모드",
@@ -652,6 +653,7 @@ const L = KO
         needText: "Add a title or some text",
       },
       messengerPane: "One messenger window (list attached to the chat)",
+      pickChat: "Pick a chat from the list",
       toggleList: "Show/hide the chat list",
       menu: "Menu",
       focusMode: "Focus mode",
@@ -1001,6 +1003,16 @@ if (!state.mainFitWidgets) {
   if (state.windows && !state.windows.main?.snap) delete state.windows.main;
   state.mainFitWidgets = true;
 }
+// 2.18: the saved chat window no longer includes the joined list (the list is
+// added on its left); take the list's width off a size saved with it once.
+if (!state.paneChatOnly) {
+  const m = state.windows?.main;
+  const lw = Math.min(Math.max(state.listW || 320, 240), 480);
+  if (state.messengerPane !== false && m && !m.snap && Number.isFinite(m.w) && m.w - lw >= 520) {
+    state.windows.main = { ...m, x: m.x + lw, w: m.w - lw };
+  }
+  state.paneChatOnly = true;
+}
 for (const key of ["apps", "bookmarks", "sbOrder", "sbHidden", "readerHosts"]) if (!Array.isArray(state[key])) state[key] = [];
 state.chat = { convo: { ...(state.chat?.convo || {}) }, rp: { ...(state.chat?.rp || {}) } };
 state.yt = { mode: "link", apiKey: "", ...(state.yt || {}) };
@@ -1342,9 +1354,25 @@ const paneOn = () => isDesktop() && state.messengerPane !== false && chatsOpen()
 function listWidth(frame) {
   return Math.round(Math.min(Math.max(state.listW || 320, LIST_MIN), LIST_MAX, frame.w - MIN_W));
 }
+// The main window's saved rect is the chat alone; the open list is added on
+// its left (the chat keeps its width), shifted / trimmed only to fit the screen.
+// Snapped windows keep their screen area and the list shares it.
+function paneFrame() {
+  const f = baseRect("main");
+  if (savedRect("main")?.snap) return f;
+  const lw = Math.round(Math.min(Math.max(state.listW || 320, LIST_MIN), LIST_MAX));
+  const x = Math.max(8, f.x - lw);
+  const w = Math.max(LIST_MIN + MIN_W, Math.min(f.w + lw, innerWidth - 8 - x));
+  return { x, y: f.y, w, h: f.h };
+}
+// A frame rect (list + chat) back to the chat-only rect that is saved.
+function chatPart(r) {
+  const lw = listWidth(r);
+  return { ...r, x: r.x + lw, w: r.w - lw };
+}
 function rectOf(id) {
   if ((id === "chats" || id === "main") && paneOn()) {
-    const f = baseRect("main");
+    const f = paneFrame();
     const lw = listWidth(f);
     return id === "chats" ? { x: f.x, y: f.y, w: lw, h: f.h } : { x: f.x + lw, y: f.y, w: f.w - lw, h: f.h };
   }
@@ -1667,14 +1695,16 @@ function startGesture(event, id, gmode) {
     frame = true;
   }
   const saved = savedRect(id);
-  let start = frame ? baseRect("main") : rectOf(id);
+  let start = frame ? paneFrame() : rectOf(id);
   if (gmode === "move" && saved?.snap) {
     // Pull a snapped window off the edge at its remembered size, under the pointer.
     const restore = clampRect(validRect(saved) ? saved : defaultRect(id));
     const ratio = (event.clientX - start.x) / start.w;
     start = { ...restore, x: event.clientX - restore.w * ratio, y: start.y };
     writeRect(id, { ...start, snap: null });
+    if (frame) start = paneFrame();
     applyRect(id);
+    if (frame) applyRect("chats");
   }
   gesture = { kind: "window", id, frame, mode: gmode, sx: event.clientX, sy: event.clientY, start, rect: start, moved: false, snap: null };
   html.classList.add("mdos-gesture");
@@ -1757,7 +1787,7 @@ function applyGestureFrame() {
     }
   }
   g.rect = clampRect({ x, y, w: g.frame ? Math.max(w, LIST_MIN + MIN_W) : w, h: hh });
-  writeRect(g.id, { ...g.rect, snap: null });
+  writeRect(g.id, { ...(g.frame ? chatPart(g.rect) : g.rect), snap: null });
   applyRect(g.id);
   if (g.frame) applyRect("chats");
 }
@@ -1808,11 +1838,12 @@ function onPointerUp() {
     return;
   }
   if (g.mode === "move") {
+    const own = (r) => (g.frame ? chatPart(r) : r);
     if (g.moved && g.snap) {
-      writeRect(g.id, { ...g.start, snap: g.snap });
+      writeRect(g.id, { ...own(g.start), snap: g.snap });
       animateGeometry();
     } else if (g.moved) {
-      writeRect(g.id, clampRect({ ...g.start, x: g.start.x + g.dx, y: g.start.y + g.dy }));
+      writeRect(g.id, clampRect(own({ ...g.start, x: g.start.x + g.dx, y: g.start.y + g.dy })));
     }
     applyRect(g.id);
     setTranslate(g.id, 0, 0);
@@ -2401,7 +2432,10 @@ function openChatMode(mode, toggle) {
   const pick = () => {
     const tab = $(`[data-chat-mode-tab="${mode}"]`);
     if (tab && tab.getAttribute("aria-pressed") !== "true") tab.click();
-    if (tab) syncSoon();
+    if (tab) {
+      syncSoon();
+      followApp(mode);
+    }
     return !!tab;
   };
   if (pick()) return;
@@ -2411,6 +2445,101 @@ function openChatMode(mode, toggle) {
   };
   marinara.setTimeout(poll, 100);
 }
+// ── Chat apps own their chats (desktop) ──
+// Conversation, Roleplay and Game are separate apps, so each shows a chat of
+// its own mode: opening one switches to the chat last open in it (else its
+// newest), and a chat of another mode is covered by an empty "pick a chat"
+// view. The chat's name sits in the window's title bar.
+const chatInfo = new Map(); // id → { name, mode, at }
+let chatInfoAt = -1e9;
+let chatInfoBusy = null;
+function loadChatInfo(maxAge = 30_000) {
+  if (chatInfoBusy) return chatInfoBusy;
+  if (performance.now() - chatInfoAt < maxAge) return Promise.resolve();
+  chatInfoAt = performance.now();
+  chatInfoBusy = window
+    .fetch("/api/chats", { credentials: "same-origin" })
+    .then((r) => (r.ok ? r.json() : null))
+    .then((list) => {
+      if (!Array.isArray(list)) return;
+      chatInfo.clear();
+      for (const c of list) {
+        if (c?.id) chatInfo.set(c.id, { name: String(c.name || ""), mode: String(c.mode || ""), at: Date.parse(c.lastMessageAt || c.updatedAt || "") || 0 });
+      }
+      syncSoon();
+    })
+    .catch(() => {})
+    .finally(() => (chatInfoBusy = null));
+  return chatInfoBusy;
+}
+const openChatId = () => {
+  try {
+    return localStorage.getItem("marinara-active-chat-id") || "";
+  } catch {
+    return "";
+  }
+};
+function followApp(mode) {
+  if (!isDesktop()) return;
+  loadChatInfo().then(() => {
+    if (chatInfo.get(openChatId())?.mode === mode) return;
+    let id = state.lastChat?.[mode];
+    if (chatInfo.get(id)?.mode !== mode) {
+      id = [...chatInfo].filter(([, c]) => c.mode === mode).sort((a, b) => b[1].at - a[1].at)[0]?.[0];
+    }
+    if (!id) return;
+    let tries = 0;
+    // The list re-renders for the new mode a moment after its tab is pressed.
+    const go = () => {
+      const row = activeChatMode() === mode ? $(`${SEL.chatRows}[data-chat-id="${CSS.escape(id)}"]`) : null;
+      if (row) click(row);
+      else if (++tries < 20) marinara.setTimeout(go, 100);
+    };
+    go();
+  });
+}
+let chatTitleEl = null;
+let chatOtherEl = null;
+function refreshChatApp() {
+  const main = $once(SEL.main);
+  const inChat = isDesktop() && !!main && !!$once("[data-chat-mode]") && !homeVisible() && !$once(SEL.detail);
+  const id = inChat ? openChatId() : "";
+  let info = chatInfo.get(id);
+  if (id && !info) loadChatInfo(4000);
+  // Remember the chat last open in each app.
+  if (info?.mode && MODE_KEYS.includes(info.mode) && state.lastChat?.[info.mode] !== id) {
+    state.lastChat = { ...(state.lastChat || {}), [info.mode]: id };
+    save();
+  }
+  const row = id ? $(`${SEL.chatRows}[data-chat-id="${CSS.escape(id)}"]`) : null;
+  const name = (info?.name || row?.querySelector(".truncate")?.textContent || "").trim();
+  if (inChat && name) {
+    if (!chatTitleEl || chatTitleEl.parentElement !== main) {
+      chatTitleEl ||= h("div", { class: "mdos-chat-title", "data-exd": "", "aria-hidden": "true" });
+      main.append(chatTitleEl);
+    }
+    if (chatTitleEl.textContent !== name) chatTitleEl.textContent = name;
+  } else chatTitleEl?.remove();
+  // A chat of another app behind the list: cover it until one is picked.
+  const listMode = paneOn() ? activeChatMode() : null;
+  const other = inChat && !!listMode && !!info?.mode && info.mode !== listMode;
+  toggleClass("mdos-chat-other", other);
+  if (other) {
+    if (!chatOtherEl || chatOtherEl.parentElement !== main) {
+      chatOtherEl ||= h("div", { class: "mdos-pickchat", "data-exd": "" }, h("div", { class: "mdos-pickchat-icon" }), h("p", {}, ""));
+      main.append(chatOtherEl);
+    }
+    const app = appById(`mode:${listMode}`);
+    const icon = chatOtherEl.firstChild;
+    if (icon.dataset.app !== app?.id) {
+      icon.dataset.app = app?.id || "";
+      icon.replaceChildren(app ? appIcon(app) : "");
+    }
+    const p = chatOtherEl.lastChild;
+    if (p.textContent !== L.pickChat) p.textContent = L.pickChat;
+  } else chatOtherEl?.remove();
+}
+
 // Home tabs live inside Marinara's Home view; show Home first if needed.
 function openHomeTab(key) {
   const find = () => $(`#marinara-home-tab-${CSS.escape(key)}`);
@@ -5926,6 +6055,7 @@ function syncBody() {
   refreshChatTools();
   lockerTick();
   refreshChatList();
+  refreshChatApp();
   const hubApp = !!hubAppTab();
   toggleClass("mdos-hub-app", hubApp);
   refreshLocker();
@@ -8157,6 +8287,8 @@ return () => {
   removeSceneBar();
   pvIO?.disconnect();
   for (const el of $$(".mdos-preview")) el.remove();
+  chatTitleEl?.remove();
+  chatOtherEl?.remove();
   lkStopPick();
   lkReleaseAll();
   lkTopBtn?.remove();
