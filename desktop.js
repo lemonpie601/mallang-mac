@@ -2845,10 +2845,45 @@ function scrapeLedger(card) {
     })),
   };
 }
+// The credit extension prints "null" where a provider sent no value (a
+// missing balance line, an empty sub-amount), on its own cards. Those cells
+// are hidden — tagged, not removed, so its own rendering is untouched. A small
+// observer catches its re-renders between our 2.5 s reads.
+const NULL_TEXT = /^\s*(?:null|undefined|NaN)\s*$/i;
+const nullWatched = new WeakSet();
+const nullObservers = new Set();
+function hideNullCells(root) {
+  for (const el of root.getElementsByTagName("*")) {
+    if (el.childElementCount) continue;
+    const isNull = NULL_TEXT.test(el.textContent);
+    if (isNull !== el.hasAttribute("data-mdos-null")) el.toggleAttribute("data-mdos-null", isNull);
+  }
+}
+function watchCreditNulls(home) {
+  hideNullCells(home);
+  if (nullWatched.has(home)) return;
+  nullWatched.add(home);
+  let queued = false;
+  const mo = new MutationObserver(() => {
+    if (queued) return;
+    queued = true;
+    raf(() => {
+      queued = false;
+      if (home.isConnected) hideNullCells(home);
+      else {
+        mo.disconnect();
+        nullObservers.delete(mo);
+      }
+    });
+  });
+  mo.observe(home, { childList: true, subtree: true, characterData: true });
+  nullObservers.add(mo);
+}
 let creditSig = "";
 function scrapeCredits() {
   const home = $("#mac-credit-home");
   if (!home) return;
+  watchCreditNulls(home);
   // The cards' text (plus element count, for the heat map and bars) changes
   // whenever their numbers do; skip the ~30 queries otherwise.
   const sig = `${home.getElementsByTagName("*").length}|${home.textContent}`;
@@ -5771,6 +5806,8 @@ return () => {
   mode = "off";
   observer.disconnect();
   themeObserver.disconnect();
+  for (const mo of nullObservers) mo.disconnect();
+  for (const el of $$("[data-mdos-null]")) el.toggleAttribute("data-mdos-null", false);
   marinara.clearInterval(clockTimer);
   marinara.clearInterval(viewTimer);
   marinara.clearInterval(pollTimer);

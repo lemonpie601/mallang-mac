@@ -1649,3 +1649,8 @@ html.mdos-touch-home #mac-credit-home .mlh-crcard:not(:nth-child(4n + 2)) .mlh-c
 .mdos-lg-tile:first-child b {
   font-size: 19px;
 }
+
+/* Cells the credit extension filled with "null" (desktop.js hideNullCells). */
+#mac-credit-home [data-mdos-null] {
+  display: none !important;
+}
