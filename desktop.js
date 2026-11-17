@@ -2858,6 +2858,12 @@ function hideNullCells(root) {
     const isNull = NULL_TEXT.test(el.textContent);
     if (isNull !== el.hasAttribute("data-mdos-null")) el.toggleAttribute("data-mdos-null", isNull);
   }
+  // Some cards print it as a bare line of text beside their elements (no
+  // element of its own to hide), so that text is emptied instead.
+  const walker = doc.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+    if (n.parentElement?.childElementCount && NULL_TEXT.test(n.data)) n.data = "";
+  }
 }
 function watchCreditNulls(home) {
   hideNullCells(home);
