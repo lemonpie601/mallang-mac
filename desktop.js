@@ -1209,6 +1209,7 @@ function computeMode() {
 }
 const isDesktop = () => mode === "desktop";
 const isTouch = () => mode === "touch";
+const isPhone = () => mode === "touch" && !html.classList.contains("mdos-tablet");
 
 // ── App icons ─────────────────────────────────────────────────
 
@@ -6588,6 +6589,7 @@ function mountQuickPalette() {
 let qpPop = null;
 function closeQpMenu() {
   if (!qpPop) return;
+  qpPop.scrim?.remove();
   qpPop.el.remove();
   qpPop.anchor.classList.remove("is-open");
   doc.removeEventListener("pointerdown", qpPop.outside, true);
@@ -6653,8 +6655,24 @@ function openQpMenu(anchor) {
       );
     }),
   );
-  const el = h("div", { class: "mdos-qp-pop", role: "dialog", "aria-label": L.qp.menu, "data-exd": "" }, actions, pins);
+  const sheet = isPhone();
+  const el = h("div", { class: `mdos-qp-pop${sheet ? " is-sheet" : ""}`, role: "dialog", "aria-label": L.qp.menu, "data-exd": "" }, actions, pins);
+  const scrim = sheet ? h("div", { class: "mdos-sheet-scrim mdos-qp-scrim", "data-exd": "", onclick: () => closeQpMenu() }) : null;
+  if (scrim) doc.body.append(scrim);
   doc.body.append(el);
+  if (sheet) {
+    anchor.classList.add("is-open");
+    const outside = () => {};
+    const key = (e) => {
+      if (e.key === "Escape") {
+        e.stopPropagation();
+        closeQpMenu();
+      }
+    };
+    doc.addEventListener("keydown", key, true);
+    qpPop = { el, anchor, outside, key, scrim };
+    return;
+  }
   const r = anchor.getBoundingClientRect();
   const w = el.offsetWidth;
   el.style.left = `${Math.max(8, Math.min(r.left - 10, innerWidth - w - 8))}px`;
@@ -6750,8 +6768,8 @@ function renderSnippets(first = false) {
     list,
   );
   const scroll = popEl?.querySelector(".mdos-snip-list")?.scrollTop || 0;
-  openPop(body, first ? snipAnchor : null, { title: L.qp.memo, wide: true });
-  if (!first) popEl.classList.add("is-centered");
+  openPop(body, first && !isPhone() ? snipAnchor : null, { title: L.qp.memo, wide: true, cls: isPhone() ? "mdos-pop--sheet" : "" });
+  if (!first && !isPhone()) popEl.classList.add("is-centered");
   list.scrollTop = scroll;
 }
 function snipRow(m, canMove) {

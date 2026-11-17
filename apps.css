@@ -978,6 +978,7 @@ html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night
   bottom: 0 !important;
   translate: -50% 0 !important;
   transform: none !important;
+  box-sizing: border-box;
   width: min(560px, 100vw) !important;
   max-height: 78vh;
   padding: 18px 16px calc(env(safe-area-inset-bottom, 0px) + 18px);
@@ -1543,3 +1544,137 @@ html.mdos .mari-chat-sidebar[data-mdos-list="game"] [data-drag-kind="chat"] > .m
   font-size: 15px !important;
   font-weight: 700 !important;
 }
+
+/* ══ Phones (touch, narrower than a tablet) ═════════════════════ */
+
+/* + menu as a bottom sheet, like the Claude iPhone app. */
+.mdos-qp-pop.is-sheet {
+  left: 0 !important;
+  right: 0;
+  bottom: 0 !important;
+  width: 100% !important;
+  max-height: 82vh;
+  box-sizing: border-box;
+  padding: 26px 12px calc(env(safe-area-inset-bottom, 0px) + 14px);
+  border-radius: 26px 26px 0 0;
+  animation: mdos-qp-up 220ms var(--mdos-ease);
+}
+.mdos-qp-pop.is-sheet::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  width: 36px;
+  height: 5px;
+  margin-left: -18px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--mdos-fg, #000) 22%, transparent);
+}
+@keyframes mdos-qp-up {
+  from {
+    translate: 0 100%;
+  }
+}
+.mdos-qp-scrim {
+  z-index: 8990;
+}
+
+/* Model picker: a bottom sheet over the full width. */
+html.mdos-touch:not(.mdos-tablet) [data-quick-connection-menu] {
+  left: 0 !important;
+  right: 0 !important;
+  top: auto !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  max-width: none !important;
+  height: min(82vh, 640px) !important;
+  border-radius: 28px 28px 0 0 !important;
+  padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+  transform: none !important;
+}
+
+/* Toasts sit near the top, clear of the composer. */
+html.mdos-touch:not(.mdos-tablet) #mdos-toast {
+  top: calc(env(safe-area-inset-top, 0px) + 58px);
+  bottom: auto;
+  translate: -50% -12px;
+}
+html.mdos-touch:not(.mdos-tablet) #mdos-toast.is-on {
+  translate: -50% 0;
+}
+
+/* Editors on narrow screens: the sections as a row of chips that scrolls
+   sideways (Marinara shows a drop-down there), under the name. */
+@container (max-width: 759px) {
+  html.mdos .mari-editor-header--with-nav .mari-editor-navigation-compact {
+    display: none !important;
+  }
+  html.mdos .mari-editor-header--with-nav .mari-editor-navigation {
+    flex: 1 0 100% !important;
+    order: 3;
+    min-width: 0;
+    margin: 2px -4px 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  html.mdos .mari-editor-header--with-nav .mari-editor-navigation::-webkit-scrollbar {
+    display: none;
+  }
+  html.mdos .mari-editor-header--with-nav .mari-editor-navigation-tabs {
+    display: flex !important;
+    flex-wrap: nowrap;
+    gap: 6px;
+    padding: 2px 4px 4px;
+    width: max-content;
+  }
+  html.mdos .mari-editor-header--with-nav .mari-editor-tab {
+    flex: none;
+    height: 32px !important;
+    min-height: 32px !important;
+    padding: 0 14px !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    box-shadow: none !important;
+    font-size: 13px !important;
+    background: color-mix(in srgb, var(--marinara-editor-text, currentColor) 7%, transparent);
+  }
+  html.mdos .mari-editor-header--with-nav .mari-editor-tab-label {
+    display: inline !important;
+  }
+  html.mdos .mari-editor-header--with-nav .mari-editor-tab[data-active="true"] {
+    background: var(--mdos-accent, #0a84ff) !important;
+    color: #fff !important;
+  }
+  html.mdos .mari-editor-header--with-nav {
+    height: auto !important;
+    flex-wrap: wrap !important;
+    row-gap: 8px !important;
+  }
+  html.mdos .mari-editor-shell .mari-editor-content {
+    padding: 16px 14px 40px !important;
+  }
+}
+
+/* Phone composer: a little tighter so the bottom row fits; the row scrolls
+   sideways if a chat has many tools. */
+html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell:has(> textarea[data-chat-composer]) {
+  padding: 12px 10px 8px !important;
+  column-gap: 4px !important;
+}
+html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > :is(button, div > button, .mdos-qp-plus):not(:last-child),
+html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div > button {
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px;
+}
+html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button[aria-haspopup="dialog"]:has(svg.lucide-link),
+html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div > button[aria-haspopup="dialog"]:has(svg.lucide-link) {
+  width: auto !important;
+  max-width: 30vw;
+  padding: 0 12px !important;
+}
+html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div {
+  gap: 4px !important;
+}
+
