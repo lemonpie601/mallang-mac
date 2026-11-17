@@ -2201,3 +2201,311 @@ html.mdos-desktop [data-mdos-win="chats"] .mari-sidebar-header h2[data-mdos-titl
 .mdos-pickchat p {
   margin: 0;
 }
+
+/* ── Web pages: on white, scaled to fit (desktop.js mountBrowser) ── */
+/* A page with a transparent background showed the black meant for videos.
+   Wide pages are laid out at 100%/z of the window and scaled by z. */
+.mdos-zoom {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: #fff;
+}
+.mdos-zoom > .mdos-frame {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(100% / var(--z, 1));
+  height: calc(100% / var(--z, 1));
+  transform: scale(var(--z, 1));
+  transform-origin: 0 0;
+  background: #fff;
+  color-scheme: light;
+}
+.mdos-zoom-btn {
+  min-width: 44px;
+  font: 600 11.5px/1 var(--mdos-font);
+  font-variant-numeric: tabular-nums;
+}
+.mdos-zoom-menu {
+  display: grid;
+  gap: 2px;
+  min-width: 150px;
+}
+.mdos-zoom-menu .mdos-menu-item.is-on {
+  font-weight: 650;
+  background: color-mix(in srgb, var(--mdos-accent, #0a84ff) 22%, transparent);
+}
+
+/* ── YouTube: browsing like the site (desktop.js mountYouTube) ── */
+.mdos-yt {
+  --yt-bg: #0f0f0f;
+  --yt-fg: #f1f1f1;
+  --yt-mute: #aaaaaa;
+  --yt-chip: #272727;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 18px 24px;
+  background: var(--yt-bg);
+  color: var(--yt-fg);
+  font: 14px/1.4 "Roboto", var(--mdos-font);
+  scrollbar-width: thin;
+  scrollbar-color: #555 transparent;
+}
+.mdos-yt button {
+  all: unset;
+  cursor: var(--mdos-cur-ptr, pointer);
+}
+.mdos-yt .mdos-btn {
+  all: unset;
+  padding: 8px 18px;
+  border-radius: 18px;
+  background: var(--yt-fg);
+  color: var(--yt-bg);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: var(--mdos-cur-ptr, pointer);
+}
+.mdos-yt-note {
+  margin: 18px 0;
+  color: var(--yt-mute);
+  font-size: 13px;
+}
+.mdos-yt-empty {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  max-width: 440px;
+  margin: 48px auto;
+  text-align: center;
+}
+.mdos-yt-empty .mdos-yt-note {
+  margin: 0;
+  line-height: 1.6;
+}
+.mdos-yt-logo {
+  width: 64px;
+  height: 45px;
+  border-radius: 12px;
+  background: #ff0033;
+  position: relative;
+}
+.mdos-yt-logo::after {
+  content: "";
+  position: absolute;
+  inset: 13px 23px 13px 26px;
+  background: #fff;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+.mdos-yt-chips {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  margin: 0 -18px 12px;
+  padding: 12px 18px;
+  background: var(--yt-bg);
+  scrollbar-width: none;
+}
+.mdos-yt .mdos-yt-chip {
+  flex: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: var(--yt-chip);
+  font-size: 13.5px;
+  font-weight: 500;
+}
+.mdos-yt .mdos-yt-chip:hover {
+  background: #3f3f3f;
+}
+.mdos-yt .mdos-yt-chip.is-on {
+  background: var(--yt-fg);
+  color: var(--yt-bg);
+}
+.mdos-yt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 26px 16px;
+  padding-top: 4px;
+}
+.mdos-yt-card {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.mdos-yt .mdos-yt-thumbbox {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  margin-bottom: 6px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #222;
+}
+.mdos-yt-thumbbox img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 200ms var(--mdos-ease);
+}
+.mdos-yt .mdos-yt-thumbbox:hover img {
+  transform: scale(1.03);
+}
+.mdos-yt-dur {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+}
+.mdos-yt-dur.is-live {
+  background: #cc0000;
+}
+.mdos-yt .mdos-yt-title {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.38;
+}
+.mdos-yt .mdos-yt-chan,
+.mdos-yt-meta {
+  overflow: hidden;
+  color: var(--yt-mute);
+  font-size: 12.5px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.mdos-yt .mdos-yt-chan:hover {
+  color: var(--yt-fg);
+}
+.mdos-yt-h {
+  margin: 18px 0 12px;
+  font-size: 17px;
+  font-weight: 700;
+}
+/* Watch page: player and details, the channel's other videos beside them
+   when the window is wide (under them when narrow). */
+.mdos-yt.is-watch {
+  padding-top: 16px;
+  container-type: inline-size;
+}
+.mdos-yt-watch {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+}
+@container (min-width: 900px) {
+  .mdos-yt-watch {
+    grid-template-columns: minmax(0, 1fr) 340px;
+  }
+}
+.mdos-yt-player {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #000;
+}
+.mdos-yt-player .mdos-frame {
+  width: 100%;
+  height: 100%;
+}
+.mdos-yt-wtitle {
+  margin: 12px 0 10px;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.mdos-yt .mdos-yt-owner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.mdos-yt-owner img,
+.mdos-yt-avatar,
+.mdos-yt-chhead img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #333;
+}
+.mdos-yt-owner span {
+  display: grid;
+}
+.mdos-yt-owner b {
+  font-size: 15px;
+}
+.mdos-yt-owner small,
+.mdos-yt-chhead small {
+  color: var(--yt-mute);
+  font-size: 12px;
+}
+.mdos-yt-descbox {
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--yt-chip);
+  font-size: 13.5px;
+}
+.mdos-yt-desc {
+  max-height: 4.2em;
+  margin-top: 6px;
+  overflow: hidden;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.mdos-yt-desc.is-open {
+  max-height: none;
+}
+.mdos-yt .mdos-yt-more {
+  margin-top: 6px;
+  font-weight: 650;
+}
+.mdos-yt-side .mdos-yt-h {
+  margin-top: 0;
+}
+.mdos-yt-list {
+  display: grid;
+  gap: 10px;
+}
+.mdos-yt-list .mdos-yt-card {
+  grid-template-columns: 168px minmax(0, 1fr);
+  grid-template-rows: auto auto 1fr;
+  column-gap: 10px;
+  row-gap: 2px;
+}
+.mdos-yt-list .mdos-yt-thumbbox {
+  grid-row: 1 / 4;
+  margin: 0;
+  border-radius: 8px;
+}
+.mdos-yt-list .mdos-yt-title {
+  font-size: 14px;
+}
+.mdos-yt-chhead {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 0 6px;
+}
+.mdos-yt-chhead img,
+.mdos-yt-chhead .mdos-yt-avatar {
+  width: 72px;
+  height: 72px;
+}
+.mdos-yt-chhead h2 {
+  margin: 0 0 2px;
+  font-size: 24px;
+  font-weight: 700;
+}

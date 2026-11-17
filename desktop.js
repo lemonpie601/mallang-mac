@@ -242,9 +242,9 @@ const L = KO
       narColor: "서술",
       actColor: "행동 (* *)",
       ytMode: "YouTube 사용 방식",
-      ytModes: { link: "링크만", api: "API 키로 검색", account: "내 계정으로" },
+      ytModes: { link: "개인정보 보호 플레이어", account: "내 계정으로 재생" },
       ytApiKey: "YouTube Data API 키",
-      ytApiHint: "Google Cloud 콘솔에서 만든 YouTube Data API v3 키를 넣으면 앱 안에서 검색할 수 있어요. 키는 이 확장의 저장 공간에만 저장돼요.",
+      ytApiHint: "Google Cloud 콘솔에서 만든 YouTube Data API v3 키를 넣으면 홈(인기)·검색·채널을 이 창에서 볼 수 있어요. 키는 입력하는 대로 이 확장의 저장 공간에 저장돼요.",
       ytAccountHint: "로그인한 YouTube 계정으로 재생해요(광고 없음·기록 등). 브라우저가 다른 사이트 쿠키를 막으면 창 안 플레이어에는 로그인이 안 보일 수 있어요.",
       ytLogin: "YouTube 로그인",
       ytOpenSite: "YouTube 열기",
@@ -254,6 +254,21 @@ const L = KO
       ytError: "검색하지 못했어요",
       ytResults: "검색 결과",
       ytSettings: "YouTube 설정",
+      ytHome: "홈",
+      ytCats: [["all", "인기"], ["10", "음악"], ["20", "게임"], ["24", "엔터테인먼트"], ["1", "영화·애니"], ["17", "스포츠"], ["25", "뉴스"], ["28", "과학·기술"]],
+      ytNeedKey: "YouTube 자체 화면(youtube.com)은 다른 창 안에 띄우는 걸 YouTube가 막아 두었어요. 대신 YouTube Data API 키를 넣으면 이 창에서 홈·검색·채널·영상 화면을 YouTube처럼 볼 수 있어요. 링크를 붙여 넣으면 키 없이도 바로 재생돼요.",
+      ytAddKey: "API 키 넣기",
+      ytLoading: "불러오는 중…",
+      ytViews: (n) => `조회수 ${n}회`,
+      ytSubs: (n) => `구독자 ${n}명`,
+      ytMore: "더보기",
+      ytLess: "간략히",
+      ytFromChannel: "이 채널의 다른 영상",
+      ytUploads: "동영상",
+      ytLive: "실시간",
+      ytEmpty: "영상이 없어요",
+      zoom: "확대/축소",
+      zoomFit: "창에 맞춤",
       quick: "빠른 설정",
       allSettings: "모든 꾸미기 설정",
       greeting: (hour) =>
@@ -578,9 +593,9 @@ const L = KO
       narColor: "Narration",
       actColor: "Actions (* *)",
       ytMode: "How YouTube works",
-      ytModes: { link: "Links only", api: "Search with API key", account: "My account" },
+      ytModes: { link: "Privacy player", account: "Play with my account" },
       ytApiKey: "YouTube Data API key",
-      ytApiHint: "Add a YouTube Data API v3 key from the Google Cloud console to search inside the app. The key is stored only in this extension's storage.",
+      ytApiHint: "Add a YouTube Data API v3 key from the Google Cloud console to browse trending, search and channels in this window. The key is saved as you type, in this extension's storage only.",
       ytAccountHint: "Plays with your signed-in YouTube account (no ads, history…). If the browser blocks third-party cookies, the in-window player may not show you as signed in.",
       ytLogin: "Sign in to YouTube",
       ytOpenSite: "Open YouTube",
@@ -590,6 +605,21 @@ const L = KO
       ytError: "Search failed",
       ytResults: "Results",
       ytSettings: "YouTube settings",
+      ytHome: "Home",
+      ytCats: [["all", "Trending"], ["10", "Music"], ["20", "Gaming"], ["24", "Entertainment"], ["1", "Film & animation"], ["17", "Sports"], ["25", "News"], ["28", "Science & tech"]],
+      ytNeedKey: "YouTube doesn't allow youtube.com itself inside another window. With a YouTube Data API key this window browses YouTube instead: home, search, channels and the watch page. Pasted links play without a key.",
+      ytAddKey: "Add an API key",
+      ytLoading: "Loading…",
+      ytViews: (n) => `${n} views`,
+      ytSubs: (n) => `${n} subscribers`,
+      ytMore: "More",
+      ytLess: "Less",
+      ytFromChannel: "More from this channel",
+      ytUploads: "Videos",
+      ytLive: "Live",
+      ytEmpty: "No videos",
+      zoom: "Zoom",
+      zoomFit: "Fit to window",
       quick: "Quick settings",
       allSettings: "All customize settings",
       greeting: (hour) =>
@@ -1040,6 +1070,7 @@ if (!state.paneChatOnly) {
 for (const key of ["apps", "bookmarks", "sbOrder", "sbHidden", "readerHosts"]) if (!Array.isArray(state[key])) state[key] = [];
 state.chat = { convo: { ...(state.chat?.convo || {}) }, rp: { ...(state.chat?.rp || {}) } };
 state.yt = { mode: "link", apiKey: "", ...(state.yt || {}) };
+if (state.yt.mode === "api") state.yt.mode = "link";
 if (!Array.isArray(state.desk)) {
   state.desk = UTIL_APPS.map((a) => ({ id: newId(), app: a.id, x: null, y: null }));
 }
@@ -4382,9 +4413,60 @@ function mountBrowser(win) {
     if (key === shown) return;
     shown = key;
     win.body.replaceChildren(
-      !url ? startPage() : src ? frame(src, hostOf(url)) : page ? frame(page, hostOf(url), WEB_SANDBOX) : useReader ? readerView(url) : blocked(url),
+      !url ? startPage() : src ? frame(src, hostOf(url)) : page ? h("div", { class: "mdos-zoom" }, frame(page, hostOf(url), WEB_SANDBOX)) : useReader ? readerView(url) : blocked(url),
     );
+    zoomBtn.hidden = !page;
+    applyZoom();
   };
+  // Pages built for wide screens (DCInside and the like) are drawn at a wider
+  // virtual width and scaled down to the window ("fit"), or at a zoom picked
+  // per site (− / %, kept in state.webZoom).
+  const zoomOf = () => state.webZoom?.[hostOf(win.rec.url || "")] ?? "fit";
+  const zoomValue = () => {
+    const z = zoomOf();
+    if (z !== "fit") return z;
+    return Math.max(0.45, Math.min(1, (win.body.clientWidth || 1280) / 1280));
+  };
+  function applyZoom() {
+    const box = win.body.querySelector(":scope > .mdos-zoom");
+    if (!box) return;
+    const z = zoomValue();
+    box.style.setProperty("--z", String(Math.round(z * 1000) / 1000));
+    zoomBtn.textContent = `${Math.round(z * 100)}%`;
+  }
+  const zoomBtn = h("button", {
+    type: "button",
+    class: "mdos-tool mdos-zoom-btn",
+    title: L.zoom,
+    "aria-label": L.zoom,
+    text: "100%",
+    onclick: (e) => {
+      const set = (v) => {
+        const host = hostOf(win.rec.url || "");
+        state.webZoom = { ...(state.webZoom || {}) };
+        if (v === "fit") delete state.webZoom[host];
+        else state.webZoom[host] = v;
+        save();
+        applyZoom();
+        closePop();
+      };
+      const cur = zoomOf();
+      openPop(
+        h(
+          "div",
+          { class: "mdos-pop-body mdos-zoom-menu" },
+          h("button", { type: "button", class: `mdos-menu-item${cur === "fit" ? " is-on" : ""}`, text: L.zoomFit, onclick: () => set("fit") }),
+          ...[0.5, 0.67, 0.8, 0.9, 1, 1.1, 1.25].map((v) =>
+            h("button", { type: "button", class: `mdos-menu-item${cur === v ? " is-on" : ""}`, text: `${Math.round(v * 100)}%`, onclick: () => set(v) }),
+          ),
+        ),
+        e.currentTarget,
+        { title: L.zoom },
+      );
+    },
+  });
+  win.tools.prepend(zoomBtn);
+  if (typeof ResizeObserver === "function") new ResizeObserver(() => zoomOf() === "fit" && applyZoom()).observe(win.body);
   const go = (url, remember = true) => {
     if (remember && win.rec.url && win.rec.url !== url) history.push(win.rec.url);
     if (history.length > 50) history.shift();
@@ -4397,25 +4479,100 @@ function mountBrowser(win) {
   render();
 }
 
-// YouTube: three ways to use it (YouTube settings ⚙):
-//   link    — paste a link; privacy-enhanced player.
-//   api     — search inside the app with your own YouTube Data API key.
-//   account — youtube.com player, so a signed-in YouTube session can apply.
+// YouTube. youtube.com itself refuses to load inside another page
+// (X-Frame-Options), so with a YouTube Data API key this window browses like
+// YouTube: home (trending, by category), search, the watch page (player,
+// details, more from the channel) and channel pages; videos play in the
+// embeddable player. Without a key, pasted links still play.
+// Player: privacy-enhanced (youtube-nocookie) or youtube.com ("my account").
 // The player keeps playing while minimized; 📌 keeps the window on top.
-async function searchYouTube(query) {
-  const params = new URLSearchParams({ part: "snippet", type: "video", maxResults: "24", q: query, key: state.yt.apiKey });
+function setYtKey(value) {
+  const key = String(value || "").trim();
+  if (key === state.yt.apiKey) return;
+  state.yt.apiKey = key;
+  ytCache.clear();
+  save();
+  for (const w of appWins.values()) if (w.rec.type === "youtube") w.refresh?.(true);
+}
+const YT_REGION = KO ? "KR" : "US";
+const ytCache = new Map(); // request → { at, data }, 10 minutes
+async function ytApi(path, params) {
+  const q = new URLSearchParams({ ...params, key: state.yt.apiKey });
+  const k = `${path}?${q}`;
+  const hit = ytCache.get(k);
+  if (hit && Date.now() - hit.at < 600_000) return hit.data;
   const doFetch = typeof marinara.fetch === "function" ? marinara.fetch : window.fetch.bind(window);
-  const res = await doFetch(`https://www.googleapis.com/youtube/v3/search?${params}`);
+  const res = await doFetch(`https://www.googleapis.com/youtube/v3/${k}`);
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data?.error?.message || `HTTP ${res.status}`);
-  return (data.items || [])
-    .filter((it) => it.id?.videoId)
-    .map((it) => ({
-      id: it.id.videoId,
-      title: it.snippet?.title || "",
-      channel: it.snippet?.channelTitle || "",
-      thumb: it.snippet?.thumbnails?.medium?.url || it.snippet?.thumbnails?.default?.url || "",
-    }));
+  ytCache.set(k, { at: Date.now(), data });
+  if (ytCache.size > 80) ytCache.delete(ytCache.keys().next().value);
+  return data;
+}
+const ytNum = (n) => {
+  const v = Number(n);
+  if (!Number.isFinite(v)) return "";
+  try {
+    return new Intl.NumberFormat(KO ? "ko" : "en", { notation: "compact", maximumFractionDigits: 1 }).format(v);
+  } catch {
+    return String(v);
+  }
+};
+function ytDur(iso) {
+  const m = /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/.exec(iso || "");
+  if (!m) return "";
+  const [hh, mm, ss] = [m[1], m[2], m[3]].map((x) => Number(x) || 0);
+  const two = (x) => String(x).padStart(2, "0");
+  return hh ? `${hh}:${two(mm)}:${two(ss)}` : `${mm}:${two(ss)}`;
+}
+const ytThumb = (t) => t?.medium?.url || t?.high?.url || t?.default?.url || "";
+function ytVideo(it) {
+  const sn = it.snippet || {};
+  return {
+    id: typeof it.id === "string" ? it.id : it.id?.videoId,
+    title: decodeEntities(sn.title || ""),
+    channel: decodeEntities(sn.channelTitle || ""),
+    channelId: sn.channelId || "",
+    thumb: ytThumb(sn.thumbnails),
+    at: Date.parse(sn.publishedAt || "") || 0,
+    desc: sn.description || "",
+    dur: ytDur(it.contentDetails?.duration),
+    live: sn.liveBroadcastContent === "live",
+    views: it.statistics?.viewCount,
+  };
+}
+async function ytDetails(ids) {
+  if (!ids.length) return [];
+  const data = await ytApi("videos", { part: "snippet,contentDetails,statistics", id: ids.join(","), maxResults: "50" });
+  const byId = new Map((data.items || []).map((it) => [it.id, ytVideo(it)]));
+  return ids.map((id) => byId.get(id)).filter(Boolean);
+}
+async function ytPopular(cat) {
+  const params = { part: "snippet,contentDetails,statistics", chart: "mostPopular", regionCode: YT_REGION, maxResults: "30" };
+  if (cat && cat !== "all") params.videoCategoryId = cat;
+  const data = await ytApi("videos", params);
+  return (data.items || []).map(ytVideo);
+}
+async function ytSearchVideos(query) {
+  const data = await ytApi("search", { part: "snippet", type: "video", maxResults: "24", q: query, regionCode: YT_REGION });
+  return ytDetails((data.items || []).map((it) => it.id?.videoId).filter(Boolean));
+}
+async function ytChannel(id) {
+  const data = await ytApi("channels", { part: "snippet,statistics,contentDetails", id });
+  const c = data.items?.[0];
+  if (!c) throw new Error("channel");
+  return {
+    id,
+    title: decodeEntities(c.snippet?.title || ""),
+    avatar: ytThumb(c.snippet?.thumbnails),
+    subs: c.statistics?.hiddenSubscriberCount ? "" : c.statistics?.subscriberCount,
+    uploads: c.contentDetails?.relatedPlaylists?.uploads || "",
+  };
+}
+async function ytUploads(playlistId) {
+  if (!playlistId) return [];
+  const data = await ytApi("playlistItems", { part: "contentDetails", playlistId, maxResults: "24" });
+  return ytDetails((data.items || []).map((it) => it.contentDetails?.videoId).filter(Boolean));
 }
 // Titles from the API arrive HTML-escaped; decode them as text, never markup.
 const decodeEntities = (text) => new DOMParser().parseFromString(`<!doctype html><body>${text}`, "text/html").body.textContent || "";
@@ -4426,10 +4583,8 @@ function openYouTubeSettings(anchor) {
     placeholder: L.ytApiKey,
     autocomplete: "off",
     value: state.yt.apiKey || "",
-    onchange: (e) => {
-      state.yt.apiKey = e.target.value.trim();
-      save();
-    },
+    oninput: (e) => setYtKey(e.target.value),
+    onchange: (e) => setYtKey(e.target.value),
   });
   const body = h(
     "div",
@@ -4443,8 +4598,8 @@ function openYouTubeSettings(anchor) {
         openYouTubeSettings(anchor);
       }),
     ),
-    state.yt.mode === "api" ? field(L.ytApiKey, key) : null,
-    state.yt.mode === "api" ? h("p", { class: "mdos-pop-note", text: L.ytApiHint }) : null,
+    field(L.ytApiKey, key),
+    h("p", { class: "mdos-pop-note", text: L.ytApiHint }),
     state.yt.mode === "account" ? h("p", { class: "mdos-pop-note", text: L.ytAccountHint }) : null,
     state.yt.mode === "account"
       ? h(
@@ -4463,40 +4618,35 @@ function openYouTubeSettings(anchor) {
   openPop(body, anchor, { title: L.ytSettings });
 }
 function mountYouTube(win) {
-  let results = null; // last search results, kept so "back" can return to them
-  let status = "";
-  const input = urlField(win, L.ytPlaceholder, async (value) => {
-    const text = value.trim();
-    if (!text) return;
-    if (parseYouTube(text)) {
-      win.rec.url = text;
+  // Views: home (by category), search, watch, channel; a stack for "back".
+  const stack = [];
+  let view = parseYouTube(win.rec.url || "") ? { type: "watch", url: win.rec.url } : { type: "home", cat: "all" };
+  let seq = 0;
+  const boxTokens = new WeakMap();
+  const go = (next) => {
+    stack.push(view);
+    if (stack.length > 40) stack.shift();
+    view = next;
+    if (next.type === "watch") {
+      win.rec.url = next.url;
       win.autoplay = true;
-      win.view = "player";
       save();
-      return render();
     }
-    if (state.yt.mode !== "api" || !state.yt.apiKey) {
-      status = L.ytNoKey;
-      win.view = "results";
-      return render(true);
-    }
-    status = L.ytSearching;
-    win.view = "results";
     render(true);
-    try {
-      results = await searchYouTube(text);
-      status = results.length ? "" : "0";
-    } catch (error) {
-      results = null;
-      status = `${L.ytError}: ${error.message}`;
-    }
+  };
+  const input = urlField(win, L.ytSearchPlaceholder, (value) => {
+    const text = value.trim();
+    if (!text) return go({ type: "home", cat: "all" });
+    if (parseYouTube(text)) return go({ type: "watch", url: text });
+    go({ type: "search", q: text });
+  });
+  const back = toolBtn("back", L.back, () => {
+    if (!stack.length) return;
+    view = stack.pop();
     render(true);
   });
+  const homeBtn = toolBtn("home", L.ytHome, () => go({ type: "home", cat: "all" }));
   const settingsBtn = toolBtn("sliders", L.ytSettings, (e) => openYouTubeSettings(e.currentTarget));
-  const listBtn = toolBtn("launchpad", L.ytResults, () => {
-    win.view = win.view === "results" ? "player" : "results";
-    render(true);
-  });
   const pin = toolBtn("pin", L.pinOnTop, () => {
     win.rec.pinned = !win.rec.pinned;
     pin.setAttribute("aria-pressed", String(!!win.rec.pinned));
@@ -4504,51 +4654,137 @@ function mountYouTube(win) {
     save();
   });
   pin.setAttribute("aria-pressed", String(!!win.rec.pinned));
-  const ext = toolBtn("external", L.openOutside, () => win.rec.url && openExternal(win.rec.url));
-  win.tools.append(listBtn, settingsBtn, pin, ext);
-  let shown = null;
-  const resultsView = () =>
+  const ext = toolBtn("external", L.openOutside, () => openExternal(view.type === "watch" ? view.url : view.type === "channel" ? `https://www.youtube.com/channel/${view.id}` : "https://www.youtube.com/"));
+  win.tools.prepend(back, homeBtn);
+  win.tools.append(settingsBtn, pin, ext);
+
+  const note = (text) => h("p", { class: "mdos-yt-note", text });
+  const needKey = () =>
     h(
       "div",
-      { class: "mdos-yt-results" },
-      status ? h("p", { class: "mdos-web-note", text: status === "0" ? "—" : status }) : null,
-      ...(results || []).map((r) =>
-        h(
-          "button",
-          {
-            type: "button",
-            class: "mdos-yt-item",
-            onclick: () => {
-              win.rec.url = `https://youtu.be/${r.id}`;
-              win.autoplay = true;
-              win.view = "player";
-              save();
-              render();
-            },
+      { class: "mdos-yt-empty" },
+      h("span", { class: "mdos-yt-logo", "aria-hidden": "true" }),
+      note(L.ytNeedKey),
+      h("button", { type: "button", class: "mdos-btn mdos-btn--primary", text: L.ytAddKey, onclick: (e) => openYouTubeSettings(e.currentTarget) }),
+    );
+  const meta = (v) => [v.views != null ? L.ytViews(ytNum(v.views)) : "", v.live ? L.ytLive : relTime(v.at)].filter(Boolean).join(" · ");
+  const card = (v, { channel = true } = {}) =>
+    h(
+      "div",
+      { class: "mdos-yt-card" },
+      h(
+        "button",
+        { type: "button", class: "mdos-yt-thumbbox", "aria-label": v.title, onclick: () => go({ type: "watch", url: `https://youtu.be/${v.id}` }) },
+        v.thumb ? h("img", { src: v.thumb, alt: "", loading: "lazy", referrerpolicy: "no-referrer" }) : null,
+        v.live ? h("span", { class: "mdos-yt-dur is-live", text: L.ytLive }) : v.dur ? h("span", { class: "mdos-yt-dur", text: v.dur }) : null,
+      ),
+      h("button", { type: "button", class: "mdos-yt-title", text: v.title, title: v.title, onclick: () => go({ type: "watch", url: `https://youtu.be/${v.id}` }) }),
+      channel && v.channel ? h("button", { type: "button", class: "mdos-yt-chan", text: v.channel, onclick: () => v.channelId && go({ type: "channel", id: v.channelId }) }) : null,
+      h("span", { class: "mdos-yt-meta", text: meta(v) }),
+    );
+  const grid = (list, opts) => (list.length ? h("div", { class: "mdos-yt-grid" }, ...list.map((v) => card(v, opts))) : note(L.ytEmpty));
+  // Fills a box when its request answers; a box replaced or no longer on the
+  // page (another view) ignores a late answer.
+  const later = (box, load) => {
+    const token = ++seq;
+    boxTokens.set(box, token);
+    box.replaceChildren(note(L.ytLoading));
+    const fresh = () => box.isConnected && boxTokens.get(box) === token;
+    load().then(
+      (nodes) => fresh() && box.replaceChildren(...[].concat(nodes)),
+      (err) => fresh() && box.replaceChildren(note(`${L.ytError}: ${err.message}`)),
+    );
+    return box;
+  };
+  const homeView = () => {
+    const chips = h(
+      "div",
+      { class: "mdos-yt-chips", role: "tablist" },
+      ...L.ytCats.map(([id, label]) =>
+        h("button", {
+          type: "button",
+          role: "tab",
+          class: `mdos-yt-chip${String(view.cat) === id ? " is-on" : ""}`,
+          "aria-selected": String(String(view.cat) === id),
+          text: label,
+          onclick: () => {
+            view = { type: "home", cat: id };
+            render(true);
           },
-          r.thumb ? h("img", { src: r.thumb, alt: "", loading: "lazy", referrerpolicy: "no-referrer" }) : h("span", { class: "mdos-yt-thumb" }),
-          h("b", { text: decodeEntities(r.title) }),
-          h("span", { text: decodeEntities(r.channel) }),
-        ),
+        }),
       ),
     );
-  const render = (force = false) => {
-    input.placeholder = state.yt.mode === "api" ? L.ytSearchPlaceholder : L.ytPlaceholder;
-    input.setAttribute("aria-label", input.placeholder);
-    listBtn.hidden = !(results || status);
-    listBtn.setAttribute("aria-pressed", String(win.view === "results"));
-    if (win.view === "results") {
-      shown = "results";
-      return win.body.replaceChildren(resultsView());
+    return [chips, later(h("div"), async () => grid(await ytPopular(view.cat)))];
+  };
+  const watchView = () => {
+    const yt = parseYouTube(view.url);
+    const player = h("div", { class: "mdos-yt-player" }, yt ? frame(youTubeEmbed(yt, win.autoplay), "YouTube") : null);
+    win.autoplay = false;
+    const info = h("div", { class: "mdos-yt-info" });
+    const side = h("div", { class: "mdos-yt-side" });
+    if (yt?.id && state.yt.apiKey) {
+      later(info, async () => {
+        const [v] = await ytDetails([yt.id]);
+        if (!v) return [];
+        const desc = h("div", { class: "mdos-yt-desc", text: v.desc });
+        const more = h("button", {
+          type: "button",
+          class: "mdos-yt-more",
+          text: L.ytMore,
+          onclick: () => {
+            const open = desc.classList.toggle("is-open");
+            more.textContent = open ? L.ytLess : L.ytMore;
+          },
+        });
+        const ch = v.channelId ? await ytChannel(v.channelId).catch(() => null) : null;
+        if (ch?.uploads) {
+          later(side, async () => {
+            const list = (await ytUploads(ch.uploads)).filter((x) => x.id !== v.id);
+            return [h("h3", { class: "mdos-yt-h", text: L.ytFromChannel }), h("div", { class: "mdos-yt-list" }, ...list.map((x) => card(x, { channel: false })))];
+          });
+        } else side.replaceChildren();
+        return [
+          h("h2", { class: "mdos-yt-wtitle", text: v.title }),
+          h(
+            "button",
+            { type: "button", class: "mdos-yt-owner", onclick: () => v.channelId && go({ type: "channel", id: v.channelId }) },
+            ch?.avatar ? h("img", { src: ch.avatar, alt: "", referrerpolicy: "no-referrer" }) : h("span", { class: "mdos-yt-avatar" }),
+            h("span", {}, h("b", { text: v.channel }), ch?.subs ? h("small", { text: L.ytSubs(ytNum(ch.subs)) }) : null),
+          ),
+          h("div", { class: "mdos-yt-descbox" }, h("b", { text: meta(v) }), desc, v.desc ? more : null),
+        ];
+      });
     }
-    const yt = parseYouTube(win.rec.url || "");
-    input.value = win.rec.url || "";
-    const src = yt ? youTubeEmbed(yt, win.autoplay) : null;
-    const key = yt ? `${state.yt.mode}|${yt.id}|${yt.list}` : `hint|${state.yt.mode}`;
+    return [h("div", { class: "mdos-yt-watch" }, h("div", { class: "mdos-yt-main" }, player, info), side)];
+  };
+  const searchView = () => [later(h("div"), async () => grid(await ytSearchVideos(view.q)))];
+  const channelView = () => [
+    later(h("div"), async () => {
+      const ch = await ytChannel(view.id);
+      const list = await ytUploads(ch.uploads);
+      return [
+        h(
+          "div",
+          { class: "mdos-yt-chhead" },
+          ch.avatar ? h("img", { src: ch.avatar, alt: "", referrerpolicy: "no-referrer" }) : h("span", { class: "mdos-yt-avatar" }),
+          h("div", {}, h("h2", { text: ch.title }), ch.subs ? h("small", { text: L.ytSubs(ytNum(ch.subs)) }) : null),
+        ),
+        h("h3", { class: "mdos-yt-h", text: L.ytUploads }),
+        grid(list, { channel: false }),
+      ];
+    }),
+  ];
+  let shown = "";
+  const render = (force = false) => {
+    back.disabled = !stack.length;
+    input.value = view.type === "search" ? view.q : view.type === "watch" ? view.url : "";
+    const key = JSON.stringify(view) + state.yt.mode + !!state.yt.apiKey;
     if (key === shown && !force) return;
     shown = key;
-    const hint = state.yt.mode === "api" && !state.yt.apiKey ? `${L.ytHint} ${L.ytNoKey}` : L.ytHint;
-    win.body.replaceChildren(src ? frame(src, "YouTube") : h("div", { class: "mdos-web-start" }, h("p", { class: "mdos-web-note", text: hint })));
+    const watch = view.type === "watch";
+    const parts = !state.yt.apiKey && !watch ? [needKey()] : watch ? watchView() : view.type === "search" ? searchView() : view.type === "channel" ? channelView() : homeView();
+    const page = h("div", { class: `mdos-yt${watch ? " is-watch" : ""}` }, ...parts);
+    win.body.replaceChildren(page);
   };
   win.refresh = render;
   render();
@@ -5124,10 +5360,8 @@ function mountCustomize(win) {
         placeholder: L.ytApiKey,
         autocomplete: "off",
         value: state.yt.apiKey || "",
-        onchange: (e) => {
-          state.yt.apiKey = e.target.value.trim();
-          save();
-        },
+        oninput: (e) => setYtKey(e.target.value),
+        onchange: (e) => setYtKey(e.target.value),
       });
       return [
         group(
@@ -5138,8 +5372,8 @@ function mountCustomize(win) {
             for (const w of appWins.values()) if (w.rec.type === "youtube") w.refresh?.(true);
             show("youtube");
           }),
-          state.yt.mode === "api" ? field(L.ytApiKey, key) : null,
-          state.yt.mode === "api" ? hint(L.ytApiHint) : null,
+          field(L.ytApiKey, key),
+          hint(L.ytApiHint),
           state.yt.mode === "account" ? hint(L.ytAccountHint) : null,
           state.yt.mode === "account"
             ? h(
