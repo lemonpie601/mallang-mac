@@ -327,6 +327,7 @@ const L = KO
       },
       messengerPane: "메신저 한 창 (목록을 대화 창에 붙이기)",
       toggleList: "채팅 목록 접기/펼치기",
+      menu: "메뉴",
       focusMode: "집중 모드",
       focusExit: "집중 모드 끄기",
       chars: "자",
@@ -652,6 +653,7 @@ const L = KO
       },
       messengerPane: "One messenger window (list attached to the chat)",
       toggleList: "Show/hide the chat list",
+      menu: "Menu",
       focusMode: "Focus mode",
       focusExit: "Leave focus mode",
       chars: " chars",
@@ -5916,6 +5918,7 @@ function syncBody() {
     click($(SEL.chatsBtn));
   }
   toggleClass("mdos-split", split && listOpen);
+  toggleClass("mdos-touch-panel", isTouch() && !!$once('[data-component="RightPanelMobile"], [data-component="MobileDetailSheet"]'));
   if (homeVisible()) readHomeApps();
   refreshBadges();
   refreshChatTools();
@@ -7165,7 +7168,7 @@ function placeTopbarLocker(show) {
 function lockerTick() {
   const active = state.lockerOn && mode !== "off";
   mbLocker.hidden = !(state.lockerOn && mode !== "off");
-  placeTopbarLocker(active && isTouch());
+  placeTopbarLocker(false);
   if (!active) {
     if (lkRecs.size) lkReleaseAll();
     return;
@@ -7779,6 +7782,47 @@ function lkStartPick() {
 function lkStopPick() {
   lkPick?.();
   lkPick = null;
+}
+
+// Phones and tablets have no top bar (like the desktop): two small glass
+// buttons at the top left take its place inside apps — the chat list
+// (fold / unfold) and a menu sheet with the panels (characters, personas…,
+// settings), the extension locker and Customize. Home is the home indicator.
+const TOUCH_MENU = ["home", "characters", "personas", "lorebooks", "presets", "connections", "agents", "settings", "locker", "customize"];
+const tctlList = h("button", {
+  type: "button",
+  class: "mdos-tctl-btn",
+  "aria-label": L.toggleList,
+  title: L.toggleList,
+  svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="3"/><path d="M9.5 4.5v15"/></svg>',
+  onclick: () => {
+    click($(SEL.chatsBtn));
+    syncSoon();
+  },
+});
+const tctlMenu = h("button", {
+  type: "button",
+  class: "mdos-tctl-btn",
+  "aria-label": L.menu,
+  title: L.menu,
+  svg: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5.5" cy="12" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="18.5" cy="12" r="1.9"/></svg>',
+  onclick: () => openTouchMenu(),
+});
+ui.append(h("div", { id: "mdos-tctl", "data-exd": "" }, tctlList, tctlMenu));
+function openTouchMenu() {
+  const grid = h(
+    "div",
+    { class: "mdos-tmenu", role: "list" },
+    ...TOUCH_MENU.map((id) => appById(id))
+      .filter(Boolean)
+      .map((a, i) =>
+        appTile(a, i, (picked) => {
+          closePop();
+          launch(picked.id);
+        }),
+      ),
+  );
+  openPop(h("div", { class: "mdos-pop-body" }, grid), null, { title: L.menu, cls: "mdos-pop--sheet" });
 }
 
 // Tablet split view: a chat picked from the list keeps the list open (Marinara

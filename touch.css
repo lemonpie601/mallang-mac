@@ -271,7 +271,7 @@ html.mdos-tablet aside[data-component="ChatSidebarPanel"] {
 /* Marinara's dimmed backdrop behind a sheet starts under its top bar. On our
    home screen that bar is hidden, so the backdrop covers the whole screen
    instead of leaving a sharp strip of home icons above it. */
-html.mdos-touch-home [class*="z-[45]"][class*="bg-black/50"] {
+html.mdos-touch [class*="z-[45]"][class*="bg-black/50"] {
   top: 0 !important;
 }
 /* Inside an app the status-bar strip above the top bar takes the bar's colour
@@ -282,7 +282,7 @@ html.mdos-touch:not(.mdos-touch-home) body::before {
   inset: 0 0 auto;
   height: env(safe-area-inset-top, 0px);
   z-index: 40;
-  background: color-mix(in srgb, var(--mdos-win-bg) 86%, transparent);
+  background: var(--background, var(--mdos-win-bg));
   pointer-events: none;
 }
 /* Floating tablet sheets sit clear of the screen edge, so Marinara's bottom
@@ -301,7 +301,7 @@ html.mdos-tablet:is(:not(.mdos-touch-home), .mdos-touch-sheet, .mdos-touch-app) 
 /* Phone: on the home screen Marinara's top bar is hidden, so sheets opened
    from it (settings, chat list, agents, editors) start at the very top like
    a full-screen app, instead of leaving a 3rem strip of empty home above. */
-html.mdos-touch.mdos-touch-home:not(.mdos-tablet) :is([data-component="RightPanelMobile"], aside[data-component="ChatSidebarPanel"], [data-component="MobileDetailSheet"]) {
+html.mdos-touch:not(.mdos-tablet) :is([data-component="RightPanelMobile"], aside[data-component="ChatSidebarPanel"], [data-component="MobileDetailSheet"]) {
   top: env(safe-area-inset-top, 0px) !important;
 }
 
@@ -464,4 +464,83 @@ html.mdos-touch.mdos-edit #mdos-editbar {
   html.mdos-split #mdos-homebar {
     margin-left: 180px;
   }
+}
+
+/* ── No top bar on phones and tablets ────────────────────────── */
+/* Marinara's top bar (home, chats, panel buttons) is hidden, like the
+   desktop's; its buttons stay in the page for this extension to press.
+   Sheets that started below it start at the top. */
+html.mdos-touch {
+  --mari-topbar-height: 0px;
+}
+html.mdos-touch [data-component="TopBar"] {
+  display: none !important;
+}
+#mdos-tctl {
+  display: none;
+}
+html.mdos-touch:not(.mdos-touch-home):not(.mdos-touch-app):not(.mdos-touch-panel) #mdos-tctl {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 10px);
+  left: 12px;
+  z-index: 60;
+  display: flex;
+  gap: 8px;
+  transition: left 200ms var(--mdos-ease);
+}
+/* A full-screen list on a phone covers the chat: no buttons over it. */
+html.mdos-touch.mdos-touch-sheet:not(.mdos-split) #mdos-tctl {
+  display: none !important;
+}
+html.mdos-split #mdos-tctl {
+  left: 372px !important;
+}
+.mdos-tctl-btn {
+  all: unset;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  color: var(--foreground, var(--mdos-fg));
+  background: color-mix(in srgb, var(--background, #fff) 72%, transparent);
+  backdrop-filter: blur(16px) saturate(170%);
+  -webkit-backdrop-filter: blur(16px) saturate(170%);
+  box-shadow:
+    0 2px 10px -3px rgba(0, 0, 0, 0.25),
+    inset 0 0 0 0.5px color-mix(in srgb, var(--foreground, #000) 16%, transparent);
+  -webkit-tap-highlight-color: transparent;
+  cursor: var(--mdos-cur-ptr, pointer);
+}
+.mdos-tctl-btn:active {
+  transform: scale(0.92);
+}
+.mdos-tctl-btn svg {
+  width: 19px;
+  height: 19px;
+}
+/* The menu sheet: the panels as app icons. */
+.mdos-tmenu {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  gap: 18px 6px;
+  padding: 4px 0 6px;
+}
+.mdos-tmenu .mdos-lp-app {
+  --mdos-badge-icon: 58px;
+  gap: 6px;
+  animation: none;
+}
+.mdos-tmenu .mdos-app-icon {
+  width: 58px !important;
+  height: 58px !important;
+}
+.mdos-tmenu .mdos-lp-label {
+  font-size: 11.5px;
+  color: inherit;
+}
+/* Phone sheets now start right under the status bar; the chat list's own
+   header no longer shares that row with a top bar. */
+html.mdos-touch:not(.mdos-tablet) :is(.mari-right-panel-header, .mari-sidebar-header) {
+  padding-top: 4px;
 }
