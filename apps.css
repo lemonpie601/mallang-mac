@@ -1700,6 +1700,17 @@ html.mdos-touch .mari-chat-sidebar .mari-sidebar-header {
   background: transparent !important;
   border: 0 !important;
 }
+html.mdos-touch .mari-chat-sidebar .mari-sidebar-header {
+  height: 58px !important;
+  min-height: 0 !important;
+  box-sizing: border-box;
+}
+html.mdos-touch .mari-chat-sidebar .mari-sidebar-header h2 {
+  margin: 0 !important;
+  line-height: 1 !important;
+  display: flex;
+  align-items: center;
+}
 html.mdos-touch .mari-chat-sidebar .mari-sidebar-header h2[data-mdos-title]:not([data-mdos-title=""]) {
   font-size: 0 !important;
 }
@@ -1726,7 +1737,9 @@ html.mdos-touch .mari-chat-sidebar .mari-sidebar-header button:has(.lucide-x) {
 html.mdos-touch .mari-chat-sidebar > div:has(> .mari-chat-mode-action) {
   position: absolute !important;
   z-index: 5;
-  top: 24px;
+  /* Level with the header's ✕: header 58px tall from a 12px top padding,
+     both 34px tall and centred → 16px. */
+  top: 16px;
   right: 60px;
   display: flex !important;
   gap: 6px !important;
@@ -1904,4 +1917,65 @@ html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"] 
 html.mdos .mari-chat-sidebar[data-mdos-list] [data-drag-kind="chat"] > .relative.flex-shrink-0 > .mari-chat-mode-avatar {
   width: 28px !important;
   height: 28px !important;
+}
+
+/* ── Composer switchers: one model pill + persona everywhere ─── */
+/* Phones got Marinara's combined quick switcher (^) as well as the model pill
+   (shown by this theme): the quick switcher goes, the model pill and the
+   persona button show on every screen size, in conversation and roleplay. */
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div[class~="sm:hidden"] {
+  display: none !important;
+}
+html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > [class~="sm:flex"] {
+  display: flex !important;
+}
+
+/* ── Model picker, redesigned ────────────────────────────────── */
+/* The current model as a highlighted card at the top, a rounded search
+   field, the sources (Starred, accounts, folders) as a calm list with the
+   chosen one tinted, the models as grouped two-line rows (above). */
+html.mdos [data-quick-connection-menu] [data-switcher-section="now"] {
+  margin: 4px 8px 8px !important;
+  padding: 4px 6px !important;
+  border: 0 !important;
+  border-radius: 18px !important;
+  background: color-mix(in srgb, var(--mdos-accent, #0a84ff) 10%, var(--mdos-win-bg, #fff)) !important;
+  box-shadow: none !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-section="now"] [data-model-title] {
+  font-size: 16px !important;
+  font-weight: 650 !important;
+}
+html.mdos [data-quick-connection-menu] :is([data-switcher-default], [data-switcher-shuffle]) {
+  border-radius: 999px !important;
+}
+html.mdos [data-quick-connection-menu] input:is([type="text"], [type="search"], :not([type])) {
+  height: 42px !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  background: color-mix(in srgb, var(--mdos-fg, #000) 7%, transparent) !important;
+  box-shadow: none !important;
+  font-size: 15px !important;
+}
+html.mdos [data-quick-connection-menu] :has(> input:is([type="text"], [type="search"], :not([type]))) {
+  border: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-pane] {
+  min-height: 44px !important;
+  margin: 1px 4px !important;
+  border-radius: 12px !important;
+  font-size: 14.5px !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-pane]::before {
+  display: none !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-pane][aria-pressed="true"] {
+  background: color-mix(in srgb, var(--mdos-accent, #0a84ff) 14%, transparent) !important;
+  color: var(--mdos-accent, #0a84ff) !important;
+  font-weight: 650 !important;
+}
+html.mdos [data-quick-connection-menu] [data-switcher-search-all] {
+  border-radius: 12px !important;
 }
