@@ -1627,10 +1627,10 @@ function windowTitle(id) {
   }
   if (desktopHome) return L.desktopTitle;
   if (homeVisible()) {
-    const tab = $(`${SEL.homeTabs}[aria-selected="true"]`);
+    const tab = $once(`${SEL.homeTabs}[aria-selected="true"]`);
     return tab?.getAttribute("aria-label") || appLabel(appById("home"));
   }
-  if ($(SEL.detail)) return L.editor;
+  if ($once(SEL.detail)) return L.editor;
   return "Marinara";
 }
 
@@ -2588,12 +2588,17 @@ function followApp(mode) {
 }
 let chatTitleEl = null;
 let chatOtherEl = null;
+let chatAppSig = "";
 function refreshChatApp() {
   const main = $once(SEL.main);
   const inChat = isDesktop() && !!main && !!$once("[data-chat-mode]") && !homeVisible() && !$once(SEL.detail);
   const id = inChat ? openChatId() : "";
   let info = chatInfo.get(id);
   if (id && !info) loadChatInfo(4000);
+  // Same chat, same app, same list, our title still in place: nothing to do.
+  const sig = `${inChat}|${id}|${info?.name}|${info?.mode}|${paneOn() ? activeChatMode() : ""}`;
+  if (sig === chatAppSig && (!chatTitleEl || chatTitleEl.parentElement === main)) return;
+  chatAppSig = sig;
   // Remember the chat last open in each app.
   if (info?.mode && MODE_KEYS.includes(info.mode) && state.lastChat?.[info.mode] !== id) {
     state.lastChat = { ...(state.lastChat || {}), [info.mode]: id };
@@ -6075,7 +6080,12 @@ const RP_PRESETS = {
 // text pick the new faces up.
 let fontBump = false;
 let fontCount = doc.fonts?.size ?? 0;
+const fontsFrom = performance.now();
+let fontsAt = -1e9;
 function refreshChatFonts() {
+  const now = performance.now();
+  if (now - fontsFrom > 60_000 && now - fontsAt < 5000) return;
+  fontsAt = now;
   const n = doc.fonts?.size ?? 0;
   if (n === fontCount) return;
   fontCount = n;
@@ -6366,6 +6376,7 @@ function syncBody() {
   if (homeVisible()) readHomeApps();
   refreshBadges();
   refreshChatTools();
+  cleanComposer();
   lockerTick();
   refreshChatList();
   refreshChatApp();
@@ -6584,8 +6595,13 @@ observer.observe(hostRoot || doc.body, {
   attributes: true,
   attributeFilter: ["aria-pressed", "aria-hidden", "aria-selected", "data-shell-overlay-mode"],
 });
+let lastInputAt = performance.now();
+for (const type of ["pointerdown", "keydown", "wheel", "touchstart"]) on(doc, type, () => (lastInputAt = performance.now()), { capture: true, passive: true });
+let pollTicks = 0;
 const pollTimer = marinara.setInterval(() => {
-  if (!doc.hidden && !gesture) syncSoon();
+  if (doc.hidden || gesture) return;
+  const idle = performance.now() - lastInputAt > 5000;
+  if (!idle || ++pollTicks % 3 === 0) syncSoon();
 }, 700);
 const viewTimer = marinara.setInterval(() => {
   if (!doc.hidden) watchMainView();
@@ -8507,18 +8523,49 @@ ui.append(h("div", { id: "mdos-tctl", "data-exd": "" }, tctlList, tctlMenu));
 // visible. Only floating elements outside Marinara's app count (not its own
 // chat header). Checked on each sync; it moves only when the corner changes.
 let tctlTop = "";
+// The composer's text field never shows a box of its own when tapped: some
+// themes give every focused textarea a border and ring. Set inline (with
+// !important), which outranks every stylesheet, once per field.
+function cleanComposer() {
+  const ta = $once("textarea[data-chat-composer]");
+  if (!ta || ta.hasAttribute("data-mdos-clean")) return;
+  ta.setAttribute("data-mdos-clean", "");
+  ta.style.setProperty("border", "0", "important");
+  ta.style.setProperty("outline", "none", "important");
+  ta.style.setProperty("box-shadow", "none", "important");
+}
+// Marinara's own chat bubbles (the relationship tracker, chat settings) sit
+// in that corner too: they count, though they live inside Marinara's app.
+let tctlAt = -1e9;
 function placeTouchControls() {
+  // At most every 2 s (hit-testing the corner each sync was the costliest
+  // part of an idle sync on phones).
+  if (performance.now() - tctlAt < 2000) return;
+  tctlAt = performance.now();
   const box = tctlList.parentElement;
   if (!box || getComputedStyle(box).display === "none") return;
   const r = box.getBoundingClientRect();
   let top = safeProbe.getBoundingClientRect().top + 10;
-  const blockerAt = (x, y) =>
-    doc.elementsFromPoint(x, y).find((e) => e !== html && e !== doc.body && !e.closest("#root, #mdos-ui, [data-mdos], [data-exd]") && getComputedStyle(e).position === "fixed");
+  const blockerAt = (x, y) => {
+    for (const e of doc.elementsFromPoint(x, y)) {
+      if (e === html || e === doc.body || e.closest("#mdos-ui, [data-mdos], [data-exd]")) continue;
+      const bubble = e.closest(".mari-window-bubble");
+      if (bubble) return bubble;
+      // Small floating buttons only: a dialog or sheet covering the screen is not a corner button.
+      if (!e.closest("#root") && getComputedStyle(e).position === "fixed") {
+        const q = e.getBoundingClientRect();
+        if (q.width <= 200 && q.height <= 200) return e;
+      }
+    }
+    return null;
+  };
   for (let i = 0; i < 4; i++) {
     const hit = [r.left + 19, r.left + 65, r.right - 6].map((x) => blockerAt(x, top + 19)).find(Boolean);
     if (!hit) break;
     top = Math.round(hit.getBoundingClientRect().bottom + 8);
   }
+  // Never pushed far down the screen.
+  top = Math.min(top, Math.round(innerHeight * 0.35));
   const next = `${Math.round(top)}px`;
   if (next !== tctlTop) {
     tctlTop = next;
@@ -8911,6 +8958,10 @@ return () => {
   widgetLayer.remove();
   returnPill.remove();
   lateCss.remove();
+  for (const ta of $$("textarea[data-mdos-clean]")) {
+    for (const p of ["border", "outline", "box-shadow"]) ta.style.removeProperty(p);
+    ta.removeAttribute("data-mdos-clean");
+  }
   for (const cls of [...html.classList]) if (cls.startsWith("mdos")) html.classList.remove(cls);
   for (const key of Object.keys(html.dataset)) if (key.startsWith("mdos")) delete html.dataset[key];
   for (const name of [...html.style]) if (name.startsWith("--mdos-")) html.style.removeProperty(name);
