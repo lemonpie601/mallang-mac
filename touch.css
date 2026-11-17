@@ -578,34 +578,15 @@ html.mdos-split #mdos-tctl {
 html.mdos-touch:is(:not(.mdos-touch-home), .mdos-touch-sheet) .chat-input-container {
   padding-bottom: max(44px, calc(env(safe-area-inset-bottom, 0px) + 22px)) !important;
 }
-/* Pinned composer buttons: at the composer's top right, so a button an
-   extension keeps at the bottom left (a relationship tracker…) stays seen. */
-.mdos-qp-chips {
+/* Pinned composer buttons stay at the composer's top left; in a
+   conversation they move to the top right, where they don't cover the button
+   an extension keeps at the bottom left (a relationship tracker…). */
+[data-chat-mode="conversation"] .mdos-qp-chips {
   left: auto !important;
   right: 12px;
 }
-/* Phone composer: every round button 34px (Marinara nests the mobile
-   switchers a level deeper), tight gaps, so the bottom row stays one line. */
-html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell:has(> textarea[data-chat-composer]) button:not([aria-haspopup="dialog"]) {
-  width: 34px !important;
-  height: 34px !important;
-  min-width: 34px !important;
-  min-height: 34px !important;
-}
-html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell:has(> textarea[data-chat-composer]) :is(> button:last-child, > div:last-child > button:last-child) {
-  width: 36px !important;
-  height: 36px !important;
-}
-html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell:has(> textarea[data-chat-composer]),
-html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell:has(> textarea[data-chat-composer]) div {
-  column-gap: 4px !important;
-  gap: 4px !important;
-}
-html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell:has(> textarea[data-chat-composer]) button[aria-haspopup="dialog"]:has(svg.lucide-link) {
-  height: 34px !important;
-  max-width: 34vw !important;
-  font-size: 13px !important;
-}
+/* Phone composer: the bottom row stays one line — the model pill takes only
+   the room that is left (the round buttons keep their 36px). */
 html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell:has(> textarea[data-chat-composer]) :is(> button, > div > button)[aria-haspopup="dialog"]:has(svg.lucide-link) {
   flex: 1 1 56px !important;
   min-width: 0 !important;
