@@ -5836,6 +5836,7 @@ function syncBody() {
   refreshBadges();
   refreshChatTools();
   lockerTick();
+  refreshChatList();
   const hubApp = !!hubAppTab();
   toggleClass("mdos-hub-app", hubApp);
   refreshLocker();
@@ -7707,6 +7708,102 @@ on(
   true,
 );
 
+// ── Chat list per app: Messenger / Books / Arcade ─────────────
+// The list takes the look of the app it belongs to (the mode tab shown):
+// Conversation is a messenger — with each chat's last message under its
+// name, which Marinara's list doesn't carry, so it is fetched (one message,
+// only for chats on screen, two at a time, again only when the chat's time
+// changes). Roleplay is a bookshelf, Game a game library (CSS).
+const previews = new Map(); // chatId -> { key, text }
+const pvQueue = [];
+let pvBusy = 0;
+const pvSeen = new WeakSet();
+const pvIO = typeof IntersectionObserver === "function"
+  ? new IntersectionObserver((entries) => {
+      for (const e of entries) if (e.isIntersecting) pvWant(e.target);
+    })
+  : null;
+const rowTime = (row) => row.querySelector(":scope > .tabular-nums")?.textContent.trim() || "";
+function pvWant(row) {
+  const id = row.getAttribute("data-chat-id");
+  if (!id || activeChatMode() !== "conversation") return;
+  const p = previews.get(id);
+  if ((p && p.key === rowTime(row)) || pvQueue.includes(id)) return;
+  pvQueue.push(id);
+  pvPump();
+}
+function pvText(m) {
+  let t = typeof m?.content === "string" ? m.content : typeof m?.text === "string" ? m.text : "";
+  t = t
+    .replace(/<[^>]+>/g, " ")
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, "🖼")
+    .replace(/[*_`#>~]+/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!t && (m?.attachments?.length || m?.images?.length)) t = "🖼";
+  const mine = m?.role === "user";
+  return t ? `${mine ? (KO ? "나: " : "You: ") : ""}${t.slice(0, 90)}` : "";
+}
+function pvPump() {
+  while (pvBusy < 2 && pvQueue.length) {
+    const id = pvQueue.shift();
+    const row = doc.querySelector(`${SEL.chatRows}[data-chat-id="${CSS.escape(id)}"]`);
+    if (!row) continue;
+    const key = rowTime(row);
+    pvBusy++;
+    window
+      .fetch(`/api/chats/${encodeURIComponent(id)}/messages?limit=1`, { credentials: "same-origin" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        const list = Array.isArray(data) ? data : data?.messages || data?.items || [];
+        const last = list.reduce((a, m) => (!a || String(m?.createdAt || "") >= String(a?.createdAt || "") ? m : a), null);
+        previews.set(id, { key, text: last ? pvText(last) : "" });
+        paintPreview(doc.querySelector(`${SEL.chatRows}[data-chat-id="${CSS.escape(id)}"]`));
+      })
+      .catch(() => previews.set(id, { key, text: "" }))
+      .finally(() => {
+        pvBusy--;
+        pvPump();
+      });
+  }
+}
+function paintPreview(row) {
+  const block = row?.querySelector(":scope > .min-w-0.flex-1");
+  if (!block) return;
+  const text = previews.get(row.getAttribute("data-chat-id"))?.text || "";
+  let el = block.querySelector(":scope > .mdos-preview");
+  if (!text) return el?.remove();
+  if (!el) {
+    el = h("span", { class: "mdos-preview", "data-exd": "" });
+    block.append(el);
+  }
+  if (el.textContent !== text) el.textContent = text;
+}
+let listSig = "";
+function refreshChatList() {
+  const sidebar = $once(".mari-chat-sidebar");
+  if (!sidebar) return;
+  const mode = activeChatMode() || "";
+  if (sidebar.getAttribute("data-mdos-list") !== mode) sidebar.setAttribute("data-mdos-list", mode);
+  if (mode !== "conversation") return;
+  // Only when the rows changed (count / first row) — not a walk every sync.
+  const rows = sidebar.querySelectorAll(SEL.chatRows);
+  const sig = `${rows.length}|${rows[0]?.getAttribute("data-chat-id") || ""}|${rowTime(rows[0] || doc.body)}`;
+  const changed = sig !== listSig;
+  listSig = sig;
+  for (const row of rows) {
+    if (!pvSeen.has(row)) {
+      pvSeen.add(row);
+      pvIO?.observe(row);
+    }
+    if (changed || !row.querySelector(":scope > .min-w-0.flex-1 > .mdos-preview")) {
+      const p = previews.get(row.getAttribute("data-chat-id"));
+      if (p && p.key !== rowTime(row)) pvWant(row);
+      else if (p) paintPreview(row);
+    }
+  }
+}
+
 // ── Convenience ───────────────────────────────────────────────
 
 // New chat in whichever mode the chat list shows (Conversation if none yet).
@@ -7825,6 +7922,8 @@ return () => {
   themeObserver.disconnect();
   for (const mo of nullObservers) mo.disconnect();
   removeSceneBar();
+  pvIO?.disconnect();
+  for (const el of $$(".mdos-preview")) el.remove();
   lkStopPick();
   lkReleaseAll();
   lkTopBtn?.remove();

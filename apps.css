@@ -1345,7 +1345,11 @@ html.mdos [data-quick-connection-menu] .mari-connection-model-choice > [data-con
   flex: 1 1 auto !important;
   min-width: 0 !important;
 }
-html.mdos [data-quick-connection-menu] .mari-connection-model-choice > span:not(:first-child):not([data-connection-model-copy]):not(:has(.mari-connection-pill--warn)):not(.mari-connection-pill--warn) {
+html.mdos [data-quick-connection-menu] .mari-connection-model-choice > span:not(:first-child):not([data-connection-model-copy]):not([data-connection-badges]):not(:has(.mari-connection-pill--warn)):not(.mari-connection-pill--warn) {
+  display: none !important;
+}
+/* The price stays (role badges like "Agents" go, warnings stay). */
+html.mdos [data-quick-connection-menu] [data-connection-badges] > [data-connection-role]:not(.mari-connection-pill--warn) {
   display: none !important;
 }
 html.mdos [data-quick-connection-menu] [data-model-title] {
@@ -1443,4 +1447,99 @@ html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:n
   display: flex !important;
   align-items: center !important;
   gap: 6px !important;
+}
+
+/* ── Chat list per app (desktop.js refreshChatList) ──────────── */
+/* Conversation = a messenger: round 50px picture, bold name with the time on
+   the right, the last message in two grey lines under it. */
+html.mdos .mari-chat-sidebar[data-mdos-list="conversation"] [data-drag-kind="chat"] {
+  min-height: 74px;
+  align-items: center !important;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="conversation"] [data-drag-kind="chat"] > .relative.flex-shrink-0,
+html.mdos .mari-chat-sidebar[data-mdos-list="conversation"] [data-drag-kind="chat"] > .relative.flex-shrink-0 > :is(span.rounded-lg, .mari-chat-mode-avatar) {
+  width: 50px !important;
+  height: 50px !important;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="conversation"] [data-drag-kind="chat"] > .min-w-0.flex-1 {
+  align-self: center;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="conversation"] [data-drag-kind="chat"] > .min-w-0.flex-1 > span:first-child {
+  font-size: 15px !important;
+  font-weight: 650 !important;
+}
+.mdos-preview {
+  display: -webkit-box;
+  margin-top: 2px;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  font-size: 13px;
+  line-height: 1.35;
+  /* Marinara's own muted text colour: it follows the list's theme. */
+  color: var(--muted-foreground, color-mix(in srgb, currentColor 60%, transparent));
+  white-space: normal;
+  word-break: break-all;
+}
+html.mdos .mari-chat-sidebar [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress) .mdos-preview {
+  color: rgba(255, 255, 255, 0.8);
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="conversation"] [data-drag-kind="chat"]::after {
+  left: 72px;
+}
+
+/* Roleplay = a bookshelf: the picture as a book cover (tall, square corners
+   with a spine shadow), the title in a serif face. */
+html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"] {
+  min-height: 82px;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"] > .relative.flex-shrink-0 {
+  width: 46px !important;
+  height: 64px !important;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"] > .relative.flex-shrink-0 > :is(span.rounded-lg, .mari-chat-mode-avatar) {
+  width: 46px !important;
+  height: 64px !important;
+  border-radius: 3px 6px 6px 3px !important;
+  box-shadow:
+    inset 3px 0 0 rgba(0, 0, 0, 0.18),
+    0 3px 8px -3px rgba(0, 0, 0, 0.35);
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"] > .relative.flex-shrink-0 > span.rounded-lg > img {
+  border-radius: 3px 6px 6px 3px !important;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"] > .min-w-0.flex-1 > span:first-child {
+  font-family: "Iowan Old Style", "Noto Serif KR", "Nanum Myeongjo", Georgia, serif !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"]::after {
+  left: 68px;
+}
+
+/* Game = a game library: an app-icon picture, the row as a card. */
+html.mdos .mari-chat-sidebar[data-mdos-list="game"] [data-drag-kind="chat"] {
+  min-height: 76px;
+  margin: 4px 6px !important;
+  border-radius: 16px !important;
+  background: color-mix(in srgb, var(--mdos-fg, #000) 4%, transparent);
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="game"] [data-drag-kind="chat"]::after {
+  display: none;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="game"] [data-drag-kind="chat"] > .relative.flex-shrink-0,
+html.mdos .mari-chat-sidebar[data-mdos-list="game"] [data-drag-kind="chat"] > .relative.flex-shrink-0 > :is(span.rounded-lg, .mari-chat-mode-avatar) {
+  width: 54px !important;
+  height: 54px !important;
+  border-radius: 14px !important;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="game"] [data-drag-kind="chat"] > .relative.flex-shrink-0 > :is(span.rounded-lg, .mari-chat-mode-avatar) {
+  box-shadow: 0 3px 10px -4px rgba(0, 0, 0, 0.4);
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="game"] [data-drag-kind="chat"] > .relative.flex-shrink-0 > span.rounded-lg > img {
+  border-radius: 14px !important;
+}
+html.mdos .mari-chat-sidebar[data-mdos-list="game"] [data-drag-kind="chat"] > .min-w-0.flex-1 > span:first-child {
+  font-size: 15px !important;
+  font-weight: 700 !important;
 }
