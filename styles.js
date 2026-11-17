@@ -2164,18 +2164,55 @@ button.marinara-chat-input-shell > .mdos-qp-chips {
   display: none !important;
 }
 
-/* ── Phones: list / menu buttons ── */
-/* Two separate round glass buttons with a fixed gap (they never squeeze
-   into each other), a little smaller so less of the chat is covered. */
+/* ── Phones: list / menu buttons as one capsule (2.22.1) ── */
+/* One glass capsule holding both icons with a hairline between them, like
+   iOS's grouped toolbar buttons: a single element, so the two can never
+   overlap, whatever restyles a button on the page. The buttons themselves
+   draw nothing (no background, ring, shadow or scale of their own). */
 html.mdos-touch #mdos-tctl {
-  gap: 10px !important;
+  gap: 0 !important;
+  align-items: center !important;
+  height: 38px;
+  padding: 0 3px !important;
+  box-sizing: border-box;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--background, #fff) 74%, transparent);
+  backdrop-filter: blur(16px) saturate(170%);
+  -webkit-backdrop-filter: blur(16px) saturate(170%);
+  box-shadow:
+    0 2px 10px -3px rgba(0, 0, 0, 0.25),
+    inset 0 0 0 0.5px color-mix(in srgb, var(--foreground, #000) 16%, transparent);
 }
 html.mdos-touch #mdos-tctl > .mdos-tctl-btn {
+  all: unset !important;
+  position: relative !important;
+  display: grid !important;
+  place-items: center !important;
   flex: none !important;
-  width: 36px !important;
-  height: 36px !important;
-  min-width: 36px !important;
+  width: 38px !important;
+  min-width: 38px !important;
+  height: 32px !important;
   box-sizing: border-box !important;
+  border-radius: 999px !important;
+  color: var(--foreground, var(--mdos-fg)) !important;
+  -webkit-tap-highlight-color: transparent !important;
+  cursor: var(--mdos-cur-ptr, pointer) !important;
+}
+html.mdos-touch #mdos-tctl > .mdos-tctl-btn:active {
+  background: color-mix(in srgb, var(--foreground, #000) 10%, transparent) !important;
+}
+html.mdos-touch #mdos-tctl > .mdos-tctl-btn + .mdos-tctl-btn::before {
+  content: "";
+  position: absolute;
+  left: -0.5px;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background: color-mix(in srgb, var(--foreground, #000) 16%, transparent);
+}
+html.mdos-touch #mdos-tctl > .mdos-tctl-btn svg {
+  width: 19px !important;
+  height: 19px !important;
 }
 
 /* ── Desktop: Marinara's chat bubbles inside the chat window ── */
