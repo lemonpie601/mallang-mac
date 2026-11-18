@@ -6298,9 +6298,15 @@ function setEnabled(enabled) {
   refreshMode();
   syncSoon();
 }
+// Leaving the home screen, the chat window takes its own size at once: the
+// list joining it in the same moment must not animate it down from the
+// full-screen desktop (it looked like the window grew, then shrank).
+let homeChangedAt = -1e9;
 function setDesktopHome(on) {
   if (desktopHome === on) return;
   desktopHome = on;
+  homeChangedAt = performance.now();
+  if (!on) html.classList.remove("mdos-animating");
   toggleClass("mdos-desktop-home", on);
   if (on) raf(fitBoard);
   if (on && state.mainMinimized) setMainMinimized(false);
@@ -6317,6 +6323,21 @@ let lastSync = 0;
 let lastCreditScrape = -1e9;
 // Set by cleanup: a queued sync must not re-attach chrome after disable.
 let disposed = false;
+// The main window's view (home, a chat, an editor) swaps two levels inside
+// it. Syncing in the observer callback runs before the browser paints, so a
+// chat opened from the desktop is never drawn at the desktop's full-screen
+// size first (it used to wait for the next periodic sync, then shrink).
+let viewBox = null;
+const viewObserver = new MutationObserver(() => {
+  if (!disposed) sync();
+});
+function watchViewBox() {
+  const box = $once(SEL.main)?.querySelector(":scope > .mari-app-background-paint > .mari-app-background-paint") || null;
+  if (box === viewBox) return;
+  viewObserver.disconnect();
+  viewBox = box;
+  if (box) viewObserver.observe(box, { childList: true });
+}
 function syncSoon() {
   if (syncTimer || disposed) return;
   // At most ~10 syncs a second, even while a reply streams in.
@@ -6365,7 +6386,7 @@ function syncBody() {
     keepListAt = 0;
     click($(SEL.chatsBtn));
   }
-  toggleClass("mdos-split", split && listOpen);
+  toggleClass("mdos-split", split && (listOpen || performance.now() < splitHoldUntil));
   toggleClass("mdos-touch-panel", isTouch() && !!$once('[data-component="RightPanelMobile"], [data-component="MobileDetailSheet"]'));
   if (isTouch()) {
     placeTouchControls();
@@ -6377,6 +6398,7 @@ function syncBody() {
   refreshBadges();
   refreshChatTools();
   cleanComposer();
+  watchViewBox();
   lockerTick();
   refreshChatList();
   refreshChatApp();
@@ -6406,7 +6428,7 @@ function syncBody() {
   toggleClass("mdos-pane", pane);
   toggleClass("mdos-pane-ready", isDesktop() && state.messengerPane !== false && !desktopHome);
   if (pane !== lastPane) {
-    if (lastPane !== null) animateGeometry();
+    if (lastPane !== null && performance.now() - homeChangedAt > 400) animateGeometry();
     lastPane = pane;
     applyRect("chats");
     applyRect("main");
@@ -6558,6 +6580,7 @@ let topbarSeen = null;
 let topbarRO = null;
 let lastPane = null;
 let keepListAt = 0;
+let splitHoldUntil = 0;
 // The main window comes back whenever Marinara shows something new in it.
 let lastView = "";
 const detailIds = new WeakMap();
@@ -8600,7 +8623,18 @@ on(
     if (!isTouch() || !html.classList.contains("mdos-tablet") || state.messengerPane === false || innerWidth < 1000) return;
     if (event.target instanceof Element && event.target.closest('aside[data-component="ChatSidebarPanel"] [data-drag-kind="chat"]')) {
       keepListAt = performance.now();
-      marinara.setTimeout(syncSoon, 320);
+      splitHoldUntil = keepListAt + 1500;
+      let tries = 0;
+      const reopen = () => {
+        if (!$('aside[data-component="ChatSidebarPanel"]')) {
+          keepListAt = 0;
+          click($(SEL.chatsBtn));
+          syncSoon();
+          return;
+        }
+        if (++tries < 40) marinara.setTimeout(reopen, 25);
+      };
+      marinara.setTimeout(reopen, 25);
     }
   },
   true,
@@ -8906,6 +8940,7 @@ return () => {
   disposed = true;
   mode = "off";
   observer.disconnect();
+  viewObserver.disconnect();
   themeObserver.disconnect();
   for (const mo of nullObservers) mo.disconnect();
   removeSceneBar();
