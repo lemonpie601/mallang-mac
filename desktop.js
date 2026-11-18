@@ -7378,7 +7378,8 @@ function snipEditor() {
 // Locker app), and pressed for real (pointer + mouse + click at its centre)
 // when picked. A button that unfolds in place shows while it is open.
 // Reimplements the "확장 보관함" extension, lighter: it reads only the
-// page's top-level floating elements every 2 s and the stored ones each sync.
+// page's top-level floating elements, when something outside Marinara's own
+// tree changes (lkWake), and the stored ones each sync.
 const LK_INTERACTIVE = 'button, a[href], [role="button"], [onclick], input[type="button"], input[type="submit"], input[type="image"], summary, [data-drawer-launcher]';
 const LK_SKIP = 'script, style, link, meta, template, noscript, iframe, object, embed, [data-sonner-toaster], [data-radix-popper-content-wrapper], [data-radix-portal], [data-exd], [data-mdos], .mdos-alert-overlay';
 const LK_TW = /^(flex|grid|block|inline|hidden|fixed|absolute|relative|sticky|inset|top|left|right|bottom|z|w|h|min|max|p[xytrbl]?|m[xytrbl]?|gap|space|text|font|leading|tracking|bg|from|to|via|border|rounded|shadow|ring|opacity|transition|duration|ease|delay|animate|transform|translate|scale|rotate|cursor|select|pointer|items|justify|content|self|place|overflow|backdrop|blur|filter|outline|order|col|row|sr|aspect|object|shrink|grow|basis|drop|fill|stroke|dark|hover|focus|group|peer|sm|md|lg|xl)(-|:|$)/;
@@ -7759,6 +7760,7 @@ function lkReleaseAll() {
   }
   lkRecs.clear();
   lkPending.clear();
+  lkUnwatchHosts();
 }
 // On phones and tablets inside apps and chats (Marinara's top bar showing),
 // the locker sits just before the ☰ button, styled like its neighbours.
@@ -7803,7 +7805,7 @@ function lockerTick() {
   mbLocker.hidden = !(state.lockerOn && mode !== "off");
   placeTopbarLocker(false);
   if (!active) {
-    if (lkRecs.size) lkReleaseAll();
+    if (lkRecs.size || lkTopWatched) lkReleaseAll();
     return;
   }
   // Built in: the other extension, if it runs on this page, sleeps.
@@ -7813,6 +7815,7 @@ function lockerTick() {
     void bghPull();
   }
   if (doc.hidden) return;
+  lkWatchHosts();
   const now = performance.now();
   const sig = `${doc.body.childElementCount}|${html.childElementCount}`;
   if ((sig !== lkTopSig && now - lkLastScan > 1200) || now - lkLastScan > 15000) {
@@ -7823,6 +7826,77 @@ function lockerTick() {
   if (++lkTicks % 20 === 0) for (const rec of lkRecs.values()) lkEnforce(rec);
 }
 let lkTopSig = "";
+const LK_STABLE_MS = 600;
+const LK_HOST_WATCH = { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden", "class", "style"] };
+const lkHostObs = new Map();
+let lkWakeTimer = 0;
+const lkOurs = (n) => n.nodeType !== 1 || !!n.closest?.("[data-mdos], [data-exd], [data-bgh-stored], .mdos-alert-overlay");
+function lkWake(added) {
+  if (disposed || doc.hidden || !(state.lockerOn && mode !== "off" && lkBuiltin())) return;
+  const gap = performance.now() - lkLastScan;
+  const wait = added ? 120 : 700;
+  if (gap >= wait) {
+    marinara.clearTimeout(lkWakeTimer);
+    lkWakeTimer = 0;
+    lkLastScan = performance.now();
+    const before = lkRecs.size;
+    lkScan();
+    if (lkRecs.size !== before) syncSoon();
+    return;
+  }
+  if (!lkWakeTimer) {
+    lkWakeTimer = marinara.setTimeout(() => {
+      lkWakeTimer = 0;
+      lkWake(true);
+    }, wait - gap + 10);
+  }
+}
+const lkHostWake = (list) => {
+  let added = false;
+  let hit = false;
+  for (const m of list) {
+    const t = m.target.nodeType === 1 ? m.target : m.target.host;
+    if (t && lkOurs(t)) continue;
+    hit = true;
+    if (m.addedNodes?.length) added = true;
+  }
+  if (hit) lkWake(added);
+};
+const lkTopObs = new MutationObserver((list) => {
+  let hit = false;
+  for (const m of list) for (const n of [...m.addedNodes, ...m.removedNodes]) if (n.nodeType === 1 && !lkOurs(n) && n.id !== "root") hit = true;
+  if (!hit) return;
+  lkWatchHosts();
+  lkWake(true);
+});
+let lkTopWatched = false;
+function lkWatchHosts() {
+  if (!lkTopWatched) {
+    lkTopWatched = true;
+    lkTopObs.observe(doc.body, { childList: true });
+    lkTopObs.observe(html, { childList: true });
+  }
+  for (const host of doc.body.children) {
+    if (lkHostObs.has(host) || host.id === "root" || host === ui || host.matches(LK_SKIP)) continue;
+    const mo = new MutationObserver(lkHostWake);
+    mo.observe(host, LK_HOST_WATCH);
+    if (host.shadowRoot) mo.observe(host.shadowRoot, LK_HOST_WATCH);
+    lkHostObs.set(host, mo);
+  }
+  for (const [host, mo] of lkHostObs) {
+    if (host.isConnected) continue;
+    mo.disconnect();
+    lkHostObs.delete(host);
+  }
+}
+function lkUnwatchHosts() {
+  lkTopObs.disconnect();
+  lkTopWatched = false;
+  for (const mo of lkHostObs.values()) mo.disconnect();
+  lkHostObs.clear();
+  marinara.clearTimeout(lkWakeTimer);
+  lkWakeTimer = 0;
+}
 function lkScan() {
   const st = lkState();
   const seen = new Set();
@@ -7839,10 +7913,13 @@ function lkScan() {
           lkPending.set(key, performance.now());
           seen.add(`pending:${key}`);
           // Come back for it once it has stayed a moment.
-          marinara.setTimeout(() => (lkLastScan = -1e9), 1300);
+          marinara.setTimeout(() => {
+            lkLastScan = -1e9;
+            lkWake(true);
+          }, LK_STABLE_MS + 60);
           continue;
         }
-        if (performance.now() - lkPending.get(key) < 1200) {
+        if (performance.now() - lkPending.get(key) < LK_STABLE_MS) {
           seen.add(`pending:${key}`);
           continue;
         }
