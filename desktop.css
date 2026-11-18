@@ -2205,6 +2205,11 @@ html.mdos-desktop [data-mdos-win="chats"] .mari-sidebar-header h2[data-mdos-titl
 /* ── Web pages: on white, scaled to fit (desktop.js mountBrowser) ── */
 /* A page with a transparent background showed the black meant for videos.
    Wide pages are laid out at 100%/z of the window and scaled by z. */
+/* An editor took the chat's place: the list hides behind the window (desktop.js editorShown). */
+html.mdos-editing [data-component="ChatSidebarSlot"] {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
 .mdos-zoom {
   position: relative;
   flex: 1;

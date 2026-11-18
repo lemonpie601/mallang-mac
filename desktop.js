@@ -1411,7 +1411,11 @@ const validRect = (r) => r && ["x", "y", "w", "h"].every((k) => Number.isFinite(
 const LIST_MIN = 240;
 const LIST_MAX = 480;
 const paneReady = () => isDesktop() && state.messengerPane !== false && !state.mainMinimized && !desktopHome && !html.classList.contains("mdos-focus");
-const paneOn = () => paneReady() && chatsOpen();
+// An editor (model, character, preset...) replaces the chat in this window
+// (Marinara unmounts the chat meanwhile): it is its own window then, without
+// the list, which waits hidden behind it and joins again when the chat is back.
+const editorShown = () => isDesktop() && !!$once(SEL.detail);
+const paneOn = () => paneReady() && chatsOpen() && !editorShown();
 function listWidth(frame) {
   return Math.round(Math.min(Math.max(state.listW || 320, LIST_MIN), LIST_MAX, frame.w - MIN_W));
 }
@@ -1490,7 +1494,7 @@ function windowVisible(id) {
     const rec = appRec(id);
     return !!rec && !rec.min;
   }
-  if (id === "chats") return chatsOpen();
+  if (id === "chats") return chatsOpen() && !(paneReady() && editorShown());
   if (id === "panel") return panelOpen();
   return !state.mainMinimized && !desktopHome;
 }
@@ -6426,6 +6430,7 @@ function syncBody() {
   // The list joins / leaves the chat window as it opens and closes.
   const pane = paneOn();
   toggleClass("mdos-pane", pane);
+  toggleClass("mdos-editing", paneReady() && editorShown() && chatsOpen());
   toggleClass("mdos-pane-ready", isDesktop() && state.messengerPane !== false && !desktopHome);
   if (pane !== lastPane) {
     if (lastPane !== null && performance.now() - homeChangedAt > 400) animateGeometry();
