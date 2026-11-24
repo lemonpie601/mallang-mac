@@ -228,6 +228,9 @@ html.mdos.mdos-in-rp:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-mdo
   color: var(--mdos-ink-2) !important;
 }
 html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] .mari-rp-bubble {
+  /* Ink for everything in the bubble, not only the passage: Marinara's bubble
+     text is white, so extension lines under the text vanished on paper. */
+  color: var(--mdos-ink) !important;
   background: transparent !important;
   border: 0 !important;
   border-radius: 0 !important;
