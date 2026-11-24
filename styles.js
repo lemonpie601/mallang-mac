@@ -264,7 +264,9 @@ html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-messa
   color: var(--mdos-ink) !important;
   text-shadow: none !important;
 }
-html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-body > div:first-child span:not(.mari-message-name) {
+/* Only the name row: a grouped message has no name row, so its bubble is
+   the first child and must keep the passage size (2.22.7). */
+html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-body > div:first-child:has(> .mari-message-name) span:not(.mari-message-name) {
   font-size: 11px !important;
   color: var(--mdos-ink-3) !important;
 }
@@ -368,7 +370,7 @@ html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .mari
   html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-row {
     margin-bottom: 22px !important;
   }
-  html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-body > div:first-child span:not(.mari-message-name, :nth-child(2)) {
+  html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-body > div:first-child:has(> .mari-message-name) span:not(.mari-message-name, :nth-child(2)) {
     display: none;
   }
   html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .marinara-chat-input-shell {
