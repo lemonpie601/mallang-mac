@@ -223,6 +223,7 @@ const L = KO
       justify: "양쪽 정렬",
       actionsHover: "메시지 버튼은 가리킬 때만",
       actItalic: "행동(* *) 기울이기",
+      weather: "날씨 효과(눈·비·햇빛)",
       readerLayout: "읽기 화면",
       sideMargin: "좌우 여백",
       sideMarginHint: "좁은 창과 휴대폰에서 글 양옆의 여백이에요. 0이면 화면 끝까지 써요.",
@@ -574,6 +575,7 @@ const L = KO
       justify: "Justify text",
       actionsHover: "Message buttons on hover only",
       actItalic: "Italic actions (* *)",
+      weather: "Weather effects (snow, rain, sun)",
       readerLayout: "Reading view",
       sideMargin: "Side margins",
       sideMarginHint: "Space on each side of the text in narrow windows and on phones; 0 uses the full width.",
@@ -5616,6 +5618,7 @@ function chatDesignSection(win, { group, row, hint, btn, rerender }) {
           ["justify", L.justify, !!spec.justify, (on) => ({ justify: on || "" })],
           ["actItalic", L.actItalic, !spec.actUpright, (on) => ({ actUpright: on ? "" : true })],
           ["actions", L.actionsHover, !spec.actionsAlways, (on) => ({ actionsAlways: on ? "" : true })],
+          ["weather", L.weather, !spec.weatherOff, (on) => ({ weatherOff: on ? "" : true })],
         ].map(([key, label, checked, patch]) =>
           h(
             "label",
@@ -6129,6 +6132,7 @@ function applyChatStyle() {
   v("--mdos-rp-gutter", rp.gutter != null && rp.gutter !== "" ? `${rp.gutter}px` : null);
   html.dataset.mdosRpActions = rp.actionsAlways ? "" : "hover";
   html.dataset.mdosRpActItalic = rp.actUpright ? "off" : "";
+  html.dataset.mdosRpWeather = rp.weatherOff ? "off" : "";
   html.dataset.mdosRpTone = state.rpTone ? "on" : "";
   if (!state.rpTone) CSS.highlights?.delete("mdos-dlg");
   scanDialogue(true);

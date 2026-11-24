@@ -199,9 +199,14 @@ html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area {
   background: var(--mdos-paper) !important;
   color: var(--mdos-ink);
 }
-/* Weather effects draw over the page; a reading view doesn't need them. */
-html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area > canvas {
+/* Weather effects (Chat design → Reading view, on by default). Marinara's
+   particles are white for dark scenes, so on a light page they are darkened
+   to show; the night page keeps them as they are. */
+html.mdos[data-mdos-rp-weather="off"]:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area > canvas {
   display: none !important;
+}
+html.mdos[data-mdos-rp="book"]:not([data-mdos-rp-weather="off"]) .rpg-chat-area > canvas {
+  filter: sepia(0.6) brightness(0.65);
 }
 html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] {
   --mari-roleplay-message-column-width: min(var(--mdos-rp-width, 640px), 100cqw - 48px) !important;
