@@ -3,13 +3,15 @@
   "version": 1,
   "config": {
     "name": "Marinara Desktop",
-    "version": "2.23.2",
-    "description": "Turns Marinara into a desktop OS: menu bar, auto-hiding Dock, draggable windows, Home as a customizable widget board with desktop icons and bookmarks, small apps (Notes, Web, YouTube), Launchpad, Control Center, and phone/tablet home screens. Ctrl+Alt+D switches back to the classic layout.",
+    "version": "2.24.0",
+    "description": "Turns Marinara into a desktop OS: menu bar, auto-hiding Dock, draggable windows, Home as a customizable widget board with desktop icons and bookmarks, small apps (Notes, Web, YouTube), Launchpad, Control Center, and phone/tablet home screens, and per-message token cost receipts. Ctrl+Alt+D switches back to the classic layout.",
     "runtime": "client",
     "capabilities": [
       "full_page_access"
     ],
     "jsPaths": [
+      "receipt-presets.js",
+      "receipt.js",
       "styles.js",
       "desktop.js"
     ],
